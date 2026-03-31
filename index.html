@@ -1,1 +1,956 @@
+<!DOCTYPE html>
+<html lang="ro" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+<title>Coaching AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+--gold:#D4A843;--gold-light:#F0D58A;--gold-dark:#8B6914;--gold-glow:rgba(212,168,67,.3);
+--bg-primary:#06060B;--bg-secondary:#0C0C14;--bg-card:rgba(16,16,28,.72);--bg-elevated:rgba(24,24,42,.8);--bg-glass:rgba(18,18,32,.55);
+--text-primary:#F2EDE2;--text-secondary:#8A869E;--text-muted:#504D66;
+--accent-emerald:#4FD4A4;--accent-sky:#4FB8D4;--accent-coral:#E05577;--accent-violet:#A455E0;--accent-amber:#E0A832;
+--success:#4FD4A4;--warning:#E0A832;--danger:#E05555;
+--radius:14px;--radius-sm:8px;--radius-lg:22px;--radius-xl:32px;
+--shadow:0 8px 32px rgba(0,0,0,.55);--shadow-gold:0 4px 28px rgba(212,168,67,.18);
+--font-display:'Instrument Serif',Georgia,serif;
+--font-body:'Outfit',system-ui,sans-serif;
+--fs-xs:.78rem;--fs-sm:.9rem;--fs-base:1rem;--fs-lg:1.25rem;--fs-xl:1.6rem;--fs-2xl:2.1rem;--fs-3xl:2.8rem;--fs-hero:3.6rem;
+--spacing-xs:6px;--spacing-sm:12px;--spacing-md:20px;--spacing-lg:32px;--spacing-xl:48px;--spacing-2xl:64px;
+--ease-out-expo:cubic-bezier(.16,1,.3,1);--ease-out-back:cubic-bezier(.34,1.56,.64,1);
+--transition:all .35s var(--ease-out-expo);
+--blur:blur(22px);
+}
+[data-high-contrast="true"]{--bg-primary:#000;--bg-secondary:#050505;--bg-card:rgba(12,12,12,.95);--text-primary:#FFF;--text-secondary:#CCC;--gold:#FFD700;--gold-light:#FFE44D;--gold-glow:rgba(255,215,0,.4)}
+[data-large-text="true"]{--fs-xs:1rem;--fs-sm:1.15rem;--fs-base:1.25rem;--fs-lg:1.55rem;--fs-xl:2rem;--fs-2xl:2.6rem;--fs-3xl:3.4rem;--fs-hero:4.2rem}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-body);font-size:var(--fs-base);background:var(--bg-primary);color:var(--text-primary);line-height:1.6;min-height:100vh;min-height:100dvh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:var(--font-display);font-weight:400;line-height:1.15}
+button{font-family:var(--font-body);cursor:pointer;border:none;outline:none;font-size:var(--fs-base);-webkit-tap-highlight-color:transparent}
+button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:var(--radius-sm)}
+::selection{background:var(--gold);color:var(--bg-primary)}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--gold-dark);border-radius:3px}
+input::placeholder,textarea::placeholder{color:var(--text-muted)}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
 
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes breatheGlow{0%,100%{box-shadow:0 0 30px rgba(212,168,67,.08)}50%{box-shadow:0 0 60px rgba(212,168,67,.2)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes confetti{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(500px) rotate(720deg);opacity:0}}
+@keyframes levelUp{0%{transform:scale(0) rotate(-180deg);opacity:0}50%{transform:scale(1.2) rotate(10deg);opacity:1}100%{transform:scale(1) rotate(0);opacity:1}}
+@keyframes pulseRing{0%{transform:scale(.8);opacity:1}100%{transform:scale(1.8);opacity:0}}
+@keyframes orbFloat{0%{transform:translate(0,0) scale(1)}33%{transform:translate(30px,-25px) scale(1.08)}66%{transform:translate(-20px,-40px) scale(.94)}100%{transform:translate(0,0) scale(1)}}
+@keyframes morphBlob{0%{border-radius:60% 40% 30% 70%/60% 30% 70% 40%}50%{border-radius:30% 60% 70% 40%/50% 60% 30% 60%}100%{border-radius:60% 40% 30% 70%/60% 30% 70% 40%}}
+@keyframes streakFlame{0%,100%{text-shadow:0 0 8px rgba(255,140,50,.5)}50%{text-shadow:0 0 20px rgba(255,140,50,.8),0 0 40px rgba(255,60,20,.3)}}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+@keyframes gradientShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes ripple{0%{transform:scale(0);opacity:.6}100%{transform:scale(4);opacity:0}}
+@keyframes slideDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* ═══ MESH GRADIENT BG ═══ */
+.mesh-bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.mesh-bg .orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:.035;animation:orbFloat 18s ease-in-out infinite}
+.mesh-bg .orb:nth-child(1){width:500px;height:500px;top:-10%;left:-10%;background:var(--gold)}
+.mesh-bg .orb:nth-child(2){width:400px;height:400px;bottom:-10%;right:-10%;background:var(--accent-sky);animation-delay:-6s;animation-duration:22s}
+.mesh-bg .orb:nth-child(3){width:300px;height:300px;top:40%;left:50%;background:var(--accent-violet);animation-delay:-12s;animation-duration:25s}
+.mesh-bg .grid-overlay{position:absolute;inset:0;background-image:linear-gradient(rgba(212,168,67,.015) 1px,transparent 1px),linear-gradient(90deg,rgba(212,168,67,.015) 1px,transparent 1px);background-size:60px 60px}
+
+#particleCanvas{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5}
+
+.app{max-width:480px;margin:0 auto;min-height:100vh;min-height:100dvh;position:relative;padding-bottom:100px;z-index:1}
+
+/* ═══ A11Y BAR ═══ */
+.a11y-bar{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(6,6,11,.88);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);border-bottom:1px solid rgba(212,168,67,.06);padding:var(--spacing-xs) var(--spacing-sm);display:flex;align-items:center;gap:var(--spacing-xs);overflow-x:auto}
+.a11y-bar button{background:rgba(212,168,67,.06);color:var(--text-secondary);padding:6px 14px;border-radius:20px;font-size:var(--fs-xs);white-space:nowrap;transition:var(--transition);min-height:34px;font-weight:500}
+.a11y-bar button.active{background:var(--gold);color:var(--bg-primary);font-weight:700}
+.lang-toggle{margin-left:auto;background:linear-gradient(135deg,var(--gold-dark),var(--gold))!important;color:var(--bg-primary)!important;font-weight:700!important;min-width:42px}
+
+/* ═══ HEADER ═══ */
+.header{padding:calc(50px + var(--spacing-xl)) var(--spacing-md) var(--spacing-md);text-align:center}
+.header .logo{font-family:var(--font-display);font-size:var(--fs-2xl);font-weight:400;letter-spacing:.02em;background:linear-gradient(135deg,var(--gold-light),var(--gold),var(--gold-dark));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.header .logo .ai-tag{font-size:var(--fs-xs);font-family:var(--font-body);font-weight:700;-webkit-text-fill-color:var(--bg-primary);background:var(--gold);padding:2px 10px;border-radius:20px;margin-left:8px;vertical-align:middle;letter-spacing:.1em;display:inline-block;position:relative;top:-2px}
+.header .subtitle{font-size:var(--fs-sm);color:var(--text-muted);margin-top:6px;letter-spacing:.06em;font-weight:300}
+
+/* ═══ XP BAR ═══ */
+.xp-section{padding:0 var(--spacing-md);margin-bottom:var(--spacing-lg)}
+.xp-card{background:var(--bg-glass);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);border:1px solid rgba(212,168,67,.08);border-radius:var(--radius-lg);padding:var(--spacing-md) var(--spacing-lg);animation:breatheGlow 5s ease-in-out infinite;position:relative;overflow:hidden}
+.xp-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold-light),transparent);opacity:.4}
+.xp-info{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+.xp-level{font-family:var(--font-display);font-size:var(--fs-lg);color:var(--gold-light);font-style:italic}
+.xp-points{font-size:var(--fs-sm);color:var(--text-secondary);font-weight:300}
+.xp-bar-bg{height:6px;background:rgba(255,255,255,.04);border-radius:3px;overflow:hidden}
+.xp-bar-fill{height:100%;background:linear-gradient(90deg,var(--gold-dark),var(--gold),var(--gold-light));border-radius:3px;transition:width 1s var(--ease-out-expo);position:relative}
+.xp-bar-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);background-size:200% 100%;animation:shimmer 2s ease infinite}
+
+/* ═══ MOOD ═══ */
+.mood-section{padding:0 var(--spacing-md);margin-bottom:var(--spacing-lg)}
+.mood-section h3{font-size:var(--fs-lg);margin-bottom:var(--spacing-sm);color:var(--text-primary);font-family:var(--font-display);font-style:italic}
+.mood-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:var(--spacing-xs)}
+.mood-btn{background:var(--bg-glass);backdrop-filter:var(--blur);border:1.5px solid rgba(255,255,255,.04);border-radius:var(--radius);padding:var(--spacing-sm) var(--spacing-xs);text-align:center;transition:var(--transition);min-height:72px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;position:relative;overflow:hidden}
+.mood-btn::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 120%,var(--gold-glow),transparent 70%);opacity:0;transition:opacity .4s ease}
+.mood-btn:hover::before{opacity:1}
+.mood-btn:hover{border-color:rgba(212,168,67,.25);transform:translateY(-3px)}
+.mood-btn.selected{border-color:var(--gold);background:rgba(212,168,67,.08)}
+.mood-btn.selected::before{opacity:1}
+.mood-btn .emoji{font-size:1.8rem;display:block;transition:transform .3s var(--ease-out-back)}
+.mood-btn:hover .emoji{transform:scale(1.15)}
+.mood-btn .label{font-size:var(--fs-xs);color:var(--text-secondary);font-weight:300}
+
+/* ═══ SECTION TITLES ═══ */
+.section-title{font-family:var(--font-display);font-size:var(--fs-xl);color:var(--text-primary);padding:0 var(--spacing-md);margin-bottom:var(--spacing-md);display:flex;align-items:center;gap:10px;font-style:italic}
+.section-title .accent{color:var(--gold);font-size:.6em;font-style:normal}
+
+/* ═══ RITUAL CARD ═══ */
+.ritual-section{padding:0 var(--spacing-md);margin-bottom:var(--spacing-lg)}
+.ritual-card{background:var(--bg-glass);backdrop-filter:var(--blur);border:1px solid rgba(212,168,67,.1);border-radius:var(--radius-xl);padding:var(--spacing-lg);position:relative;overflow:hidden}
+.ritual-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.ritual-quote{font-family:var(--font-display);font-size:var(--fs-xl);font-style:italic;color:var(--text-primary);line-height:1.45;margin-bottom:var(--spacing-sm);padding-left:20px;position:relative}
+.ritual-quote::before{content:'"';position:absolute;left:-2px;top:-10px;font-size:3.5rem;color:var(--gold);opacity:.2;font-style:normal}
+.ritual-author{font-size:var(--fs-sm);color:var(--gold);margin-bottom:var(--spacing-md);padding-left:20px;letter-spacing:.06em;font-weight:300}
+.ritual-action{display:flex;gap:var(--spacing-sm);flex-wrap:wrap;padding-left:20px}
+
+/* ═══ BUTTONS ═══ */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 26px;border-radius:var(--radius);font-size:var(--fs-sm);font-weight:600;transition:var(--transition);min-height:48px;min-width:48px;position:relative;overflow:hidden;letter-spacing:.03em}
+.btn::after{content:'';position:absolute;inset:0;background:linear-gradient(rgba(255,255,255,.1),transparent);opacity:0;transition:opacity .3s ease}
+.btn:hover::after{opacity:1}
+.btn-gold{background:linear-gradient(135deg,var(--gold-dark),var(--gold));color:var(--bg-primary)}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:var(--shadow-gold)}
+.btn-outline{background:transparent;border:1.5px solid rgba(212,168,67,.35);color:var(--gold)}
+.btn-outline:hover{background:rgba(212,168,67,.06);border-color:var(--gold)}
+.btn-secondary{background:var(--bg-elevated);color:var(--text-primary);border:1px solid rgba(255,255,255,.05)}
+.btn-sm{padding:9px 16px;font-size:var(--fs-xs);min-height:40px}
+.btn-lg{padding:16px 36px;font-size:var(--fs-lg);min-height:56px;border-radius:var(--radius-lg)}
+.btn-block{width:100%}
+.btn-ghost{background:none;color:var(--text-secondary);padding:8px 12px}
+.btn-ghost:hover{color:var(--gold)}
+.btn-danger{background:rgba(224,85,85,.1);color:var(--danger);border:1px solid rgba(224,85,85,.15)}
+
+/* ═══ NAV ═══ */
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;z-index:900;padding:0 var(--spacing-sm) var(--spacing-sm)}
+.nav-inner{background:rgba(10,10,18,.9);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);border:1px solid rgba(212,168,67,.06);border-radius:var(--radius-xl);display:flex;justify-content:space-around;padding:var(--spacing-xs) 0;box-shadow:0 -4px 30px rgba(0,0,0,.4)}
+.nav-btn{background:none;color:var(--text-muted);display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px;font-size:var(--fs-xs);transition:var(--transition);min-height:50px;min-width:44px;border-radius:var(--radius);position:relative}
+.nav-btn.active{color:var(--gold)}
+.nav-btn.active::before{content:'';position:absolute;top:2px;width:18px;height:2px;background:var(--gold);border-radius:1px}
+.nav-btn .nav-icon{font-size:1.35rem;transition:transform .3s var(--ease-out-back)}
+.nav-btn:hover{color:var(--gold-light)}
+.nav-btn:hover .nav-icon{transform:scale(1.1)}
+.nav-btn .nav-label{font-size:.65rem;letter-spacing:.05em;text-transform:uppercase;font-weight:500}
+
+/* ═══ PAGES ═══ */
+.page{display:none;padding-bottom:var(--spacing-xl)}
+.page.active{display:block;animation:fadeUp .5s var(--ease-out-expo) forwards}
+
+/* ═══ CARDS ═══ */
+.card{background:var(--bg-glass);backdrop-filter:var(--blur);border:1px solid rgba(255,255,255,.04);border-radius:var(--radius-lg);padding:var(--spacing-lg);margin:0 var(--spacing-md) var(--spacing-md);transition:var(--transition)}
+
+/* ═══ HABITS ═══ */
+.habits-section{padding:0 var(--spacing-md);margin-bottom:var(--spacing-lg)}
+.habit-row{display:flex;align-items:center;gap:var(--spacing-sm);background:var(--bg-glass);backdrop-filter:var(--blur);border:1px solid rgba(255,255,255,.04);border-radius:var(--radius);padding:var(--spacing-sm) var(--spacing-md);margin-bottom:var(--spacing-xs);transition:var(--transition);min-height:56px}
+.habit-row:hover{border-color:rgba(212,168,67,.1)}
+.habit-icon{font-size:1.4rem;width:36px;text-align:center;flex-shrink:0}
+.habit-info{flex:1;min-width:0}
+.habit-name{font-size:var(--fs-sm);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.habit-streak{font-size:var(--fs-xs);color:var(--text-muted);font-weight:300}
+.habit-days{display:flex;gap:3px;flex-shrink:0}
+.habit-day{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-size:.55rem;color:var(--text-muted);transition:var(--transition);cursor:pointer;font-weight:600}
+.habit-day.done{background:var(--gold);border-color:var(--gold);color:var(--bg-primary)}
+.habit-day.today{border-color:var(--gold);box-shadow:0 0 8px rgba(212,168,67,.2)}
+.habit-delete{background:none;color:var(--text-muted);font-size:1.1rem;padding:4px;opacity:.3;transition:var(--transition);border-radius:50%;min-width:28px;min-height:28px;display:flex;align-items:center;justify-content:center}
+.habit-delete:hover{opacity:1;color:var(--danger)}
+.add-habit-row{display:flex;gap:var(--spacing-xs);margin-top:var(--spacing-sm)}
+.add-habit-input{flex:1;background:var(--bg-glass);border:1.5px solid rgba(255,255,255,.06);border-radius:var(--radius);padding:12px 16px;color:var(--text-primary);font-family:var(--font-body);font-size:var(--fs-sm);transition:var(--transition)}
+.add-habit-input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,168,67,.08)}
+.emoji-pick{display:flex;gap:4px;flex-wrap:wrap;margin-top:var(--spacing-xs)}
+.emoji-pick button{font-size:1.2rem;padding:6px 8px;background:var(--bg-glass);border:1px solid transparent;border-radius:var(--radius-sm);transition:var(--transition);min-width:36px;min-height:36px}
+.emoji-pick button.selected{border-color:var(--gold);background:rgba(212,168,67,.08)}
+.emoji-pick button:hover{border-color:rgba(212,168,67,.2)}
+
+/* ═══ JOURNAL ═══ */
+.journal-section{padding:0 var(--spacing-md);margin-bottom:var(--spacing-lg)}
+.journal-textarea{width:100%;min-height:120px;background:var(--bg-glass);backdrop-filter:var(--blur);border:1.5px solid rgba(255,255,255,.06);border-radius:var(--radius);padding:var(--spacing-md);color:var(--text-primary);font-family:var(--font-body);font-size:var(--fs-sm);resize:vertical;transition:var(--transition);line-height:1.7}
+.journal-textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,168,67,.08)}
+.journal-prompts{display:flex;gap:var(--spacing-xs);flex-wrap:wrap;margin-bottom:var(--spacing-sm)}
+.journal-prompt{background:rgba(212,168,67,.06);border:1px solid rgba(212,168,67,.1);color:var(--gold-light);padding:6px 14px;border-radius:20px;font-size:var(--fs-xs);transition:var(--transition);cursor:pointer;font-weight:400}
+.journal-prompt:hover{background:rgba(212,168,67,.12);border-color:var(--gold)}
+.journal-entries{margin-top:var(--spacing-md)}
+.journal-entry{background:var(--bg-glass);border:1px solid rgba(255,255,255,.04);border-radius:var(--radius);padding:var(--spacing-md);margin-bottom:var(--spacing-xs);position:relative}
+.journal-entry-date{font-size:var(--fs-xs);color:var(--text-muted);margin-bottom:6px;font-weight:300}
+.journal-entry-text{font-size:var(--fs-sm);color:var(--text-secondary);line-height:1.6;font-weight:300}
+.journal-entry-mood{position:absolute;top:12px;right:12px;font-size:1.1rem}
+
+/* ═══ POMODORO ═══ */
+.pomo-container{text-align:center;padding:0 var(--spacing-md)}
+.pomo-ring-wrap{position:relative;width:220px;height:220px;margin:0 auto var(--spacing-lg)}
+.pomo-ring-svg{width:100%;height:100%;transform:rotate(-90deg)}
+.pomo-ring-bg{fill:none;stroke:rgba(255,255,255,.04);stroke-width:6}
+.pomo-ring-fill{fill:none;stroke:var(--gold);stroke-width:6;stroke-linecap:round;transition:stroke-dashoffset .5s ease;filter:drop-shadow(0 0 8px rgba(212,168,67,.3))}
+.pomo-time{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.pomo-time .time{font-family:var(--font-display);font-size:var(--fs-3xl);color:var(--gold-light);font-style:italic}
+.pomo-time .phase{font-size:var(--fs-xs);color:var(--text-muted);text-transform:uppercase;letter-spacing:.12em;margin-top:4px;font-weight:500}
+.pomo-controls{display:flex;gap:var(--spacing-sm);justify-content:center;flex-wrap:wrap}
+.pomo-sessions{display:flex;gap:6px;justify-content:center;margin:var(--spacing-md) 0}
+.pomo-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.06);transition:var(--transition)}
+.pomo-dot.done{background:var(--gold)}
+.pomo-dot.active{background:var(--gold-light);box-shadow:0 0 10px var(--gold-glow)}
+
+/* ═══ SOUND MIXER ═══ */
+.sound-section{padding:0 var(--spacing-md);margin-bottom:var(--spacing-lg)}
+.sound-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--spacing-sm)}
+.sound-btn{background:var(--bg-glass);border:1.5px solid rgba(255,255,255,.04);border-radius:var(--radius-lg);padding:var(--spacing-md) var(--spacing-xs);text-align:center;transition:var(--transition);cursor:pointer;min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
+.sound-btn:hover{border-color:rgba(212,168,67,.2);transform:translateY(-2px)}
+.sound-btn.active{border-color:var(--gold);background:rgba(212,168,67,.06)}
+.sound-btn .snd-icon{font-size:1.8rem;transition:transform .3s var(--ease-out-back)}
+.sound-btn:hover .snd-icon{transform:scale(1.1)}
+.sound-btn .snd-name{font-size:var(--fs-xs);color:var(--text-secondary);font-weight:400}
+.sound-vol{width:100%;margin-top:4px;accent-color:var(--gold);height:3px;opacity:0;transition:opacity .3s ease}
+.sound-btn.active .sound-vol{opacity:1}
+
+/* ═══ TODOS ═══ */
+.todo-input-row{display:flex;gap:var(--spacing-xs);padding:0 var(--spacing-md);margin-bottom:var(--spacing-sm)}
+.todo-input{flex:1;background:var(--bg-glass);backdrop-filter:var(--blur);border:1.5px solid rgba(255,255,255,.06);border-radius:var(--radius);padding:14px 18px;color:var(--text-primary);font-size:var(--fs-base);font-family:var(--font-body);transition:var(--transition);min-height:50px}
+.todo-input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,168,67,.08)}
+.priority-row{display:flex;gap:var(--spacing-xs);padding:0 var(--spacing-md);margin-bottom:var(--spacing-md)}
+.priority-btn{flex:1;padding:10px;border-radius:var(--radius-sm);font-size:var(--fs-sm);font-weight:600;background:var(--bg-glass);color:var(--text-muted);border:1.5px solid transparent;transition:var(--transition);min-height:42px}
+.priority-btn.active-urgent{border-color:var(--danger);color:var(--danger);background:rgba(224,85,85,.06)}
+.priority-btn.active-normal{border-color:var(--warning);color:var(--warning);background:rgba(224,168,50,.06)}
+.priority-btn.active-calm{border-color:var(--accent-emerald);color:var(--accent-emerald);background:rgba(79,212,164,.06)}
+.todo-tabs{display:flex;gap:var(--spacing-xs);padding:0 var(--spacing-md);margin-bottom:var(--spacing-md)}
+.todo-tab{flex:1;padding:10px;border-radius:var(--radius);background:var(--bg-glass);color:var(--text-muted);font-size:var(--fs-sm);font-weight:600;transition:var(--transition);min-height:42px;text-align:center;border:1.5px solid transparent}
+.todo-tab.active{background:linear-gradient(135deg,var(--gold-dark),var(--gold));color:var(--bg-primary)}
+.todo-list{padding:0 var(--spacing-md)}
+.todo-item{display:flex;align-items:center;gap:var(--spacing-sm);background:var(--bg-glass);border:1px solid rgba(255,255,255,.04);border-radius:var(--radius);padding:var(--spacing-sm) var(--spacing-md);margin-bottom:var(--spacing-xs);transition:var(--transition);min-height:54px;animation:fadeUp .3s var(--ease-out-expo) forwards}
+.todo-item.done{opacity:.4}
+.todo-item.done .todo-text{text-decoration:line-through;text-decoration-color:var(--text-muted)}
+.todo-check{width:24px;height:24px;border-radius:50%;border:2px solid rgba(212,168,67,.35);background:transparent;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:var(--transition);cursor:pointer;color:transparent;font-size:.65rem}
+.todo-check.checked{background:var(--gold);border-color:var(--gold);color:var(--bg-primary)}
+.todo-text{flex:1;font-size:var(--fs-sm);font-weight:400}
+.todo-priority-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.todo-delete{background:none;color:var(--text-muted);font-size:var(--fs-lg);padding:4px 8px;border-radius:var(--radius-sm);transition:var(--transition);opacity:.3}
+.todo-delete:hover{color:var(--danger);opacity:1}
+
+/* ═══ GAMES ═══ */
+.games-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--spacing-sm);padding:0 var(--spacing-md)}
+.game-card{background:var(--bg-glass);backdrop-filter:var(--blur);border:1px solid rgba(255,255,255,.04);border-radius:var(--radius-xl);padding:var(--spacing-lg) var(--spacing-md);text-align:center;cursor:pointer;transition:var(--transition);min-height:140px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--spacing-xs);position:relative;overflow:hidden}
+.game-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 100%,var(--gold-glow),transparent 70%);opacity:0;transition:opacity .4s ease}
+.game-card:hover{transform:translateY(-4px);border-color:rgba(212,168,67,.15)}
+.game-card:hover::before{opacity:1}
+.game-card .game-icon{font-size:2.6rem;transition:transform .4s var(--ease-out-back)}
+.game-card:hover .game-icon{transform:scale(1.1) translateY(-2px)}
+.game-card .game-name{font-family:var(--font-display);font-size:var(--fs-lg);color:var(--text-primary);font-style:italic}
+.game-card .game-xp{font-size:var(--fs-xs);color:var(--text-muted);font-weight:300}
+
+.memory-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:0 var(--spacing-md);max-width:380px;margin:0 auto}
+.memory-card{aspect-ratio:1;background:var(--bg-glass);border:1.5px solid rgba(255,255,255,.06);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:1.8rem;cursor:pointer;transition:all .35s var(--ease-out-expo);min-height:68px;user-select:none}
+.memory-card:not(.flipped):not(.matched)::after{content:'✦';color:var(--gold-dark);opacity:.3;font-size:1rem}
+.memory-card.flipped{background:rgba(212,168,67,.08);border-color:var(--gold)}
+.memory-card.matched{background:rgba(79,212,164,.08);border-color:var(--accent-emerald)}
+.memory-card:not(.flipped):not(.matched):hover{border-color:rgba(212,168,67,.25);transform:scale(1.04)}
+
+.quiz-container{padding:0 var(--spacing-md)}
+.quiz-question{font-family:var(--font-display);font-size:var(--fs-xl);color:var(--text-primary);margin-bottom:var(--spacing-lg);text-align:center;line-height:1.4;font-style:italic}
+.quiz-options{display:flex;flex-direction:column;gap:var(--spacing-sm)}
+.quiz-option{background:var(--bg-glass);border:1.5px solid rgba(255,255,255,.05);border-radius:var(--radius);padding:var(--spacing-md) var(--spacing-md) var(--spacing-md) var(--spacing-lg);font-size:var(--fs-base);color:var(--text-primary);text-align:left;transition:var(--transition);min-height:54px;position:relative}
+.quiz-option::before{content:'';position:absolute;left:14px;top:50%;transform:translateY(-50%);width:9px;height:9px;border-radius:50%;border:2px solid rgba(255,255,255,.12);transition:var(--transition)}
+.quiz-option:hover{border-color:rgba(212,168,67,.25)}
+.quiz-option.correct{border-color:var(--accent-emerald);background:rgba(79,212,164,.08)}
+.quiz-option.correct::before{background:var(--accent-emerald);border-color:var(--accent-emerald)}
+.quiz-option.wrong{border-color:var(--danger);background:rgba(224,85,85,.08)}
+.quiz-option.wrong::before{background:var(--danger);border-color:var(--danger)}
+.quiz-progress{display:flex;gap:6px;justify-content:center;margin-bottom:var(--spacing-md)}
+.quiz-dot{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.06);transition:var(--transition)}
+.quiz-dot.answered{background:var(--gold)}
+.quiz-dot.current{background:var(--gold-light);box-shadow:0 0 10px var(--gold-glow)}
+
+.puzzle-container{padding:0 var(--spacing-md);text-align:center}
+.puzzle-scrambled{font-family:var(--font-display);font-size:var(--fs-3xl);color:var(--gold);letter-spacing:.2em;margin-bottom:var(--spacing-md);font-style:italic}
+.puzzle-hint{font-size:var(--fs-sm);color:var(--text-muted);font-style:italic;margin-bottom:var(--spacing-md);min-height:2em;font-weight:300}
+
+.breath-container{padding:0 var(--spacing-md);text-align:center}
+.breath-visual{position:relative;width:200px;height:200px;margin:var(--spacing-lg) auto}
+.breath-circle{width:100%;height:100%;border-radius:50%;background:radial-gradient(circle,rgba(212,168,67,.12),rgba(212,168,67,.02));border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;transition:all 4s ease-in-out}
+.breath-circle.inhale{transform:scale(1.3);border-color:var(--accent-emerald);background:radial-gradient(circle,rgba(79,212,164,.12),rgba(79,212,164,.02))}
+.breath-circle.exhale{transform:scale(.7);border-color:var(--accent-sky);background:radial-gradient(circle,rgba(79,184,212,.12),rgba(79,184,212,.02))}
+.breath-circle.hold{border-color:var(--gold-light)}
+.breath-ring{position:absolute;inset:-15px;border-radius:50%;border:1px solid rgba(212,168,67,.08);animation:pulseRing 3s ease-in-out infinite}
+.breath-text{font-family:var(--font-display);font-size:var(--fs-xl);color:var(--gold-light);font-style:italic;z-index:1}
+.breath-timer{font-size:var(--fs-3xl);font-family:var(--font-display);color:var(--gold);margin-top:var(--spacing-sm)}
+.breath-score{font-size:var(--fs-sm);color:var(--text-secondary);margin-top:var(--spacing-sm);font-weight:300}
+.breath-tap-zone{width:100%;padding:var(--spacing-lg);background:var(--bg-glass);border:1.5px dashed rgba(212,168,67,.15);border-radius:var(--radius-xl);margin:var(--spacing-md) 0;cursor:pointer;transition:var(--transition);min-height:70px;display:flex;align-items:center;justify-content:center}
+.breath-tap-zone:active{background:rgba(212,168,67,.06);border-style:solid;transform:scale(.98)}
+
+/* ═══ DASHBOARD ═══ */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--spacing-sm);padding:0 var(--spacing-md);margin-bottom:var(--spacing-lg)}
+.stat-card{background:var(--bg-glass);backdrop-filter:var(--blur);border:1px solid rgba(255,255,255,.04);border-radius:var(--radius-lg);padding:var(--spacing-md);text-align:center;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:40%;height:1px;background:linear-gradient(90deg,transparent,rgba(212,168,67,.25),transparent)}
+.stat-value{font-family:var(--font-display);font-size:var(--fs-2xl);color:var(--gold);font-style:italic}
+.stat-label{font-size:var(--fs-xs);color:var(--text-muted);margin-top:4px;text-transform:uppercase;letter-spacing:.1em;font-weight:500}
+.stat-card.streak .stat-value{animation:streakFlame 2s ease-in-out infinite}
+.chart-container{padding:0 var(--spacing-md);margin-bottom:var(--spacing-lg)}
+.chart-card{background:var(--bg-glass);backdrop-filter:var(--blur);border:1px solid rgba(255,255,255,.04);border-radius:var(--radius-xl);padding:var(--spacing-lg)}
+.chart-title{font-family:var(--font-display);font-size:var(--fs-lg);color:var(--text-primary);margin-bottom:var(--spacing-md);font-style:italic}
+.bar-chart{display:flex;align-items:flex-end;justify-content:space-between;gap:var(--spacing-xs);height:140px;padding-top:var(--spacing-sm)}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.bar{width:100%;background:linear-gradient(to top,var(--gold-dark),var(--gold));border-radius:4px 4px 0 0;transition:height .8s var(--ease-out-expo);min-width:16px;position:relative}
+.bar::after{content:'';position:absolute;inset:0;background:linear-gradient(rgba(255,255,255,.12),transparent);border-radius:inherit}
+.bar-label{font-size:var(--fs-xs);color:var(--text-muted);font-weight:300}
+.bar-value{font-size:.65rem;color:var(--gold-light)}
+
+/* Mood chart */
+.mood-chart{display:flex;align-items:flex-end;justify-content:space-between;gap:var(--spacing-xs);height:80px;margin-top:var(--spacing-sm)}
+.mood-chart-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.mood-chart-bar{width:100%;border-radius:4px 4px 0 0;min-width:16px;transition:height .8s var(--ease-out-expo)}
+.mood-chart-label{font-size:.6rem;color:var(--text-muted)}
+
+.badges-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--spacing-sm);padding:0 var(--spacing-md)}
+.badge{text-align:center;padding:var(--spacing-sm);border-radius:var(--radius-lg);background:var(--bg-glass);border:1px solid rgba(255,255,255,.04);transition:var(--transition)}
+.badge.unlocked{border-color:rgba(212,168,67,.15);background:rgba(212,168,67,.04)}
+.badge.locked{opacity:.25;filter:grayscale(1)}
+.badge .badge-icon{font-size:1.6rem;display:block;margin-bottom:4px}
+.badge .badge-name{font-size:.6rem;color:var(--text-muted);line-height:1.2;font-weight:400}
+
+/* ═══ COACH BUBBLE ═══ */
+.coach-section{padding:0 var(--spacing-md);margin-bottom:var(--spacing-lg)}
+.coach-bubble{background:var(--bg-glass);backdrop-filter:var(--blur);border:1px solid rgba(212,168,67,.08);border-radius:var(--radius-xl);padding:var(--spacing-lg);position:relative;overflow:hidden}
+.coach-bubble::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,rgba(212,168,67,.03),transparent 50%);pointer-events:none}
+.coach-avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--gold-dark),var(--gold));display:flex;align-items:center;justify-content:center;font-size:1rem;margin-bottom:var(--spacing-sm);box-shadow:0 4px 16px rgba(212,168,67,.15)}
+.coach-text{font-family:var(--font-display);font-size:var(--fs-lg);color:var(--text-primary);font-style:italic;line-height:1.5}
+.coach-actions{display:flex;gap:var(--spacing-xs);margin-top:var(--spacing-md);flex-wrap:wrap}
+
+/* ═══ ONBOARDING ═══ */
+.onboarding{position:fixed;inset:0;background:var(--bg-primary);z-index:2000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:var(--spacing-lg);overflow:hidden}
+.onboarding::before{content:'';position:absolute;top:20%;left:50%;transform:translate(-50%,-50%);width:300px;height:300px;background:radial-gradient(circle,rgba(212,168,67,.06),transparent 70%);animation:morphBlob 8s ease-in-out infinite;pointer-events:none}
+.onboarding.hidden{display:none}
+.onb-step{display:none;flex-direction:column;align-items:center;text-align:center;width:100%;max-width:420px;animation:fadeUp .6s var(--ease-out-expo) forwards}
+.onb-step.active{display:flex}
+.onb-logo{font-family:var(--font-display);font-size:var(--fs-hero);background:linear-gradient(135deg,var(--gold-light),var(--gold),var(--gold-dark));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:var(--spacing-xs);line-height:1.1;font-style:italic}
+.onb-title{font-family:var(--font-display);font-size:var(--fs-2xl);color:var(--text-primary);margin-bottom:var(--spacing-sm);font-style:italic}
+.onb-subtitle{font-size:var(--fs-base);color:var(--text-secondary);margin-bottom:var(--spacing-lg);line-height:1.5;font-weight:300}
+.onb-options{display:flex;flex-wrap:wrap;gap:var(--spacing-sm);justify-content:center;margin-bottom:var(--spacing-lg);width:100%}
+.onb-option{background:var(--bg-glass);border:1.5px solid rgba(255,255,255,.06);border-radius:var(--radius-lg);padding:var(--spacing-md);cursor:pointer;transition:var(--transition);min-width:125px;flex:1;max-width:165px;min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+.onb-option:hover{border-color:rgba(212,168,67,.25);transform:translateY(-2px)}
+.onb-option.selected{border-color:var(--gold);background:rgba(212,168,67,.06)}
+.onb-option .opt-icon{font-size:2rem}
+.onb-option .opt-label{font-size:var(--fs-sm);color:var(--text-primary);font-weight:500}
+.onb-dots{display:flex;gap:8px;margin-bottom:var(--spacing-lg)}
+.onb-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.08);transition:var(--transition)}
+.onb-dot.active{background:var(--gold);width:24px}
+.onb-name-input{background:var(--bg-glass);border:1.5px solid rgba(212,168,67,.12);border-radius:var(--radius-lg);padding:18px 24px;font-size:var(--fs-lg);color:var(--text-primary);text-align:center;width:100%;max-width:300px;margin-bottom:var(--spacing-lg);font-family:var(--font-body);transition:var(--transition)}
+.onb-name-input:focus{border-color:var(--gold);box-shadow:0 0 0 4px rgba(212,168,67,.08)}
+
+.game-header{display:flex;justify-content:space-between;align-items:center;padding:0 var(--spacing-md);margin-bottom:var(--spacing-md)}
+.game-score{font-family:var(--font-display);font-size:var(--fs-lg);color:var(--gold);font-style:italic}
+.game-back{background:var(--bg-glass);border:1px solid rgba(255,255,255,.06);color:var(--text-secondary);padding:8px 16px;border-radius:var(--radius);font-size:var(--fs-sm);min-height:38px;transition:var(--transition)}
+.game-back:hover{border-color:rgba(212,168,67,.2);color:var(--gold)}
+
+.toast{position:fixed;top:56px;left:50%;transform:translateX(-50%) translateY(-120px);background:rgba(10,10,18,.92);backdrop-filter:var(--blur);border:1px solid rgba(212,168,67,.15);color:var(--gold-light);padding:var(--spacing-sm) var(--spacing-lg);border-radius:var(--radius-xl);font-size:var(--fs-sm);font-weight:600;z-index:3000;transition:transform .5s var(--ease-out-expo);pointer-events:none;white-space:nowrap;box-shadow:0 8px 32px rgba(0,0,0,.5)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+.level-overlay{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:2500;display:none;align-items:center;justify-content:center;flex-direction:column;gap:var(--spacing-md)}
+.level-overlay.show{display:flex}
+.level-overlay .level-badge{font-size:5rem;animation:levelUp .8s var(--ease-out-back) forwards}
+.level-overlay .level-text{font-family:var(--font-display);font-size:var(--fs-2xl);color:var(--gold);font-style:italic}
+.level-overlay .level-sub{color:var(--text-secondary);font-size:var(--fs-base);font-weight:300}
+.confetti-piece{position:fixed;z-index:3001;pointer-events:none;animation:confetti 2s ease-out forwards}
+
+.empty-state{text-align:center;padding:var(--spacing-2xl) var(--spacing-md);color:var(--text-muted)}
+.empty-state .empty-icon{font-size:2.5rem;margin-bottom:var(--spacing-sm);opacity:.3}
+.empty-state p{font-size:var(--fs-sm);font-weight:300}
+
+/* ═══ MOTIVATIONAL TICKER ═══ */
+.ticker-wrap{overflow:hidden;margin:0 var(--spacing-md) var(--spacing-lg);border-radius:var(--radius);background:rgba(212,168,67,.03);border:1px solid rgba(212,168,67,.06);padding:10px 0}
+.ticker-inner{display:flex;white-space:nowrap;animation:ticker 30s linear infinite}
+.ticker-inner span{font-size:var(--fs-xs);color:var(--text-muted);padding:0 var(--spacing-lg);font-weight:300;letter-spacing:.04em}
+
+@media(max-width:480px){
+.app{padding-bottom:90px}
+.memory-grid{gap:6px}
+.badges-grid{gap:6px}
+.mood-grid{gap:4px}
+.mood-btn{min-height:66px;padding:8px 4px}
+.mood-btn .emoji{font-size:1.5rem}
+.sound-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+
+<div class="mesh-bg" aria-hidden="true">
+<div class="orb"></div><div class="orb"></div><div class="orb"></div>
+<div class="grid-overlay"></div>
+</div>
+<canvas id="particleCanvas" aria-hidden="true"></canvas>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="level-overlay" id="levelOverlay" role="dialog" aria-label="Level Up">
+<div class="level-badge" id="levelBadge">⭐</div>
+<div class="level-text" id="levelText"></div>
+<div class="level-sub" id="levelSub"></div>
+<button class="btn btn-gold btn-lg" onclick="closeLevelUp()" style="margin-top:20px">OK</button>
+</div>
+
+<!-- ═══ ONBOARDING ═══ -->
+<div class="onboarding" id="onboarding" role="dialog" aria-label="Onboarding">
+<div class="onb-step active" data-step="1">
+<div class="onb-logo">Coaching AI</div>
+<div class="onb-subtitle" data-i18n="onb_welcome_sub" style="margin-top:8px">Cum te cheamă?</div>
+<input type="text" class="onb-name-input" id="onbName" placeholder="Numele tău" data-i18n-placeholder="onb_name_ph" aria-label="Nume" autocomplete="name">
+<div class="onb-dots"><span class="onb-dot active"></span><span class="onb-dot"></span><span class="onb-dot"></span></div>
+<button class="btn btn-gold btn-lg" onclick="onbNext(1)" data-i18n="onb_next">Continuă</button>
+</div>
+<div class="onb-step" data-step="2">
+<div class="onb-title" data-i18n="onb_inspire">Ce te inspiră?</div>
+<div class="onb-subtitle" data-i18n="onb_inspire_sub">Alege una sau mai multe</div>
+<div class="onb-options" id="onbInterests">
+<div class="onb-option" data-val="mindfulness" tabindex="0" role="checkbox" aria-checked="false"><span class="opt-icon">🧘</span><span class="opt-label" data-i18n="int_mindfulness">Mindfulness</span></div>
+<div class="onb-option" data-val="creativity" tabindex="0" role="checkbox" aria-checked="false"><span class="opt-icon">🎨</span><span class="opt-label" data-i18n="int_creativity">Creativitate</span></div>
+<div class="onb-option" data-val="sleep" tabindex="0" role="checkbox" aria-checked="false"><span class="opt-icon">🌙</span><span class="opt-label" data-i18n="int_sleep">Somn bun</span></div>
+<div class="onb-option" data-val="gratitude" tabindex="0" role="checkbox" aria-checked="false"><span class="opt-icon">🙏</span><span class="opt-label" data-i18n="int_gratitude">Recunoștință</span></div>
+<div class="onb-option" data-val="nature" tabindex="0" role="checkbox" aria-checked="false"><span class="opt-icon">🌿</span><span class="opt-label" data-i18n="int_nature">Natură</span></div>
+<div class="onb-option" data-val="social" tabindex="0" role="checkbox" aria-checked="false"><span class="opt-icon">💛</span><span class="opt-label" data-i18n="int_social">Conexiuni</span></div>
+</div>
+<div class="onb-dots"><span class="onb-dot"></span><span class="onb-dot active"></span><span class="onb-dot"></span></div>
+<button class="btn btn-gold btn-lg" onclick="onbNext(2)" data-i18n="onb_next">Continuă</button>
+</div>
+<div class="onb-step" data-step="3">
+<div style="font-size:4rem;margin-bottom:16px;animation:float 3s ease-in-out infinite">✦</div>
+<div class="onb-title" id="onbGreeting" data-i18n="onb_ready">Pregătit?</div>
+<div class="onb-subtitle" data-i18n="onb_ready_sub">Începi de la Nivel 1, cu 0 XP. Fiecare acțiune contează.</div>
+<div class="onb-dots"><span class="onb-dot"></span><span class="onb-dot"></span><span class="onb-dot active"></span></div>
+<button class="btn btn-gold btn-lg" onclick="onbFinish()" data-i18n="onb_start">Să începem ✦</button>
+</div>
+</div>
+
+<!-- ═══ A11Y BAR ═══ -->
+<div class="a11y-bar" role="toolbar" aria-label="Setări accesibilitate">
+<button onclick="toggleLargeText()" id="btnLargeText" aria-pressed="false">Aa+</button>
+<button onclick="toggleContrast()" id="btnContrast" aria-pressed="false">◑</button>
+<button onclick="toggleLang()" class="lang-toggle" id="btnLang" aria-label="Switch language">RO</button>
+</div>
+
+<div class="app" id="mainApp" style="display:none">
+
+<!-- ═══ HOME ═══ -->
+<div class="page active" id="pageHome" role="main">
+<div class="header">
+<div class="logo">Coaching<span class="ai-tag">AI</span></div>
+<div class="subtitle" id="greetingSub" data-i18n="greeting_sub">Bunele obiceiuri încep aici</div>
+</div>
+
+<div class="xp-section">
+<div class="xp-card">
+<div class="xp-info">
+<span class="xp-level" id="xpLevel">Level 1</span>
+<span class="xp-points" id="xpPoints">0 / 100 XP</span>
+</div>
+<div class="xp-bar-bg" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" id="xpBarBg">
+<div class="xp-bar-fill" id="xpBarFill" style="width:0%"></div>
+</div>
+</div>
+</div>
+
+<!-- Motivational Ticker -->
+<div class="ticker-wrap" aria-hidden="true">
+<div class="ticker-inner" id="tickerInner"></div>
+</div>
+
+<div class="mood-section">
+<h3 data-i18n="mood_title">Cum te simți?</h3>
+<div class="mood-grid" role="radiogroup" aria-label="Stare de spirit" id="moodGrid">
+<button class="mood-btn" data-mood="great" role="radio" aria-checked="false"><span class="emoji">😊</span><span class="label" data-i18n="mood_great">Excelent</span></button>
+<button class="mood-btn" data-mood="good" role="radio" aria-checked="false"><span class="emoji">🙂</span><span class="label" data-i18n="mood_good">Bine</span></button>
+<button class="mood-btn" data-mood="ok" role="radio" aria-checked="false"><span class="emoji">😐</span><span class="label" data-i18n="mood_ok">OK</span></button>
+<button class="mood-btn" data-mood="low" role="radio" aria-checked="false"><span class="emoji">😔</span><span class="label" data-i18n="mood_low">Obosit</span></button>
+<button class="mood-btn" data-mood="bad" role="radio" aria-checked="false"><span class="emoji">😢</span><span class="label" data-i18n="mood_bad">Greu</span></button>
+</div>
+</div>
+
+<h2 class="section-title"><span class="accent">✦</span> <span data-i18n="ritual_title">Ritualul Zilei</span></h2>
+<div class="ritual-section">
+<div class="ritual-card">
+<div class="ritual-quote" id="ritualQuote">"Fiecare zi e o nouă șansă de a fi mai bun."</div>
+<div class="ritual-author" id="ritualAuthor">— Coaching AI</div>
+<div class="ritual-action">
+<button class="btn btn-gold" onclick="completeRitual()" id="ritualBtn" data-i18n="ritual_done">Am citit ✦ +15 XP</button>
+<button class="btn btn-outline btn-sm" onclick="newRitual()" data-i18n="ritual_new">Alt citat</button>
+</div>
+</div>
+</div>
+
+<!-- ═══ HABITS ═══ -->
+<h2 class="section-title"><span class="accent">✦</span> <span data-i18n="habits_title">Obiceiuri</span></h2>
+<div class="habits-section" id="habitsSection"></div>
+
+<h2 class="section-title"><span class="accent">✦</span> <span data-i18n="coach_title">Coach AI</span></h2>
+<div class="coach-section">
+<div class="coach-bubble">
+<div class="coach-avatar">✦</div>
+<div class="coach-text" id="coachText">Bine ai venit! Sunt aici să te ghidez.</div>
+<div class="coach-actions">
+<button class="btn btn-sm btn-outline" onclick="coachTip('motivation')" data-i18n="coach_motivate">Motivează-mă</button>
+<button class="btn btn-sm btn-outline" onclick="coachTip('calm')" data-i18n="coach_calm">Liniștește-mă</button>
+<button class="btn btn-sm btn-outline" onclick="coachTip('focus')" data-i18n="coach_focus">Focus</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ═══ TASKS ═══ -->
+<div class="page" id="pageTasks" role="main">
+<div class="header">
+<div class="logo" style="font-size:var(--fs-xl)">Sarcini</div>
+<div class="subtitle" data-i18n="tasks_sub">Organizează-ți ziua</div>
+</div>
+<div class="todo-input-row">
+<input type="text" class="todo-input" id="todoInput" placeholder="Adaugă o sarcină..." data-i18n-placeholder="todo_ph" aria-label="Sarcină nouă" maxlength="120">
+<button class="btn btn-gold" onclick="addTodo()" aria-label="Adaugă" style="padding:14px 20px;font-size:1.3rem">+</button>
+</div>
+<div class="priority-row" role="radiogroup" aria-label="Prioritate">
+<button class="priority-btn" id="priUrgent" onclick="setPriority('urgent')" data-i18n="pri_urgent">🔴 Urgent</button>
+<button class="priority-btn active-normal" id="priNormal" onclick="setPriority('normal')" data-i18n="pri_normal">🟡 Normal</button>
+<button class="priority-btn" id="priCalm" onclick="setPriority('calm')" data-i18n="pri_calm">🟢 Calm</button>
+</div>
+
+<!-- Pomodoro Timer -->
+<h2 class="section-title" style="margin-top:var(--spacing-md)"><span class="accent">⏱</span> <span data-i18n="pomo_title">Pomodoro</span></h2>
+<div class="pomo-container" id="pomoContainer"></div>
+
+<div class="todo-tabs">
+<button class="todo-tab active" onclick="setTodoTab('active')" id="tabActive" data-i18n="tab_active">Active</button>
+<button class="todo-tab" onclick="setTodoTab('done')" id="tabDone" data-i18n="tab_done">Finalizate</button>
+</div>
+<div class="todo-list" id="todoList" role="list"></div>
+</div>
+
+<!-- ═══ FOCUS ═══ -->
+<div class="page" id="pageFocus" role="main">
+<div class="header">
+<div class="logo" style="font-size:var(--fs-xl)">Focus</div>
+<div class="subtitle" data-i18n="focus_sub">Relaxare și concentrare</div>
+</div>
+
+<!-- Sound Mixer -->
+<h2 class="section-title"><span class="accent">🎧</span> <span data-i18n="sound_title">Sunete Ambientale</span></h2>
+<div class="sound-section">
+<div class="sound-grid" id="soundGrid"></div>
+</div>
+
+<!-- Journal -->
+<h2 class="section-title"><span class="accent">📝</span> <span data-i18n="journal_title">Jurnal</span></h2>
+<div class="journal-section">
+<div class="journal-prompts" id="journalPrompts"></div>
+<textarea class="journal-textarea" id="journalInput" placeholder="Scrie ce simți..." data-i18n-placeholder="journal_ph" maxlength="500"></textarea>
+<div style="display:flex;gap:var(--spacing-xs);margin-top:var(--spacing-sm)">
+<button class="btn btn-gold btn-sm" onclick="saveJournal()" data-i18n="journal_save">Salvează +10 XP</button>
+</div>
+<div class="journal-entries" id="journalEntries"></div>
+</div>
+</div>
+
+<!-- ═══ GAMES ═══ -->
+<div class="page" id="pageGames" role="main">
+<div class="header">
+<div class="logo" style="font-size:var(--fs-xl)">Mini Jocuri</div>
+<div class="subtitle" data-i18n="games_sub">Antrenează-ți mintea</div>
+</div>
+<div id="gameSelect">
+<div class="games-grid">
+<div class="game-card" onclick="startGame('memory')" tabindex="0" role="button"><span class="game-icon">🃏</span><span class="game-name" data-i18n="game_memory">Memory</span><span class="game-xp">+50–100 XP</span></div>
+<div class="game-card" onclick="startGame('quiz')" tabindex="0" role="button"><span class="game-icon">🧠</span><span class="game-name" data-i18n="game_quiz">Quiz</span><span class="game-xp">+20–100 XP</span></div>
+<div class="game-card" onclick="startGame('puzzle')" tabindex="0" role="button"><span class="game-icon">🔤</span><span class="game-name" data-i18n="game_puzzle">Puzzle</span><span class="game-xp">+30–80 XP</span></div>
+<div class="game-card" onclick="startGame('breathing')" tabindex="0" role="button"><span class="game-icon">🌬️</span><span class="game-name" data-i18n="game_breathing">Respirație</span><span class="game-xp">+20–80 XP</span></div>
+</div>
+</div>
+<div id="gameArea" style="display:none"></div>
+</div>
+
+<!-- ═══ DASHBOARD ═══ -->
+<div class="page" id="pageDash" role="main">
+<div class="header">
+<div class="logo" style="font-size:var(--fs-xl)">Dashboard</div>
+<div class="subtitle" data-i18n="dash_sub">Progresul tău</div>
+</div>
+<div class="stats-grid" id="statsGrid">
+<div class="stat-card"><div class="stat-value" id="statXP">0</div><div class="stat-label">XP Total</div></div>
+<div class="stat-card"><div class="stat-value" id="statLevel">1</div><div class="stat-label">Level</div></div>
+<div class="stat-card"><div class="stat-value" id="statRituals">0</div><div class="stat-label" data-i18n="stat_rituals">Ritualuri</div></div>
+<div class="stat-card"><div class="stat-value" id="statTasks">0</div><div class="stat-label" data-i18n="stat_tasks">Sarcini</div></div>
+<div class="stat-card"><div class="stat-value" id="statGames">0</div><div class="stat-label" data-i18n="stat_games">Jocuri</div></div>
+<div class="stat-card streak"><div class="stat-value" id="statStreak">0 🔥</div><div class="stat-label" data-i18n="stat_streak">Zile la rând</div></div>
+</div>
+<div class="chart-container">
+<div class="chart-card">
+<div class="chart-title" data-i18n="chart_weekly">Activitate Săptămânală</div>
+<div class="bar-chart" id="barChart"></div>
+</div>
+</div>
+<div class="chart-container">
+<div class="chart-card">
+<div class="chart-title" data-i18n="chart_mood">Istoricul Dispoziției</div>
+<div class="mood-chart" id="moodChartArea"></div>
+</div>
+</div>
+<h2 class="section-title"><span class="accent">✦</span> <span data-i18n="badges_title">Insigne</span></h2>
+<div class="badges-grid" id="badgesGrid"></div>
+</div>
+
+<!-- ═══ NAV ═══ -->
+<nav class="nav" role="navigation" aria-label="Navigare">
+<div class="nav-inner">
+<button class="nav-btn active" onclick="goPage('Home')" data-page="Home"><span class="nav-icon">🏠</span><span class="nav-label" data-i18n="nav_home">Acasă</span></button>
+<button class="nav-btn" onclick="goPage('Tasks')" data-page="Tasks"><span class="nav-icon">📋</span><span class="nav-label" data-i18n="nav_tasks">Sarcini</span></button>
+<button class="nav-btn" onclick="goPage('Focus')" data-page="Focus"><span class="nav-icon">🧘</span><span class="nav-label" data-i18n="nav_focus">Focus</span></button>
+<button class="nav-btn" onclick="goPage('Games')" data-page="Games"><span class="nav-icon">🎮</span><span class="nav-label" data-i18n="nav_games">Jocuri</span></button>
+<button class="nav-btn" onclick="goPage('Dash')" data-page="Dash"><span class="nav-icon">📊</span><span class="nav-label" data-i18n="nav_dash">Progres</span></button>
+</div>
+</nav>
+</div>
+
+<script>
+// ═══ PARTICLES ═══
+(function(){
+const canvas=document.getElementById('particleCanvas'),ctx=canvas.getContext('2d');
+let particles=[],W,H;
+const reduced=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+window.addEventListener('resize',resize);resize();
+function P(){this.x=Math.random()*W;this.y=Math.random()*H;this.vx=(Math.random()-.5)*.12;this.vy=(Math.random()-.5)*.12;this.r=Math.random()*1.5+.4;this.a=Math.random()*.25+.04}
+if(!reduced){for(let i=0;i<35;i++)particles.push(new P());
+(function loop(){ctx.clearRect(0,0,W,H);particles.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=W;if(p.x>W)p.x=0;if(p.y<0)p.y=H;if(p.y>H)p.y=0;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=`rgba(212,168,67,${p.a})`;ctx.fill()});
+for(let i=0;i<particles.length;i++)for(let j=i+1;j<particles.length;j++){const dx=particles[i].x-particles[j].x,dy=particles[i].y-particles[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<100){ctx.beginPath();ctx.moveTo(particles[i].x,particles[i].y);ctx.lineTo(particles[j].x,particles[j].y);ctx.strokeStyle=`rgba(212,168,67,${.03*(1-d/100)})`;ctx.lineWidth=.5;ctx.stroke()}}
+requestAnimationFrame(loop)})()}
+})();
+
+// ═══ STATE ═══
+const STATE={lang:'ro',name:'',interests:[],xp:0,level:1,rituals:0,tasksCompleted:0,gamesPlayed:0,streak:0,lastActive:null,mood:null,todos:[],weeklyXP:[0,0,0,0,0,0,0],badges:{},onboarded:false,highContrast:false,largeText:false,currentPriority:'normal',todoTab:'active',ritualDone:false,
+habits:[{id:1,icon:'💧',name:'Hidratare',nameEn:'Hydration',days:{}},{id:2,icon:'🏃',name:'Mișcare',nameEn:'Exercise',days:{}},{id:3,icon:'📖',name:'Citit',nameEn:'Reading',days:{}}],
+journal:[],moodHistory:[],
+pomoState:'idle',pomoTime:25*60,pomoSession:0,
+habitEmoji:'💧'
+};
+
+// ═══ I18N ═══
+const I18N={
+ro:{onb_welcome_sub:'Cum te cheamă?',onb_name_ph:'Numele tău',onb_next:'Continuă',onb_inspire:'Ce te inspiră?',onb_inspire_sub:'Alege una sau mai multe',int_mindfulness:'Mindfulness',int_creativity:'Creativitate',int_sleep:'Somn bun',int_gratitude:'Recunoștință',int_nature:'Natură',int_social:'Conexiuni',onb_ready:'Pregătit?',onb_ready_sub:'Începi de la Nivel 1, cu 0 XP. Fiecare acțiune contează.',onb_start:'Să începem ✦',greeting_sub:'Bunele obiceiuri încep aici',mood_title:'Cum te simți?',mood_great:'Excelent',mood_good:'Bine',mood_ok:'OK',mood_low:'Obosit',mood_bad:'Greu',ritual_title:'Ritualul Zilei',ritual_done:'Am citit ✦ +15 XP',ritual_new:'Alt citat',coach_title:'Coach AI',coach_motivate:'Motivează-mă',coach_calm:'Liniștește-mă',coach_focus:'Focus',tasks_sub:'Organizează-ți ziua',todo_ph:'Adaugă o sarcină...',pri_urgent:'🔴 Urgent',pri_normal:'🟡 Normal',pri_calm:'🟢 Calm',tab_active:'Active',tab_done:'Finalizate',games_sub:'Antrenează-ți mintea',game_memory:'Memory',game_quiz:'Quiz',game_puzzle:'Puzzle',game_breathing:'Respirație',dash_sub:'Progresul tău',stat_rituals:'Ritualuri',stat_tasks:'Sarcini',stat_games:'Jocuri',stat_streak:'Zile la rând',chart_weekly:'Activitate Săptămânală',chart_mood:'Istoricul Dispoziției',badges_title:'Insigne',nav_home:'Acasă',nav_tasks:'Sarcini',nav_focus:'Focus',nav_games:'Jocuri',nav_dash:'Progres',toast_xp:'+{n} XP',toast_levelup:'Nivel {n}! 🌟',toast_ritual:'Ritual completat!',toast_badge:'Insignă: {name}!',back:'← Înapoi',moves:'Mutări',score:'Scor',question:'Întrebarea',hint:'Indiciu',correct:'Corect!',wrong:'Incorect',game_over:'Joc terminat!',xp_earned:'Ai câștigat {n} XP!',start:'Start',tap_rhythm:'Apasă în ritmul respirației',inhale:'Inspiră',exhale:'Expiră',hold:'Ține',round:'Runda',no_todos:'Nicio sarcină încă.',no_done:'Nicio sarcină finalizată.',greeting_morning:'Bună dimineața',greeting_afternoon:'Bună ziua',greeting_evening:'Bună seara',try_again:'Încearcă din nou',next_word:'Cuvânt nou',
+habits_title:'Obiceiuri',add_habit_ph:'Obicei nou...',focus_sub:'Relaxare și concentrare',sound_title:'Sunete Ambientale',journal_title:'Jurnal',journal_ph:'Scrie ce simți...',journal_save:'Salvează +10 XP',pomo_title:'Pomodoro',pomo_work:'Concentrare',pomo_break:'Pauză',
+journal_prompts_list:['Sunt recunoscător pentru...','Astăzi am învățat...','Mă face fericit...','Vreau să...'],
+coach_texts:{motivation:['Ești mai puternic decât crezi. Fiecare pas mic contează.','Nu contează viteza, contează direcția.','Astăzi este ziua ta. Fă un lucru care te face mândru.','Succesul vine din constanță, nu din perfecțiune.'],calm:['Oprește-te un moment. Respiră. Ești exact unde trebuie.','Pacea vine din interior. Lasă grijile să treacă.','Ai voie să te odihnești. Odihna e înțelepciune.','Corpul tău cere liniște. Ascultă-l cu blândețe.'],focus:['Concentrează-te pe un singur lucru. Restul poate aștepta.','Mintea ta e puternică. Alege un obiectiv mic.','Fă o pauză de 2 minute, apoi revino cu energie.','Împarte sarcinile mari în bucăți mici.']},
+ticker:['Fiecare zi e o nouă șansă','Fii blând cu tine','Respiră adânc','Progresul bate perfecțiunea','Un pas la un moment dat','Recunoștința transformă totul','Tu ești suficient']},
+en:{onb_welcome_sub:"What's your name?",onb_name_ph:'Your name',onb_next:'Continue',onb_inspire:'What inspires you?',onb_inspire_sub:'Choose one or more',int_mindfulness:'Mindfulness',int_creativity:'Creativity',int_sleep:'Better Sleep',int_gratitude:'Gratitude',int_nature:'Nature',int_social:'Connections',onb_ready:'Ready?',onb_ready_sub:'Level 1 with 0 XP. Every action counts.',onb_start:"Let's begin ✦",greeting_sub:'Good habits start here',mood_title:'How do you feel?',mood_great:'Great',mood_good:'Good',mood_ok:'OK',mood_low:'Tired',mood_bad:'Tough',ritual_title:'Daily Ritual',ritual_done:"Done ✦ +15 XP",ritual_new:'New quote',coach_title:'AI Coach',coach_motivate:'Motivate me',coach_calm:'Calm me',coach_focus:'Focus',tasks_sub:'Organize your day',todo_ph:'Add a task...',pri_urgent:'🔴 Urgent',pri_normal:'🟡 Normal',pri_calm:'🟢 Calm',tab_active:'Active',tab_done:'Completed',games_sub:'Train your mind',game_memory:'Memory',game_quiz:'Quiz',game_puzzle:'Puzzle',game_breathing:'Breathing',dash_sub:'Your progress',stat_rituals:'Rituals',stat_tasks:'Tasks',stat_games:'Games',stat_streak:'Day Streak',chart_weekly:'Weekly Activity',chart_mood:'Mood History',badges_title:'Badges',nav_home:'Home',nav_tasks:'Tasks',nav_focus:'Focus',nav_games:'Games',nav_dash:'Progress',toast_xp:'+{n} XP',toast_levelup:'Level {n}! 🌟',toast_ritual:'Ritual completed!',toast_badge:'Badge: {name}!',back:'← Back',moves:'Moves',score:'Score',question:'Question',hint:'Hint',correct:'Correct!',wrong:'Incorrect',game_over:'Game Over!',xp_earned:'You earned {n} XP!',start:'Start',tap_rhythm:'Tap to the rhythm',inhale:'Inhale',exhale:'Exhale',hold:'Hold',round:'Round',no_todos:'No tasks yet.',no_done:'No completed tasks.',greeting_morning:'Good morning',greeting_afternoon:'Good afternoon',greeting_evening:'Good evening',try_again:'Try again',next_word:'New word',
+habits_title:'Habits',add_habit_ph:'New habit...',focus_sub:'Relax & focus',sound_title:'Ambient Sounds',journal_title:'Journal',journal_ph:'Write how you feel...',journal_save:'Save +10 XP',pomo_title:'Pomodoro',pomo_work:'Focus',pomo_break:'Break',
+journal_prompts_list:["I'm grateful for...","Today I learned...","Makes me happy...","I want to..."],
+coach_texts:{motivation:["You're stronger than you think. Every step counts.","Direction matters more than speed.","Today is your day. Do one thing that makes you proud.","Consistency beats perfection."],calm:["Pause. Breathe. You're exactly where you need to be.","Peace comes from within. Let worries pass.","Rest isn't laziness, it's wisdom.","Your body asks for peace. Listen gently."],focus:["Focus on one thing. The rest can wait.","Your mind is powerful. Choose one small goal.","Take a 2-min break, then come back fresh.","Break big tasks into small pieces."]},
+ticker:['Every day is a new chance','Be gentle with yourself','Breathe deeply','Progress beats perfection','One step at a time','Gratitude transforms everything','You are enough']}
+};
+
+const QUOTES={
+ro:[['"Fiecare zi e o nouă șansă de a fi mai bun."','— Coaching AI'],['"Liniștea interioară este cel mai mare dar."','— Proverb'],['"Nu contează cât de încet mergi, atât timp cât nu te oprești."','— Confucius'],['"Fii blând cu tine. Faci tot ce poți."','— Coaching AI'],['"Recunoștința transformă ceea ce avem în suficient."','— Melody Beattie'],['"Fericirea nu e o destinație, e o călătorie."','— Coaching AI'],['"Un zâmbet schimbă totul."','— Coaching AI'],['"Curajul nu e absența fricii, ci decizia că altceva e mai important."','— Ambrose Redmoon']],
+en:[['"Every day is a new chance to be better."','— Coaching AI'],['"Inner peace is the greatest gift."','— Proverb'],['"It does not matter how slowly you go, as long as you do not stop."','— Confucius'],['"Be gentle with yourself. You\'re doing your best."','— Coaching AI'],['"Gratitude turns what we have into enough."','— Melody Beattie'],['"Happiness is not a destination, it\'s a journey."','— Coaching AI'],['"A smile changes everything."','— Coaching AI'],['"Courage is not the absence of fear, but the decision that something else is more important."','— Ambrose Redmoon']]
+};
+
+const BADGES=[
+{id:'first_light',icon:'🌅',ro:'Prima Lumină',en:'First Light',check:s=>s.xp>0},
+{id:'zen_master',icon:'🧘',ro:'Maestru Zen',en:'Zen Master',check:s=>s.rituals>=5},
+{id:'scholar',icon:'📚',ro:'Erudit',en:'Scholar',check:s=>s.gamesPlayed>=3},
+{id:'explorer',icon:'🧭',ro:'Explorer',en:'Explorer',check:s=>s.level>=3},
+{id:'organizer',icon:'📋',ro:'Organizator',en:'Organizer',check:s=>s.tasksCompleted>=10},
+{id:'memory_king',icon:'👑',ro:'Rege al Memoriei',en:'Memory King',check:s=>s.gamesPlayed>=5},
+{id:'streak_fire',icon:'🔥',ro:'Flacăra',en:'Flame',check:s=>s.streak>=3},
+{id:'champion',icon:'🏆',ro:'Campion',en:'Champion',check:s=>s.level>=5},
+{id:'writer',icon:'✍️',ro:'Scriitor',en:'Writer',check:s=>s.journal.length>=5},
+{id:'habitual',icon:'⚡',ro:'Disciplinat',en:'Disciplined',check:s=>{let c=0;s.habits.forEach(h=>{if(Object.keys(h.days).length>=7)c++});return c>=1}},
+{id:'focus_guru',icon:'🎯',ro:'Guru Focus',en:'Focus Guru',check:s=>s.pomoSession>=4},
+{id:'legend',icon:'💎',ro:'Legendă',en:'Legend',check:s=>s.level>=10}
+];
+
+const QUIZ_DATA={
+ro:[{q:'Ce practică ajută la reducerea stresului?',options:['Meditația','Mâncatul rapid','Statul pe telefon','Amânarea'],correct:0},{q:'Care este beneficiul somnului de calitate?',options:['Memorie mai bună','Mai mult stres','Mai puțină energie','Concentrare slabă'],correct:0},{q:'Ce înseamnă mindfulness?',options:['Atenție la prezent','Gândire la trecut','Planificare excesivă','Ignorare'],correct:0},{q:'Ce ajută la o stare de spirit bună?',options:['Mișcare fizică','Izolarea','Critica de sine','Lipsa somnului'],correct:0},{q:'Ce stimulează creativitatea?',options:['Plimbările în natură','Statul în casă','Rutina rigidă','Multitasking'],correct:0},{q:'Care e cheia fericirii pe termen lung?',options:['Relațiile sănătoase','Banii','Faima','Competiția'],correct:0},{q:'Ce hormon e eliberat în timpul exercițiilor fizice?',options:['Endorfine','Insulină','Cortizol','Melatonină'],correct:0},{q:'Câte ore de somn sunt recomandate pentru adulți?',options:['7-9 ore','4-5 ore','10-12 ore','3-4 ore'],correct:0}],
+en:[{q:'What practice helps reduce stress?',options:['Meditation','Eating fast','Phone scrolling','Procrastination'],correct:0},{q:'What is a benefit of quality sleep?',options:['Better memory','More stress','Less energy','Poor focus'],correct:0},{q:'What does mindfulness mean?',options:['Attention to present','Thinking about past','Over-planning','Ignoring'],correct:0},{q:'What helps maintain a good mood?',options:['Physical exercise','Isolation','Self-criticism','Sleep deprivation'],correct:0},{q:'What stimulates creativity?',options:['Nature walks','Staying indoors','Rigid routine','Multitasking'],correct:0},{q:'Key to long-term happiness?',options:['Healthy relationships','Money','Fame','Competition'],correct:0},{q:'What hormone is released during exercise?',options:['Endorphins','Insulin','Cortisol','Melatonin'],correct:0},{q:'How many hours of sleep are recommended for adults?',options:['7-9 hours','4-5 hours','10-12 hours','3-4 hours'],correct:0}]
+};
+
+const PUZZLE_WORDS={
+ro:[{word:'LINIȘTE',hint:'Pace interioară'},{word:'BUCURIE',hint:'Sentiment de fericire'},{word:'CURAJ',hint:'Puterea de a face față'},{word:'SPERANȚĂ',hint:'Credința în bine'},{word:'ARMONIE',hint:'Echilibru interior'},{word:'RĂBDARE',hint:'Virtutea așteptării'},{word:'PUTERE',hint:'Forță interioară'},{word:'ZÂMBET',hint:'Expresie a fericirii'}],
+en:[{word:'PEACE',hint:'Inner calm'},{word:'JOY',hint:'Happiness'},{word:'COURAGE',hint:'Facing difficulties'},{word:'HOPE',hint:'Belief in good'},{word:'HARMONY',hint:'Inner balance'},{word:'PATIENCE',hint:'Virtue of waiting'},{word:'STRENGTH',hint:'Inner power'},{word:'SMILE',hint:'Expression of happiness'}]
+};
+
+const SOUNDS=[
+{id:'rain',icon:'🌧️',ro:'Ploaie',en:'Rain'},
+{id:'forest',icon:'🌲',ro:'Pădure',en:'Forest'},
+{id:'ocean',icon:'🌊',ro:'Ocean',en:'Ocean'},
+{id:'fire',icon:'🔥',ro:'Foc',en:'Fire'},
+{id:'wind',icon:'💨',ro:'Vânt',en:'Wind'},
+{id:'birds',icon:'🐦',ro:'Păsări',en:'Birds'}
+];
+
+// ═══ HELPERS ═══
+function t(k){return I18N[STATE.lang]?.[k]||k}
+function save(){try{localStorage.setItem('CoachingAI2',JSON.stringify(STATE))}catch(e){}}
+function load(){try{const d=JSON.parse(localStorage.getItem('CoachingAI2'));if(d)Object.assign(STATE,d)}catch(e){}}
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
+function showToast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2200)}
+function todayKey(){return new Date().toISOString().split('T')[0]}
+function dayLabel(offset){const d=new Date();d.setDate(d.getDate()-offset);return d.toLocaleDateString(STATE.lang==='ro'?'ro-RO':'en-US',{weekday:'short'}).slice(0,2).toUpperCase()}
+
+function addXP(n,silent){
+STATE.xp+=n;const today=new Date().getDay();STATE.weeklyXP[today]=(STATE.weeklyXP[today]||0)+n;
+const needed=STATE.level*100;
+if(STATE.xp>=needed){STATE.level++;STATE.xp-=needed;showLevelUp()}
+updateXPBar();if(!silent)showToast(t('toast_xp').replace('{n}',n));
+checkBadges();save();
+}
+function updateXPBar(){
+const needed=STATE.level*100,pct=Math.min((STATE.xp/needed)*100,100);
+document.getElementById('xpBarFill').style.width=pct+'%';
+document.getElementById('xpLevel').textContent='Level '+STATE.level;
+document.getElementById('xpPoints').textContent=STATE.xp+' / '+needed+' XP';
+const bar=document.getElementById('xpBarBg');bar.setAttribute('aria-valuenow',STATE.xp);bar.setAttribute('aria-valuemax',needed);
+}
+function showLevelUp(){const ol=document.getElementById('levelOverlay');document.getElementById('levelText').textContent=t('toast_levelup').replace('{n}',STATE.level);document.getElementById('levelSub').textContent=STATE.lang==='ro'?'Continuă tot așa!':'Keep it up!';ol.classList.add('show');spawnConfetti()}
+function closeLevelUp(){document.getElementById('levelOverlay').classList.remove('show')}
+function spawnConfetti(){const colors=['#D4A843','#F0D58A','#4FD4A4','#4FB8D4','#E05577','#A455E0'];for(let i=0;i<30;i++){const el=document.createElement('div');el.className='confetti-piece';el.style.cssText=`left:${Math.random()*100}vw;top:-10px;width:${5+Math.random()*7}px;height:${5+Math.random()*7}px;background:${colors[Math.floor(Math.random()*colors.length)]};border-radius:${Math.random()>.5?'50%':'2px'};animation-delay:${Math.random()*.8}s;animation-duration:${1.5+Math.random()}s`;document.body.appendChild(el);setTimeout(()=>el.remove(),3000)}}
+function checkBadges(){BADGES.forEach(b=>{if(!STATE.badges[b.id]&&b.check(STATE)){STATE.badges[b.id]=true;showToast(t('toast_badge').replace('{name}',STATE.lang==='ro'?b.ro:b.en))}});renderBadges()}
+
+// ═══ A11Y ═══
+function toggleLargeText(){STATE.largeText=!STATE.largeText;document.documentElement.setAttribute('data-large-text',STATE.largeText);document.getElementById('btnLargeText').classList.toggle('active',STATE.largeText);save()}
+function toggleContrast(){STATE.highContrast=!STATE.highContrast;document.documentElement.setAttribute('data-high-contrast',STATE.highContrast);document.getElementById('btnContrast').classList.toggle('active',STATE.highContrast);save()}
+function toggleLang(){STATE.lang=STATE.lang==='ro'?'en':'ro';document.getElementById('btnLang').textContent=STATE.lang.toUpperCase();document.documentElement.lang=STATE.lang;applyI18N();newRitual();renderHabits();renderJournal();renderSounds();renderJournalPrompts();renderTicker();renderPomodoro();save()}
+function applyI18N(){document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.getAttribute('data-i18n');if(I18N[STATE.lang]?.[k])el.textContent=I18N[STATE.lang][k]});document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{const k=el.getAttribute('data-i18n-placeholder');if(I18N[STATE.lang]?.[k])el.placeholder=I18N[STATE.lang][k]})}
+
+// ═══ ONBOARDING ═══
+function onbNext(step){
+if(step===1){STATE.name=document.getElementById('onbName').value.trim()||'';document.getElementById('onbGreeting').textContent=(STATE.lang==='ro'?'Bine ai venit, ':'Welcome, ')+STATE.name+'!'}
+if(step===2){STATE.interests=[...document.querySelectorAll('#onbInterests .onb-option.selected')].map(o=>o.dataset.val)}
+document.querySelector(`.onb-step[data-step="${step}"]`).classList.remove('active');
+document.querySelector(`.onb-step[data-step="${step+1}"]`).classList.add('active');
+}
+function onbFinish(){STATE.onboarded=true;document.getElementById('onboarding').classList.add('hidden');document.getElementById('mainApp').style.display='block';save();initApp()}
+document.querySelectorAll('#onbInterests .onb-option').forEach(opt=>{opt.addEventListener('click',()=>{opt.classList.toggle('selected');opt.setAttribute('aria-checked',opt.classList.contains('selected'))});opt.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();opt.click()}})});
+
+// ═══ NAV ═══
+function goPage(name){
+document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+document.getElementById('page'+name).classList.add('active');
+document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.page===name));
+if(name==='Dash')renderDashboard();
+if(name==='Games'){document.getElementById('gameSelect').style.display='';document.getElementById('gameArea').style.display='none'}
+if(name==='Tasks'){renderTodos();renderPomodoro()}
+if(name==='Focus'){renderSounds();renderJournalPrompts();renderJournal()}
+window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ═══ MOOD ═══
+document.getElementById('moodGrid').addEventListener('click',e=>{
+const btn=e.target.closest('.mood-btn');if(!btn)return;
+document.querySelectorAll('.mood-btn').forEach(b=>{b.classList.remove('selected');b.setAttribute('aria-checked','false')});
+btn.classList.add('selected');btn.setAttribute('aria-checked','true');
+STATE.mood=btn.dataset.mood;
+const moodVal={great:5,good:4,ok:3,low:2,bad:1}[btn.dataset.mood]||3;
+STATE.moodHistory.push({date:todayKey(),val:moodVal,mood:btn.dataset.mood});
+if(STATE.moodHistory.length>30)STATE.moodHistory=STATE.moodHistory.slice(-30);
+addXP(5);updateCoachForMood();save();
+});
+function updateCoachForMood(){
+const texts={ro:{great:'Minunat! Energia ta e contagioasă!',good:'E o zi bună pentru pași mici, dar siguri.',ok:'E OK să fii doar OK. Hai să facem ceva frumos.',low:'Oboseala e normală. Azi facem lucruri blânde.',bad:'Ești curajos că recunoști asta. Sunt aici.'},en:{great:"Wonderful! Your energy is contagious!",good:"A good day for small steady steps.",ok:"It's OK to just be OK. Let's do something nice.",low:"Tiredness is normal. Let's be gentle today.",bad:"You're brave to acknowledge this. I'm here."}};
+if(STATE.mood&&texts[STATE.lang]?.[STATE.mood])document.getElementById('coachText').textContent=texts[STATE.lang][STATE.mood];
+}
+
+// ═══ RITUAL ═══
+function newRitual(){const q=QUOTES[STATE.lang];const r=q[Math.floor(Math.random()*q.length)];document.getElementById('ritualQuote').textContent=r[0];document.getElementById('ritualAuthor').textContent=r[1];STATE.ritualDone=false;const btn=document.getElementById('ritualBtn');btn.disabled=false;btn.style.opacity='1'}
+function completeRitual(){if(STATE.ritualDone)return;STATE.ritualDone=true;STATE.rituals++;const btn=document.getElementById('ritualBtn');btn.disabled=true;btn.style.opacity='.5';addXP(15);showToast(t('toast_ritual'));save()}
+
+// ═══ COACH ═══
+function coachTip(type){const texts=I18N[STATE.lang].coach_texts[type];document.getElementById('coachText').textContent=texts[Math.floor(Math.random()*texts.length)]}
+
+// ═══ TICKER ═══
+function renderTicker(){
+const items=I18N[STATE.lang].ticker;
+const double=[...items,...items];
+document.getElementById('tickerInner').innerHTML=double.map(t=>`<span>✦ ${t}</span>`).join('');
+}
+
+// ═══ HABITS ═══
+function renderHabits(){
+const sec=document.getElementById('habitsSection');
+const tk=todayKey();
+const days=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);days.push({key:d.toISOString().split('T')[0],label:dayLabel(i),isToday:i===0})}
+let html=STATE.habits.map(h=>{
+const name=STATE.lang==='en'&&h.nameEn?h.nameEn:h.name;
+const streak=calcHabitStreak(h);
+return`<div class="habit-row"><div class="habit-icon">${h.icon}</div><div class="habit-info"><div class="habit-name">${esc(name)}</div><div class="habit-streak">${streak>0?streak+'🔥':''}</div></div><div class="habit-days">${days.map(d=>`<button class="habit-day ${h.days[d.key]?'done':''} ${d.isToday?'today':''}" onclick="toggleHabitDay(${h.id},'${d.key}')" title="${d.key}">${d.label}</button>`).join('')}</div><button class="habit-delete" onclick="deleteHabit(${h.id})">×</button></div>`}).join('');
+
+const emojis=['💧','🏃','📖','🧘','💤','🥗','🎨','💊','🚿','📝'];
+html+=`<div class="add-habit-row"><input type="text" class="add-habit-input" id="habitInput" placeholder="${t('add_habit_ph')}" maxlength="30"><button class="btn btn-gold btn-sm" onclick="addHabit()">+</button></div>`;
+html+=`<div class="emoji-pick">${emojis.map(e=>`<button onclick="pickHabitEmoji('${e}')" class="${STATE.habitEmoji===e?'selected':''}">${e}</button>`).join('')}</div>`;
+sec.innerHTML=html;
+}
+function calcHabitStreak(h){let s=0;const d=new Date();while(true){const k=d.toISOString().split('T')[0];if(h.days[k])s++;else break;d.setDate(d.getDate()-1);if(s>365)break}return s}
+function toggleHabitDay(id,key){const h=STATE.habits.find(x=>x.id===id);if(!h)return;if(h.days[key]){delete h.days[key]}else{h.days[key]=true;addXP(5)}renderHabits();save()}
+function deleteHabit(id){STATE.habits=STATE.habits.filter(h=>h.id!==id);renderHabits();save()}
+function pickHabitEmoji(e){STATE.habitEmoji=e;document.querySelectorAll('.emoji-pick button').forEach(b=>b.classList.toggle('selected',b.textContent===e))}
+function addHabit(){const inp=document.getElementById('habitInput');const name=inp.value.trim();if(!name)return;STATE.habits.push({id:Date.now(),icon:STATE.habitEmoji,name,nameEn:name,days:{}});inp.value='';renderHabits();save()}
+
+// ═══ JOURNAL ═══
+function renderJournalPrompts(){
+const prompts=I18N[STATE.lang].journal_prompts_list;
+document.getElementById('journalPrompts').innerHTML=prompts.map(p=>`<button class="journal-prompt" onclick="fillJournalPrompt('${esc(p)}')">${p}</button>`).join('');
+}
+function fillJournalPrompt(text){document.getElementById('journalInput').value=text;document.getElementById('journalInput').focus()}
+function saveJournal(){
+const inp=document.getElementById('journalInput');
+const text=inp.value.trim();if(!text)return;
+STATE.journal.unshift({date:new Date().toLocaleString(STATE.lang==='ro'?'ro-RO':'en-US'),text,mood:STATE.mood||'ok'});
+if(STATE.journal.length>50)STATE.journal=STATE.journal.slice(0,50);
+inp.value='';addXP(10);renderJournal();save();
+}
+function renderJournal(){
+const container=document.getElementById('journalEntries');
+const moodEmoji={great:'😊',good:'🙂',ok:'😐',low:'😔',bad:'😢'};
+container.innerHTML=STATE.journal.slice(0,10).map(e=>`<div class="journal-entry"><div class="journal-entry-date">${e.date}</div><div class="journal-entry-text">${esc(e.text)}</div><div class="journal-entry-mood">${moodEmoji[e.mood]||'😐'}</div></div>`).join('')||`<div class="empty-state"><div class="empty-icon">📝</div><p>${STATE.lang==='ro'?'Nicio intrare încă.':'No entries yet.'}</p></div>`;
+}
+
+// ═══ SOUNDS ═══
+let activeSounds={};
+function renderSounds(){
+document.getElementById('soundGrid').innerHTML=SOUNDS.map(s=>{
+const name=STATE.lang==='ro'?s.ro:s.en;
+const active=activeSounds[s.id];
+return`<button class="sound-btn ${active?'active':''}" onclick="toggleSound('${s.id}')"><span class="snd-icon">${s.icon}</span><span class="snd-name">${name}</span></button>`}).join('');
+}
+function toggleSound(id){
+if(activeSounds[id]){delete activeSounds[id]}else{activeSounds[id]=true}
+renderSounds();
+showToast(activeSounds[id]?(STATE.lang==='ro'?'Sunet activat':'Sound on'):(STATE.lang==='ro'?'Sunet oprit':'Sound off'));
+}
+
+// ═══ POMODORO ═══
+let pomoInterval=null;
+function renderPomodoro(){
+const g=STATE;
+const mins=Math.floor(g.pomoTime/60);
+const secs=g.pomoTime%60;
+const timeStr=String(mins).padStart(2,'0')+':'+String(secs).padStart(2,'0');
+const total=g.pomoState==='break'?5*60:25*60;
+const pct=1-(g.pomoTime/total);
+const circumference=2*Math.PI*95;
+const offset=circumference*(1-pct);
+const isWork=g.pomoState!=='break';
+const phase=g.pomoState==='idle'?'':isWork?t('pomo_work'):t('pomo_break');
+
+document.getElementById('pomoContainer').innerHTML=`
+<div class="pomo-ring-wrap">
+<svg class="pomo-ring-svg" viewBox="0 0 200 200">
+<circle class="pomo-ring-bg" cx="100" cy="100" r="95"/>
+<circle class="pomo-ring-fill" cx="100" cy="100" r="95" stroke-dasharray="${circumference}" stroke-dashoffset="${offset}" style="stroke:${isWork?'var(--gold)':'var(--accent-emerald)'}"/>
+</svg>
+<div class="pomo-time"><span class="time">${timeStr}</span><span class="phase">${phase}</span></div>
+</div>
+<div class="pomo-sessions">${[0,1,2,3].map(i=>`<span class="pomo-dot ${i<g.pomoSession?'done':''} ${i===g.pomoSession&&g.pomoState==='work'?'active':''}"></span>`).join('')}</div>
+<div class="pomo-controls">
+${g.pomoState==='idle'?`<button class="btn btn-gold" onclick="startPomo()">${t('start')}</button>`:`<button class="btn btn-outline btn-sm" onclick="resetPomo()">Reset</button>`}
+</div>`;
+}
+function startPomo(){
+STATE.pomoState='work';STATE.pomoTime=25*60;save();renderPomodoro();
+clearInterval(pomoInterval);
+pomoInterval=setInterval(()=>{
+STATE.pomoTime--;
+if(STATE.pomoTime<=0){
+if(STATE.pomoState==='work'){STATE.pomoSession++;addXP(20);STATE.pomoState='break';STATE.pomoTime=5*60;showToast(STATE.lang==='ro'?'Pauză! 🎉':'Break time! 🎉')}
+else{STATE.pomoState='work';STATE.pomoTime=25*60;showToast(STATE.lang==='ro'?'Înapoi la treabă!':'Back to work!')}
+save();
+}
+renderPomodoro();
+},1000);
+}
+function resetPomo(){clearInterval(pomoInterval);STATE.pomoState='idle';STATE.pomoTime=25*60;save();renderPomodoro()}
+
+// ═══ TODOS ═══
+function setPriority(p){STATE.currentPriority=p;['urgent','normal','calm'].forEach(pr=>{const btn=document.getElementById('pri'+pr.charAt(0).toUpperCase()+pr.slice(1));btn.classList.remove('active-urgent','active-normal','active-calm');if(pr===p)btn.classList.add('active-'+p)});save()}
+function setTodoTab(tab){STATE.todoTab=tab;document.getElementById('tabActive').classList.toggle('active',tab==='active');document.getElementById('tabDone').classList.toggle('active',tab==='done');renderTodos()}
+function addTodo(){const input=document.getElementById('todoInput');const text=input.value.trim();if(!text)return;STATE.todos.push({id:Date.now(),text,priority:STATE.currentPriority,done:false});input.value='';renderTodos();save()}
+document.getElementById('todoInput').addEventListener('keydown',e=>{if(e.key==='Enter')addTodo()});
+function toggleTodo(id){const todo=STATE.todos.find(t=>t.id===id);if(todo){todo.done=!todo.done;if(todo.done){STATE.tasksCompleted++;addXP(10)}renderTodos();save()}}
+function deleteTodo(id){STATE.todos=STATE.todos.filter(t=>t.id!==id);renderTodos();save()}
+function renderTodos(){
+const list=document.getElementById('todoList');
+const filtered=STATE.todos.filter(t=>STATE.todoTab==='active'?!t.done:t.done);
+const priOrder={urgent:0,normal:1,calm:2};filtered.sort((a,b)=>priOrder[a.priority]-priOrder[b.priority]);
+if(!filtered.length){list.innerHTML=`<div class="empty-state"><div class="empty-icon">${STATE.todoTab==='active'?'📝':'✅'}</div><p>${STATE.todoTab==='active'?t('no_todos'):t('no_done')}</p></div>`;return}
+const priColors={urgent:'var(--danger)',normal:'var(--warning)',calm:'var(--accent-emerald)'};
+list.innerHTML=filtered.map((todo,i)=>`<div class="todo-item ${todo.done?'done':''}" style="animation-delay:${i*50}ms"><button class="todo-check ${todo.done?'checked':''}" onclick="toggleTodo(${todo.id})">${todo.done?'✓':''}</button><span class="todo-text">${esc(todo.text)}</span><span class="todo-priority-dot" style="background:${priColors[todo.priority]}"></span><button class="todo-delete" onclick="deleteTodo(${todo.id})">×</button></div>`).join('')}
+
+// ═══ GAMES ═══
+let gameState={};
+function startGame(type){document.getElementById('gameSelect').style.display='none';document.getElementById('gameArea').style.display='block';gameState={type};if(type==='memory')initMemory();else if(type==='quiz')initQuiz();else if(type==='puzzle')initPuzzle();else if(type==='breathing')initBreathing()}
+function exitGame(){document.getElementById('gameSelect').style.display='';document.getElementById('gameArea').style.display='none';if(gameState.breathTimeout)clearTimeout(gameState.breathTimeout)}
+
+function initMemory(){const emojis=['🌸','🌊','🌙','⭐','🦋','🌈','🍀','🔥'];const pairs=[...emojis,...emojis].sort(()=>Math.random()-.5);gameState={type:'memory',cards:pairs,flipped:[],matched:[],moves:0,locked:false};renderMemory()}
+function renderMemory(){const g=gameState;document.getElementById('gameArea').innerHTML=`<div class="game-header"><button class="game-back" onclick="exitGame()">${t('back')}</button><div class="game-score">${t('moves')}: ${g.moves}</div></div><div class="memory-grid">${g.cards.map((c,i)=>{const show=g.flipped.includes(i)||g.matched.includes(i);const matched=g.matched.includes(i);return`<button class="memory-card ${show?'flipped':''} ${matched?'matched':''}" onclick="flipCard(${i})" ${matched?'disabled':''}>${show?c:''}</button>`}).join('')}</div>`}
+function flipCard(i){const g=gameState;if(g.locked||g.flipped.includes(i)||g.matched.includes(i))return;g.flipped.push(i);renderMemory();if(g.flipped.length===2){g.moves++;g.locked=true;const[a,b]=g.flipped;if(g.cards[a]===g.cards[b]){g.matched.push(a,b);g.flipped=[];g.locked=false;renderMemory();if(g.matched.length===g.cards.length){const xp=Math.max(50,100-g.moves*3);STATE.gamesPlayed++;setTimeout(()=>{addXP(xp);document.getElementById('gameArea').innerHTML+=`<div style="text-align:center;padding:var(--spacing-lg)"><div style="font-size:var(--fs-xl);color:var(--gold);font-family:var(--font-display);margin-bottom:12px;font-style:italic">${t('game_over')}</div><div style="color:var(--text-secondary);margin-bottom:16px;font-weight:300">${t('xp_earned').replace('{n}',xp)}</div><button class="btn btn-gold" onclick="initMemory()">${t('try_again')}</button></div>`},500);save()}}else{setTimeout(()=>{g.flipped=[];g.locked=false;renderMemory()},900)}}}
+
+function initQuiz(){const questions=[...QUIZ_DATA[STATE.lang]].sort(()=>Math.random()-.5).slice(0,5);questions.forEach(q=>{const ct=q.options[q.correct];const sh=[...q.options].sort(()=>Math.random()-.5);q.options=sh;q.correct=sh.indexOf(ct)});gameState={type:'quiz',questions,current:0,score:0,answered:false};renderQuiz()}
+function renderQuiz(){const g=gameState;const q=g.questions[g.current];document.getElementById('gameArea').innerHTML=`<div class="game-header"><button class="game-back" onclick="exitGame()">${t('back')}</button><div class="game-score">${t('score')}: ${g.score}/${g.questions.length}</div></div><div class="quiz-container"><div class="quiz-progress">${g.questions.map((_,i)=>`<span class="quiz-dot ${i<g.current?'answered':''} ${i===g.current?'current':''}"></span>`).join('')}</div><div style="color:var(--text-muted);text-align:center;margin-bottom:8px;font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.1em;font-weight:500">${t('question')} ${g.current+1}/${g.questions.length}</div><div class="quiz-question">${q.q}</div><div class="quiz-options">${q.options.map((opt,i)=>`<button class="quiz-option" onclick="answerQuiz(${i})" ${g.answered?'disabled':''}>${opt}</button>`).join('')}</div></div>`}
+function answerQuiz(i){if(gameState.answered)return;gameState.answered=true;const q=gameState.questions[gameState.current];const btns=document.querySelectorAll('.quiz-option');btns[q.correct].classList.add('correct');if(i===q.correct)gameState.score++;else btns[i].classList.add('wrong');setTimeout(()=>{gameState.current++;gameState.answered=false;if(gameState.current>=gameState.questions.length){const xp=gameState.score*20;STATE.gamesPlayed++;addXP(xp);document.getElementById('gameArea').innerHTML=`<div style="text-align:center;padding:var(--spacing-xl) var(--spacing-md)"><div style="font-size:4rem;margin-bottom:16px">🧠</div><div style="font-size:var(--fs-xl);color:var(--gold);font-family:var(--font-display);margin-bottom:12px;font-style:italic">${t('game_over')}</div><div style="color:var(--text-secondary);margin-bottom:8px;font-weight:300">${t('score')}: ${gameState.score}/${gameState.questions.length}</div><div style="color:var(--gold-light);margin-bottom:24px">${t('xp_earned').replace('{n}',xp)}</div><button class="btn btn-gold" onclick="initQuiz()">${t('try_again')}</button></div>`;save()}else renderQuiz()},1200)}
+
+function initPuzzle(){const words=PUZZLE_WORDS[STATE.lang];const w=words[Math.floor(Math.random()*words.length)];const scrambled=w.word.split('').sort(()=>Math.random()-.5).join('');gameState={type:'puzzle',word:w.word,hint:w.hint,scrambled,attempts:0,showHint:false,solved:false};renderPuzzle()}
+function renderPuzzle(){const g=gameState;document.getElementById('gameArea').innerHTML=`<div class="game-header"><button class="game-back" onclick="exitGame()">${t('back')}</button></div><div class="puzzle-container"><div style="font-size:3rem;margin-bottom:16px">🔤</div><div class="puzzle-scrambled">${g.scrambled}</div><div class="puzzle-hint">${g.showHint?'💡 '+g.hint:''}</div><input type="text" class="todo-input" id="puzzleInput" placeholder="..." style="text-align:center;max-width:280px;margin:0 auto var(--spacing-md);display:block;font-family:var(--font-display);font-size:var(--fs-xl)" maxlength="20" ${g.solved?'disabled':''}><div style="display:flex;gap:var(--spacing-sm);justify-content:center;flex-wrap:wrap"><button class="btn btn-gold" onclick="checkPuzzle()" ${g.solved?'disabled':''}>${t('score')}</button><button class="btn btn-outline btn-sm" onclick="showPuzzleHint()">${t('hint')}</button><button class="btn btn-secondary btn-sm" onclick="initPuzzle()">${t('next_word')}</button></div>${g.solved?`<div style="color:var(--accent-emerald);font-size:var(--fs-lg);margin-top:var(--spacing-md);font-family:var(--font-display);font-style:italic">${t('correct')} ${t('xp_earned').replace('{n}',Math.max(30,80-g.attempts*10))}</div>`:''}</div>`;if(!g.solved)setTimeout(()=>{const inp=document.getElementById('puzzleInput');if(inp)inp.addEventListener('keydown',e=>{if(e.key==='Enter')checkPuzzle()})},50)}
+function checkPuzzle(){const inp=document.getElementById('puzzleInput');if(!inp)return;const val=inp.value.trim().toUpperCase();gameState.attempts++;if(val===gameState.word){gameState.solved=true;const xp=Math.max(30,80-gameState.attempts*10);STATE.gamesPlayed++;addXP(xp);renderPuzzle();save()}else{inp.style.borderColor='var(--danger)';setTimeout(()=>{if(inp)inp.style.borderColor=''},600)}}
+function showPuzzleHint(){gameState.showHint=true;renderPuzzle()}
+
+function initBreathing(){gameState={type:'breathing',phase:'idle',round:0,maxRounds:4,score:0,breathTimeout:null};renderBreathing()}
+function renderBreathing(){const g=gameState;document.getElementById('gameArea').innerHTML=`<div class="game-header"><button class="game-back" onclick="exitGame()">${t('back')}</button><div class="game-score">${t('round')} ${g.round}/${g.maxRounds}</div></div><div class="breath-container"><div class="breath-visual"><div class="breath-ring"></div><div class="breath-circle ${g.phase}" id="breathCircle"><span class="breath-text" id="breathText">${g.phase==='idle'?'✦':g.phase==='inhale'?t('inhale'):g.phase==='exhale'?t('exhale'):t('hold')}</span></div></div><div class="breath-timer" id="breathTimer"></div><div class="breath-score">${t('score')}: ${g.score}</div>${g.phase==='idle'?`<button class="btn btn-gold btn-lg" onclick="startBreathing()" style="margin-top:var(--spacing-md)">${t('start')}</button>`:`<div class="breath-tap-zone" id="breathTap" onclick="breathTap()"><span style="color:var(--text-muted);font-size:var(--fs-sm);font-weight:300">${t('tap_rhythm')}</span></div>`}</div>`}
+function startBreathing(){gameState.phase='inhale';gameState.round=1;gameState.score=0;breathCycle();renderBreathing()}
+function breathCycle(){const phases=['inhale','hold','exhale','hold'],durations=[4000,2000,4000,2000];let i=0;function next(){if(gameState.round>gameState.maxRounds){finishBreathing();return}gameState.phase=phases[i];const circle=document.getElementById('breathCircle'),text=document.getElementById('breathText'),timer=document.getElementById('breathTimer');if(circle){circle.className='breath-circle '+gameState.phase;text.textContent=gameState.phase==='inhale'?t('inhale'):gameState.phase==='exhale'?t('exhale'):t('hold')}let sec=Math.round(durations[i]/1000);if(timer)timer.textContent=sec;const ci=setInterval(()=>{sec--;if(timer)timer.textContent=sec>0?sec:'';if(sec<=0)clearInterval(ci)},1000);i++;if(i>=phases.length){i=0;gameState.round++}gameState.breathTimeout=setTimeout(next,durations[i-1]||durations[0])}next()}
+function breathTap(){if(gameState.phase==='inhale'||gameState.phase==='exhale'){gameState.score+=5;const s=document.querySelector('.breath-score');if(s)s.textContent=t('score')+': '+gameState.score}}
+function finishBreathing(){gameState.phase='idle';clearTimeout(gameState.breathTimeout);const xp=Math.min(80,20+gameState.score);STATE.gamesPlayed++;addXP(xp);document.getElementById('gameArea').innerHTML=`<div style="text-align:center;padding:var(--spacing-xl) var(--spacing-md)"><div style="font-size:4rem;margin-bottom:16px">🌬️</div><div style="font-size:var(--fs-xl);color:var(--gold);font-family:var(--font-display);margin-bottom:12px;font-style:italic">${t('game_over')}</div><div style="color:var(--text-secondary);margin-bottom:8px;font-weight:300">${t('score')}: ${gameState.score}</div><div style="color:var(--gold-light);margin-bottom:24px">${t('xp_earned').replace('{n}',xp)}</div><button class="btn btn-gold" onclick="initBreathing()">${t('try_again')}</button></div>`;save()}
+
+// ═══ DASHBOARD ═══
+function renderDashboard(){
+document.getElementById('statXP').textContent=(STATE.xp+(STATE.level-1)*100).toLocaleString();
+document.getElementById('statLevel').textContent=STATE.level;
+document.getElementById('statRituals').textContent=STATE.rituals;
+document.getElementById('statTasks').textContent=STATE.tasksCompleted;
+document.getElementById('statGames').textContent=STATE.gamesPlayed;
+document.getElementById('statStreak').textContent=STATE.streak+' 🔥';
+renderWeeklyChart();renderMoodChart();renderBadges();
+}
+function renderWeeklyChart(){
+const days=STATE.lang==='ro'?['Lu','Ma','Mi','Jo','Vi','Sâ','Du']:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const max=Math.max(...STATE.weeklyXP,10);
+document.getElementById('barChart').innerHTML=STATE.weeklyXP.map((v,i)=>`<div class="bar-col"><div class="bar-value">${v}</div><div class="bar" style="height:${(v/max)*100}%;animation:fadeIn .5s ease ${i*80}ms forwards;opacity:0"></div><span class="bar-label">${days[i]}</span></div>`).join('')}
+function renderMoodChart(){
+const container=document.getElementById('moodChartArea');
+const last7=STATE.moodHistory.slice(-7);
+if(!last7.length){container.innerHTML='<div style="text-align:center;color:var(--text-muted);font-size:var(--fs-xs);padding:var(--spacing-md)">'+(STATE.lang==='ro'?'Selectează dispoziția zilnică pentru a vedea graficul':'Select your daily mood to see the chart')+'</div>';return}
+const moodColors={5:'#4FD4A4',4:'#4FB8D4',3:'var(--gold)',2:'#E0A832',1:'#E05577'};
+const max=5;
+container.innerHTML=last7.map((m,i)=>`<div class="mood-chart-col"><div class="mood-chart-bar" style="height:${(m.val/max)*100}%;background:${moodColors[m.val]||'var(--gold)'};animation:fadeIn .5s ease ${i*80}ms forwards;opacity:0"></div><span class="mood-chart-label">${m.date.slice(-2)}</span></div>`).join('');
+}
+function renderBadges(){document.getElementById('badgesGrid').innerHTML=BADGES.map(b=>`<div class="badge ${STATE.badges[b.id]?'unlocked':'locked'}"><span class="badge-icon">${b.icon}</span><span class="badge-name">${STATE.lang==='ro'?b.ro:b.en}</span></div>`).join('')}
+
+// ═══ INIT ═══
+function initApp(){
+updateXPBar();newRitual();renderTodos();renderBadges();renderHabits();renderTicker();renderPomodoro();renderSounds();renderJournalPrompts();renderJournal();applyI18N();
+if(STATE.largeText){document.documentElement.setAttribute('data-large-text','true');document.getElementById('btnLargeText').classList.add('active')}
+if(STATE.highContrast){document.documentElement.setAttribute('data-high-contrast','true');document.getElementById('btnContrast').classList.add('active')}
+const h=new Date().getHours();
+const greeting=h<12?t('greeting_morning'):h<18?t('greeting_afternoon'):t('greeting_evening');
+document.getElementById('greetingSub').textContent=greeting+(STATE.name?', '+STATE.name:'')+'!';
+const today=new Date().toDateString();
+if(STATE.lastActive&&STATE.lastActive!==today){const diff=Math.floor((new Date()-new Date(STATE.lastActive))/86400000);if(diff===1)STATE.streak++;else if(diff>1)STATE.streak=1}else if(!STATE.lastActive)STATE.streak=1;
+STATE.lastActive=today;save();
+}
+
+load();
+if(STATE.onboarded){document.getElementById('onboarding').classList.add('hidden');document.getElementById('mainApp').style.display='block';if(STATE.lang==='en'){document.getElementById('btnLang').textContent='EN';document.documentElement.lang='en'}initApp()}
+else document.getElementById('onboarding').classList.remove('hidden');
+</script>
+</body>
+</html>
