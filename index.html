@@ -1,956 +1,1095 @@
 <!DOCTYPE html>
-<html lang="ro" dir="ltr">
+<html lang="ro">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-<title>Coaching AI</title>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<title>CoachingAI – Interfață Accesibilă</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+/* ══ TOKENS ══ */
 :root{
---gold:#D4A843;--gold-light:#F0D58A;--gold-dark:#8B6914;--gold-glow:rgba(212,168,67,.3);
---bg-primary:#06060B;--bg-secondary:#0C0C14;--bg-card:rgba(16,16,28,.72);--bg-elevated:rgba(24,24,42,.8);--bg-glass:rgba(18,18,32,.55);
---text-primary:#F2EDE2;--text-secondary:#8A869E;--text-muted:#504D66;
---accent-emerald:#4FD4A4;--accent-sky:#4FB8D4;--accent-coral:#E05577;--accent-violet:#A455E0;--accent-amber:#E0A832;
---success:#4FD4A4;--warning:#E0A832;--danger:#E05555;
---radius:14px;--radius-sm:8px;--radius-lg:22px;--radius-xl:32px;
---shadow:0 8px 32px rgba(0,0,0,.55);--shadow-gold:0 4px 28px rgba(212,168,67,.18);
---font-display:'Instrument Serif',Georgia,serif;
---font-body:'Outfit',system-ui,sans-serif;
---fs-xs:.78rem;--fs-sm:.9rem;--fs-base:1rem;--fs-lg:1.25rem;--fs-xl:1.6rem;--fs-2xl:2.1rem;--fs-3xl:2.8rem;--fs-hero:3.6rem;
---spacing-xs:6px;--spacing-sm:12px;--spacing-md:20px;--spacing-lg:32px;--spacing-xl:48px;--spacing-2xl:64px;
---ease-out-expo:cubic-bezier(.16,1,.3,1);--ease-out-back:cubic-bezier(.34,1.56,.64,1);
---transition:all .35s var(--ease-out-expo);
---blur:blur(22px);
+  --bg:#F5F2EE;--surface:#FFF;--s2:#F0EDE8;--s3:#E8E4DE;
+  --primary:#1A1A2E;--accent:#E85D4A;--a2:#4A90D9;--a3:#4CAF50;--a4:#9B59B6;
+  --text:#1A1A2E;--muted:#7A7A8C;
+  --brd:rgba(26,26,46,.09);--shd:0 2px 16px rgba(26,26,46,.07);--shd2:0 8px 32px rgba(26,26,46,.13);
+  --r:20px;--rs:12px;--rx:8px;
+  --fz:15px;--tr:.25s cubic-bezier(.4,0,.2,1);--sp:.4s cubic-bezier(.34,1.56,.64,1);
 }
-[data-high-contrast="true"]{--bg-primary:#000;--bg-secondary:#050505;--bg-card:rgba(12,12,12,.95);--text-primary:#FFF;--text-secondary:#CCC;--gold:#FFD700;--gold-light:#FFE44D;--gold-glow:rgba(255,215,0,.4)}
-[data-large-text="true"]{--fs-xs:1rem;--fs-sm:1.15rem;--fs-base:1.25rem;--fs-lg:1.55rem;--fs-xl:2rem;--fs-2xl:2.6rem;--fs-3xl:3.4rem;--fs-hero:4.2rem}
-html{scroll-behavior:smooth}
-body{font-family:var(--font-body);font-size:var(--fs-base);background:var(--bg-primary);color:var(--text-primary);line-height:1.6;min-height:100vh;min-height:100dvh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
-h1,h2,h3,h4{font-family:var(--font-display);font-weight:400;line-height:1.15}
-button{font-family:var(--font-body);cursor:pointer;border:none;outline:none;font-size:var(--fs-base);-webkit-tap-highlight-color:transparent}
-button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:var(--radius-sm)}
-::selection{background:var(--gold);color:var(--bg-primary)}
-::-webkit-scrollbar{width:5px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--gold-dark);border-radius:3px}
-input::placeholder,textarea::placeholder{color:var(--text-muted)}
-.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
+[data-mode=dark]{--bg:#0F0F13;--surface:#1A1A22;--s2:#22222E;--s3:#2A2A38;--primary:#E8E4DC;--text:#E8E4DC;--muted:#888899;--brd:rgba(255,255,255,.07);--shd:0 2px 16px rgba(0,0,0,.4);--shd2:0 8px 32px rgba(0,0,0,.6);}
+[data-mode=contrast]{--bg:#000;--surface:#0D0D0D;--s2:#1A1A1A;--s3:#222;--primary:#FFF;--accent:#FFD700;--a2:#0FF;--a3:#0F8;--text:#FFF;--muted:#CCC;--brd:rgba(255,255,255,.2);}
+[data-font=large]{--fz:18px;}[data-font=xlarge]{--fz:21px;}
+[data-motion=reduce] *{animation-duration:.01ms!important;transition-duration:.01ms!important;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{font-size:var(--fz);}
+body{font-family:'Sora',sans-serif;font-size:1rem;background:#B0ACA6;color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;transition:background var(--tr),color var(--tr);background-image:radial-gradient(ellipse at 25% 15%,rgba(232,93,74,.15) 0%,transparent 55%),radial-gradient(ellipse at 75% 85%,rgba(74,144,217,.12) 0%,transparent 55%);}
 
-@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
-@keyframes breatheGlow{0%,100%{box-shadow:0 0 30px rgba(212,168,67,.08)}50%{box-shadow:0 0 60px rgba(212,168,67,.2)}}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-@keyframes confetti{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(500px) rotate(720deg);opacity:0}}
-@keyframes levelUp{0%{transform:scale(0) rotate(-180deg);opacity:0}50%{transform:scale(1.2) rotate(10deg);opacity:1}100%{transform:scale(1) rotate(0);opacity:1}}
-@keyframes pulseRing{0%{transform:scale(.8);opacity:1}100%{transform:scale(1.8);opacity:0}}
-@keyframes orbFloat{0%{transform:translate(0,0) scale(1)}33%{transform:translate(30px,-25px) scale(1.08)}66%{transform:translate(-20px,-40px) scale(.94)}100%{transform:translate(0,0) scale(1)}}
-@keyframes morphBlob{0%{border-radius:60% 40% 30% 70%/60% 30% 70% 40%}50%{border-radius:30% 60% 70% 40%/50% 60% 30% 60%}100%{border-radius:60% 40% 30% 70%/60% 30% 70% 40%}}
-@keyframes streakFlame{0%,100%{text-shadow:0 0 8px rgba(255,140,50,.5)}50%{text-shadow:0 0 20px rgba(255,140,50,.8),0 0 40px rgba(255,60,20,.3)}}
-@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
-@keyframes gradientShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-@keyframes ripple{0%{transform:scale(0);opacity:.6}100%{transform:scale(4);opacity:0}}
-@keyframes slideDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
-@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+/* ══ PHONE ══ */
+.phone{width:393px;max-width:100%;background:var(--bg);border-radius:50px;box-shadow:0 40px 100px rgba(0,0,0,.35),0 0 0 1px rgba(0,0,0,.08),inset 0 1px 0 rgba(255,255,255,.4);overflow:hidden;position:relative;transition:background var(--tr);}
+@keyframes haptic{0%,100%{transform:translateX(0)}25%{transform:translateX(-2px)}75%{transform:translateX(2px)}}
+.phone.hap{animation:haptic .22s ease;}
 
-/* ═══ MESH GRADIENT BG ═══ */
-.mesh-bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
-.mesh-bg .orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:.035;animation:orbFloat 18s ease-in-out infinite}
-.mesh-bg .orb:nth-child(1){width:500px;height:500px;top:-10%;left:-10%;background:var(--gold)}
-.mesh-bg .orb:nth-child(2){width:400px;height:400px;bottom:-10%;right:-10%;background:var(--accent-sky);animation-delay:-6s;animation-duration:22s}
-.mesh-bg .orb:nth-child(3){width:300px;height:300px;top:40%;left:50%;background:var(--accent-violet);animation-delay:-12s;animation-duration:25s}
-.mesh-bg .grid-overlay{position:absolute;inset:0;background-image:linear-gradient(rgba(212,168,67,.015) 1px,transparent 1px),linear-gradient(90deg,rgba(212,168,67,.015) 1px,transparent 1px);background-size:60px 60px}
+/* ══ ONBOARDING ══ */
+.ob{position:absolute;inset:0;z-index:200;background:var(--primary);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:36px 28px;transition:opacity .4s,transform .4s;}
+.ob.hide{opacity:0;pointer-events:none;transform:scale(1.04);}
+.ob-step{display:none;width:100%;flex-direction:column;align-items:center;gap:0;}
+.ob-step.show{display:flex;}
+.ob-ico{font-size:48px;margin-bottom:16px;}
+.ob-title{font-family:'DM Serif Display',serif;font-size:26px;color:#fff;text-align:center;margin-bottom:8px;line-height:1.2;}
+.ob-sub{font-size:12.5px;color:rgba(255,255,255,.48);text-align:center;line-height:1.65;margin-bottom:24px;}
+.ob-inp{width:100%;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.18);border-radius:var(--rs);padding:13px 16px;font-family:'Sora',sans-serif;font-size:15px;color:#fff;outline:none;caret-color:var(--accent);transition:border-color .2s;margin-bottom:11px;}
+.ob-inp::placeholder{color:rgba(255,255,255,.3);}
+.ob-inp:focus{border-color:var(--accent);}
+.ob-btn{width:100%;background:var(--accent);color:#fff;border:none;border-radius:var(--rs);padding:14px;font-family:'Sora',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s,transform .15s;margin-top:4px;}
+.ob-btn:active{opacity:.88;transform:scale(.98);}
+.interest-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;margin-bottom:16px;}
+.int-chip{background:rgba(255,255,255,.09);border:1.5px solid rgba(255,255,255,.15);border-radius:var(--rs);padding:12px 8px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;transition:background .2s,border-color .2s;font-family:'Sora',sans-serif;}
+.int-chip.sel{background:rgba(232,93,74,.25);border-color:var(--accent);}
+.int-ico{font-size:22px;}
+.int-lbl{font-size:11px;color:rgba(255,255,255,.75);font-weight:600;}
+.ob-xp-preview{background:rgba(255,255,255,.08);border-radius:var(--rs);padding:16px;width:100%;text-align:center;margin-bottom:16px;}
+.ob-xp-preview p{font-size:12px;color:rgba(255,255,255,.55);line-height:1.6;}
+.ob-xp-preview strong{color:#fff;}
+.ob-dots{display:flex;gap:6px;margin-bottom:20px;}
+.ob-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.25);}
+.ob-dot.cur{background:var(--accent);width:20px;border-radius:4px;}
 
-#particleCanvas{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5}
+/* ══ DYNAMIC ISLAND ══ */
+.di-wrap{background:var(--surface);padding:12px 24px 0;display:flex;justify-content:center;transition:background var(--tr);}
+.di{width:118px;height:34px;background:#000;border-radius:20px;display:flex;align-items:center;justify-content:center;gap:8px;position:relative;transition:width var(--sp);cursor:pointer;overflow:hidden;}
+.di.exp{width:200px;}
+.di-cam{width:10px;height:10px;background:#111;border-radius:50%;border:2px solid #2a2a2a;flex-shrink:0;}
+.di-pulse{width:6px;height:6px;background:var(--accent);border-radius:50%;opacity:.8;animation:dip 2s ease infinite;flex-shrink:0;}
+@keyframes dip{0%,100%{opacity:.8;transform:scale(1)}50%{opacity:.3;transform:scale(.7)}}
+.di-txt{font-size:10px;color:rgba(255,255,255,.7);font-weight:600;opacity:0;transition:opacity .3s;white-space:nowrap;}
+.di.exp .di-txt{opacity:1;}
 
-.app{max-width:480px;margin:0 auto;min-height:100vh;min-height:100dvh;position:relative;padding-bottom:100px;z-index:1}
+/* ══ STATUS BAR ══ */
+.sbar{background:var(--surface);padding:5px 22px 9px;display:flex;justify-content:space-between;align-items:center;transition:background var(--tr);}
+.stime{font-size:14px;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums;}
+.sicons{display:flex;align-items:center;gap:5px;}
+.sig{display:flex;gap:2px;align-items:flex-end;}
+.sig span{width:3px;border-radius:1px;background:var(--text);}
+.sig span:nth-child(1){height:4px}.sig span:nth-child(2){height:7px}.sig span:nth-child(3){height:10px}.sig span:nth-child(4){height:13px}
+.s5g{font-size:11px;font-weight:700;color:var(--text);}
+.bat{width:24px;height:13px;border:1.5px solid var(--text);border-radius:3px;position:relative;}
+.bat::after{content:'';position:absolute;right:-4px;top:50%;transform:translateY(-50%);width:2.5px;height:6px;background:var(--text);border-radius:0 2px 2px 0;}
+.batf{position:absolute;left:1.5px;top:1.5px;bottom:1.5px;width:82%;background:#4CAF50;border-radius:1px;}
 
-/* ═══ A11Y BAR ═══ */
-.a11y-bar{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(6,6,11,.88);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);border-bottom:1px solid rgba(212,168,67,.06);padding:var(--spacing-xs) var(--spacing-sm);display:flex;align-items:center;gap:var(--spacing-xs);overflow-x:auto}
-.a11y-bar button{background:rgba(212,168,67,.06);color:var(--text-secondary);padding:6px 14px;border-radius:20px;font-size:var(--fs-xs);white-space:nowrap;transition:var(--transition);min-height:34px;font-weight:500}
-.a11y-bar button.active{background:var(--gold);color:var(--bg-primary);font-weight:700}
-.lang-toggle{margin-left:auto;background:linear-gradient(135deg,var(--gold-dark),var(--gold))!important;color:var(--bg-primary)!important;font-weight:700!important;min-width:42px}
+/* ══ TOP BAR ══ */
+.topbar{background:var(--surface);padding:12px 16px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--brd);transition:background var(--tr),border-color var(--tr);}
+.greet{display:flex;flex-direction:column;gap:1px;}
+.gsub{font-size:10px;color:var(--muted);font-weight:600;letter-spacing:.07em;text-transform:uppercase;}
+.gname{font-family:'DM Serif Display',serif;font-size:20px;color:var(--text);font-style:italic;display:flex;align-items:center;gap:5px;}
+.ndisp{cursor:pointer;border-bottom:1.5px dashed var(--accent);padding-bottom:1px;transition:opacity .2s,color .3s;}
+.ndisp:hover{opacity:.7;}
+.npen{font-size:11px;opacity:.4;cursor:pointer;transition:opacity .2s;}
+.npen:hover{opacity:1;}
+.nedit{display:none;align-items:center;gap:5px;}
+.nedit.on{display:flex;}
+.ninp{font-family:'DM Serif Display',serif;font-size:20px;font-style:italic;color:var(--text);background:transparent;border:none;border-bottom:2px solid var(--a2);outline:none;width:100px;caret-color:var(--a2);}
+.nok{background:var(--a2);color:#fff;border:none;border-radius:var(--rx);padding:4px 9px;font-family:'Sora',sans-serif;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;transition:opacity .2s,transform .15s;}
+.nok:active{opacity:.85;transform:scale(.93);}
+.topright{display:flex;align-items:center;gap:6px;}
+.ibtn{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;transition:transform .2s,background var(--tr);position:relative;}
+.ibtn:active{transform:scale(.88);}
+.helpbtn{background:var(--s2);font-size:15px;color:var(--muted);}
+.avbtn{background:linear-gradient(135deg,var(--accent),#C0392B);font-size:14px;font-weight:700;color:#fff;box-shadow:0 3px 10px rgba(232,93,74,.33);}
 
-/* ═══ HEADER ═══ */
-.header{padding:calc(50px + var(--spacing-xl)) var(--spacing-md) var(--spacing-md);text-align:center}
-.header .logo{font-family:var(--font-display);font-size:var(--fs-2xl);font-weight:400;letter-spacing:.02em;background:linear-gradient(135deg,var(--gold-light),var(--gold),var(--gold-dark));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.header .logo .ai-tag{font-size:var(--fs-xs);font-family:var(--font-body);font-weight:700;-webkit-text-fill-color:var(--bg-primary);background:var(--gold);padding:2px 10px;border-radius:20px;margin-left:8px;vertical-align:middle;letter-spacing:.1em;display:inline-block;position:relative;top:-2px}
-.header .subtitle{font-size:var(--fs-sm);color:var(--text-muted);margin-top:6px;letter-spacing:.06em;font-weight:300}
+/* XP BAR in topbar */
+.xp-topbar{flex:1;margin:0 10px;display:flex;flex-direction:column;gap:3px;}
+.xp-row{display:flex;justify-content:space-between;align-items:center;}
+.xp-lbl{font-size:10px;font-weight:700;color:var(--muted);}
+.xp-val{font-size:10px;font-weight:700;color:var(--a2);}
+.xp-track{height:5px;background:var(--s2);border-radius:99px;overflow:hidden;}
+.xp-fill{height:100%;background:linear-gradient(90deg,var(--a2),var(--a4));border-radius:99px;transition:width .6s cubic-bezier(.4,0,.2,1);}
 
-/* ═══ XP BAR ═══ */
-.xp-section{padding:0 var(--spacing-md);margin-bottom:var(--spacing-lg)}
-.xp-card{background:var(--bg-glass);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);border:1px solid rgba(212,168,67,.08);border-radius:var(--radius-lg);padding:var(--spacing-md) var(--spacing-lg);animation:breatheGlow 5s ease-in-out infinite;position:relative;overflow:hidden}
-.xp-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold-light),transparent);opacity:.4}
-.xp-info{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
-.xp-level{font-family:var(--font-display);font-size:var(--fs-lg);color:var(--gold-light);font-style:italic}
-.xp-points{font-size:var(--fs-sm);color:var(--text-secondary);font-weight:300}
-.xp-bar-bg{height:6px;background:rgba(255,255,255,.04);border-radius:3px;overflow:hidden}
-.xp-bar-fill{height:100%;background:linear-gradient(90deg,var(--gold-dark),var(--gold),var(--gold-light));border-radius:3px;transition:width 1s var(--ease-out-expo);position:relative}
-.xp-bar-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);background-size:200% 100%;animation:shimmer 2s ease infinite}
+/* ══ SKELETON ══ */
+.skel-screen{padding:16px;display:flex;flex-direction:column;gap:11px;}
+.sk{background:linear-gradient(90deg,var(--s2) 25%,var(--s3) 50%,var(--s2) 75%);background-size:200% 100%;border-radius:var(--rs);animation:shim 1.4s ease infinite;}
+@keyframes shim{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.sk-hero{height:115px;border-radius:var(--r);}
+.sk-card{height:68px;}.sk-half{height:50px;}
 
-/* ═══ MOOD ═══ */
-.mood-section{padding:0 var(--spacing-md);margin-bottom:var(--spacing-lg)}
-.mood-section h3{font-size:var(--fs-lg);margin-bottom:var(--spacing-sm);color:var(--text-primary);font-family:var(--font-display);font-style:italic}
-.mood-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:var(--spacing-xs)}
-.mood-btn{background:var(--bg-glass);backdrop-filter:var(--blur);border:1.5px solid rgba(255,255,255,.04);border-radius:var(--radius);padding:var(--spacing-sm) var(--spacing-xs);text-align:center;transition:var(--transition);min-height:72px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;position:relative;overflow:hidden}
-.mood-btn::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 120%,var(--gold-glow),transparent 70%);opacity:0;transition:opacity .4s ease}
-.mood-btn:hover::before{opacity:1}
-.mood-btn:hover{border-color:rgba(212,168,67,.25);transform:translateY(-3px)}
-.mood-btn.selected{border-color:var(--gold);background:rgba(212,168,67,.08)}
-.mood-btn.selected::before{opacity:1}
-.mood-btn .emoji{font-size:1.8rem;display:block;transition:transform .3s var(--ease-out-back)}
-.mood-btn:hover .emoji{transform:scale(1.15)}
-.mood-btn .label{font-size:var(--fs-xs);color:var(--text-secondary);font-weight:300}
+/* ══ SCROLL / PTR ══ */
+.swrap{position:relative;overflow:hidden;}
+.ptr{position:absolute;top:0;left:0;right:0;height:0;overflow:hidden;display:flex;align-items:center;justify-content:center;background:var(--s2);gap:8px;font-size:11px;color:var(--muted);font-weight:600;transition:height .28s,background var(--tr);}
+.ptr-sp{width:16px;height:16px;border:2px solid var(--brd);border-top-color:var(--a2);border-radius:50%;animation:spin .65s linear infinite;display:none;}
+.ptr.loading .ptr-sp{display:block;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.scr{overflow-y:auto;max-height:650px;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;}
+.scr::-webkit-scrollbar{width:0;}
 
-/* ═══ SECTION TITLES ═══ */
-.section-title{font-family:var(--font-display);font-size:var(--fs-xl);color:var(--text-primary);padding:0 var(--spacing-md);margin-bottom:var(--spacing-md);display:flex;align-items:center;gap:10px;font-style:italic}
-.section-title .accent{color:var(--gold);font-size:.6em;font-style:normal}
+/* ══ HERO ══ */
+.hero{background:var(--primary);padding:22px 20px 26px;position:relative;overflow:hidden;transition:background var(--tr);}
+.hero::before{content:'';position:absolute;top:-70px;right:-70px;width:200px;height:200px;background:var(--accent);border-radius:50%;opacity:.11;}
+.hero::after{content:'';position:absolute;bottom:-50px;left:-50px;width:160px;height:160px;background:var(--a2);border-radius:50%;opacity:.09;}
+.hbadge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.13);border-radius:20px;padding:4px 11px;font-size:10px;color:rgba(255,255,255,.6);font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:12px;}
+.hbdot{width:6px;height:6px;background:#4CAF50;border-radius:50%;display:inline-block;animation:pulse 2s ease infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.hero h1{font-family:'DM Serif Display',serif;font-size:22px;color:#fff;line-height:1.25;margin-bottom:7px;}
+.hero p{font-size:12px;color:rgba(255,255,255,.5);line-height:1.65;max-width:260px;}
 
-/* ═══ RITUAL CARD ═══ */
-.ritual-section{padding:0 var(--spacing-md);margin-bottom:var(--spacing-lg)}
-.ritual-card{background:var(--bg-glass);backdrop-filter:var(--blur);border:1px solid rgba(212,168,67,.1);border-radius:var(--radius-xl);padding:var(--spacing-lg);position:relative;overflow:hidden}
-.ritual-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
-.ritual-quote{font-family:var(--font-display);font-size:var(--fs-xl);font-style:italic;color:var(--text-primary);line-height:1.45;margin-bottom:var(--spacing-sm);padding-left:20px;position:relative}
-.ritual-quote::before{content:'"';position:absolute;left:-2px;top:-10px;font-size:3.5rem;color:var(--gold);opacity:.2;font-style:normal}
-.ritual-author{font-size:var(--fs-sm);color:var(--gold);margin-bottom:var(--spacing-md);padding-left:20px;letter-spacing:.06em;font-weight:300}
-.ritual-action{display:flex;gap:var(--spacing-sm);flex-wrap:wrap;padding-left:20px}
+/* MOOD ROW */
+.mood-row{display:flex;gap:6px;padding:14px 15px 0;}
+.mood-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;background:var(--surface);border:1.5px solid var(--brd);border-radius:var(--rs);padding:9px 4px;cursor:pointer;transition:border-color .2s,transform .15s,background var(--tr);}
+.mood-btn:active{transform:scale(.92);}
+.mood-btn.sel{border-color:var(--a2);background:rgba(74,144,217,.08);}
+.mood-ico{font-size:20px;}
+.mood-lbl{font-size:9px;font-weight:600;color:var(--muted);}
 
-/* ═══ BUTTONS ═══ */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 26px;border-radius:var(--radius);font-size:var(--fs-sm);font-weight:600;transition:var(--transition);min-height:48px;min-width:48px;position:relative;overflow:hidden;letter-spacing:.03em}
-.btn::after{content:'';position:absolute;inset:0;background:linear-gradient(rgba(255,255,255,.1),transparent);opacity:0;transition:opacity .3s ease}
-.btn:hover::after{opacity:1}
-.btn-gold{background:linear-gradient(135deg,var(--gold-dark),var(--gold));color:var(--bg-primary)}
-.btn-gold:hover{transform:translateY(-2px);box-shadow:var(--shadow-gold)}
-.btn-outline{background:transparent;border:1.5px solid rgba(212,168,67,.35);color:var(--gold)}
-.btn-outline:hover{background:rgba(212,168,67,.06);border-color:var(--gold)}
-.btn-secondary{background:var(--bg-elevated);color:var(--text-primary);border:1px solid rgba(255,255,255,.05)}
-.btn-sm{padding:9px 16px;font-size:var(--fs-xs);min-height:40px}
-.btn-lg{padding:16px 36px;font-size:var(--fs-lg);min-height:56px;border-radius:var(--radius-lg)}
-.btn-block{width:100%}
-.btn-ghost{background:none;color:var(--text-secondary);padding:8px 12px}
-.btn-ghost:hover{color:var(--gold)}
-.btn-danger{background:rgba(224,85,85,.1);color:var(--danger);border:1px solid rgba(224,85,85,.15)}
+/* ══ SECTIONS ══ */
+.sec{padding:16px 15px 0;}
+.sec-t{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;padding-left:3px;}
 
-/* ═══ NAV ═══ */
-.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;z-index:900;padding:0 var(--spacing-sm) var(--spacing-sm)}
-.nav-inner{background:rgba(10,10,18,.9);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);border:1px solid rgba(212,168,67,.06);border-radius:var(--radius-xl);display:flex;justify-content:space-around;padding:var(--spacing-xs) 0;box-shadow:0 -4px 30px rgba(0,0,0,.4)}
-.nav-btn{background:none;color:var(--text-muted);display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px;font-size:var(--fs-xs);transition:var(--transition);min-height:50px;min-width:44px;border-radius:var(--radius);position:relative}
-.nav-btn.active{color:var(--gold)}
-.nav-btn.active::before{content:'';position:absolute;top:2px;width:18px;height:2px;background:var(--gold);border-radius:1px}
-.nav-btn .nav-icon{font-size:1.35rem;transition:transform .3s var(--ease-out-back)}
-.nav-btn:hover{color:var(--gold-light)}
-.nav-btn:hover .nav-icon{transform:scale(1.1)}
-.nav-btn .nav-label{font-size:.65rem;letter-spacing:.05em;text-transform:uppercase;font-weight:500}
+/* ══ CARDS ══ */
+.card{background:var(--surface);border-radius:var(--r);padding:16px;border:1px solid var(--brd);box-shadow:var(--shd);transition:background var(--tr),border-color var(--tr);}
+.card+.card{margin-top:8px;}
 
-/* ═══ PAGES ═══ */
-.page{display:none;padding-bottom:var(--spacing-xl)}
-.page.active{display:block;animation:fadeUp .5s var(--ease-out-expo) forwards}
+/* Action card */
+.acard{background:var(--surface);border-radius:var(--r);padding:15px;margin-bottom:7px;display:flex;align-items:center;gap:12px;border:1px solid var(--brd);box-shadow:var(--shd);cursor:pointer;position:relative;overflow:hidden;transition:transform var(--tr),background var(--tr),border-color var(--tr);min-height:66px;}
+.acard:active{transform:scale(.975);}
+.ripple{position:absolute;border-radius:50%;background:rgba(74,144,217,.15);transform:scale(0);animation:rip .5s ease-out forwards;pointer-events:none;}
+@keyframes rip{to{transform:scale(4);opacity:0}}
+.aico{width:43px;height:43px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;}
+.aico.r{background:rgba(232,93,74,.11);}.aico.b{background:rgba(74,144,217,.11);}.aico.g{background:rgba(76,175,80,.11);}.aico.p{background:rgba(155,89,182,.11);}
+.atxt{flex:1;min-width:0;}
+.atit{font-size:.86rem;font-weight:600;color:var(--text);margin-bottom:2px;}
+.adesc{font-size:.70rem;color:var(--muted);line-height:1.45;}
+.aarr{width:27px;height:27px;background:var(--s2);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px;flex-shrink:0;transition:transform var(--tr);}
+.acard:active .aarr{transform:translateX(3px);}
 
-/* ═══ CARDS ═══ */
-.card{background:var(--bg-glass);backdrop-filter:var(--blur);border:1px solid rgba(255,255,255,.04);border-radius:var(--radius-lg);padding:var(--spacing-lg);margin:0 var(--spacing-md) var(--spacing-md);transition:var(--transition)}
+/* ══ RITUAL / QUOTE ══ */
+.quote-card{background:var(--primary);border-radius:var(--r);padding:18px 16px;position:relative;overflow:hidden;transition:background var(--tr);}
+.quote-card::before{content:'✦';position:absolute;top:-8px;right:12px;font-size:60px;color:rgba(255,255,255,.04);}
+.quote-text{font-family:'DM Serif Display',serif;font-size:15px;font-style:italic;color:#fff;line-height:1.55;margin-bottom:10px;}
+.quote-author{font-size:11px;color:rgba(255,255,255,.45);font-weight:600;}
+.quote-actions{display:flex;gap:8px;margin-top:14px;}
+.qbtn{flex:1;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:var(--rs);padding:10px;font-family:'Sora',sans-serif;font-size:11px;font-weight:700;color:#fff;cursor:pointer;transition:background .2s,transform .15s;}
+.qbtn:active{transform:scale(.95);}
+.qbtn.primary{background:var(--accent);border-color:var(--accent);}
 
-/* ═══ HABITS ═══ */
-.habits-section{padding:0 var(--spacing-md);margin-bottom:var(--spacing-lg)}
-.habit-row{display:flex;align-items:center;gap:var(--spacing-sm);background:var(--bg-glass);backdrop-filter:var(--blur);border:1px solid rgba(255,255,255,.04);border-radius:var(--radius);padding:var(--spacing-sm) var(--spacing-md);margin-bottom:var(--spacing-xs);transition:var(--transition);min-height:56px}
-.habit-row:hover{border-color:rgba(212,168,67,.1)}
-.habit-icon{font-size:1.4rem;width:36px;text-align:center;flex-shrink:0}
-.habit-info{flex:1;min-width:0}
-.habit-name{font-size:var(--fs-sm);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.habit-streak{font-size:var(--fs-xs);color:var(--text-muted);font-weight:300}
-.habit-days{display:flex;gap:3px;flex-shrink:0}
-.habit-day{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-size:.55rem;color:var(--text-muted);transition:var(--transition);cursor:pointer;font-weight:600}
-.habit-day.done{background:var(--gold);border-color:var(--gold);color:var(--bg-primary)}
-.habit-day.today{border-color:var(--gold);box-shadow:0 0 8px rgba(212,168,67,.2)}
-.habit-delete{background:none;color:var(--text-muted);font-size:1.1rem;padding:4px;opacity:.3;transition:var(--transition);border-radius:50%;min-width:28px;min-height:28px;display:flex;align-items:center;justify-content:center}
-.habit-delete:hover{opacity:1;color:var(--danger)}
-.add-habit-row{display:flex;gap:var(--spacing-xs);margin-top:var(--spacing-sm)}
-.add-habit-input{flex:1;background:var(--bg-glass);border:1.5px solid rgba(255,255,255,.06);border-radius:var(--radius);padding:12px 16px;color:var(--text-primary);font-family:var(--font-body);font-size:var(--fs-sm);transition:var(--transition)}
-.add-habit-input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,168,67,.08)}
-.emoji-pick{display:flex;gap:4px;flex-wrap:wrap;margin-top:var(--spacing-xs)}
-.emoji-pick button{font-size:1.2rem;padding:6px 8px;background:var(--bg-glass);border:1px solid transparent;border-radius:var(--radius-sm);transition:var(--transition);min-width:36px;min-height:36px}
-.emoji-pick button.selected{border-color:var(--gold);background:rgba(212,168,67,.08)}
-.emoji-pick button:hover{border-color:rgba(212,168,67,.2)}
+/* ══ HABITS ══ */
+.habit-item{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--brd);}
+.habit-item:last-child{border-bottom:none;padding-bottom:0;}
+.habit-check{width:26px;height:26px;border-radius:50%;border:2px solid var(--brd);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:border-color .2s,background .2s,transform var(--sp);flex-shrink:0;font-size:0;}
+.habit-check.done{background:var(--a3);border-color:var(--a3);font-size:13px;}
+.habit-check.done::after{content:'✓';color:#fff;font-weight:700;}
+.habit-info{flex:1;}
+.habit-name{font-size:.83rem;font-weight:600;color:var(--text);}
+.habit-streak{font-size:.68rem;color:var(--muted);}
+.habit-xp{font-size:10px;font-weight:700;color:var(--a2);background:rgba(74,144,217,.1);padding:2px 7px;border-radius:99px;}
 
-/* ═══ JOURNAL ═══ */
-.journal-section{padding:0 var(--spacing-md);margin-bottom:var(--spacing-lg)}
-.journal-textarea{width:100%;min-height:120px;background:var(--bg-glass);backdrop-filter:var(--blur);border:1.5px solid rgba(255,255,255,.06);border-radius:var(--radius);padding:var(--spacing-md);color:var(--text-primary);font-family:var(--font-body);font-size:var(--fs-sm);resize:vertical;transition:var(--transition);line-height:1.7}
-.journal-textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,168,67,.08)}
-.journal-prompts{display:flex;gap:var(--spacing-xs);flex-wrap:wrap;margin-bottom:var(--spacing-sm)}
-.journal-prompt{background:rgba(212,168,67,.06);border:1px solid rgba(212,168,67,.1);color:var(--gold-light);padding:6px 14px;border-radius:20px;font-size:var(--fs-xs);transition:var(--transition);cursor:pointer;font-weight:400}
-.journal-prompt:hover{background:rgba(212,168,67,.12);border-color:var(--gold)}
-.journal-entries{margin-top:var(--spacing-md)}
-.journal-entry{background:var(--bg-glass);border:1px solid rgba(255,255,255,.04);border-radius:var(--radius);padding:var(--spacing-md);margin-bottom:var(--spacing-xs);position:relative}
-.journal-entry-date{font-size:var(--fs-xs);color:var(--text-muted);margin-bottom:6px;font-weight:300}
-.journal-entry-text{font-size:var(--fs-sm);color:var(--text-secondary);line-height:1.6;font-weight:300}
-.journal-entry-mood{position:absolute;top:12px;right:12px;font-size:1.1rem}
+/* ══ COACH AI ══ */
+.coach-chip-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+.coach-chip{background:var(--s2);border:1.5px solid var(--brd);border-radius:99px;padding:7px 13px;font-family:'Sora',sans-serif;font-size:11px;font-weight:600;color:var(--text);cursor:pointer;transition:background .2s,border-color .2s,transform .15s;}
+.coach-chip:active{transform:scale(.93);}
+.coach-chip.sel{background:rgba(155,89,182,.15);border-color:var(--a4);color:var(--a4);}
+.coach-bubble{background:rgba(155,89,182,.1);border:1px solid rgba(155,89,182,.2);border-radius:var(--rs);border-top-left-radius:4px;padding:12px 14px;font-size:.80rem;color:var(--text);line-height:1.6;margin-bottom:8px;animation:fadeUp .3s ease both;}
 
-/* ═══ POMODORO ═══ */
-.pomo-container{text-align:center;padding:0 var(--spacing-md)}
-.pomo-ring-wrap{position:relative;width:220px;height:220px;margin:0 auto var(--spacing-lg)}
-.pomo-ring-svg{width:100%;height:100%;transform:rotate(-90deg)}
-.pomo-ring-bg{fill:none;stroke:rgba(255,255,255,.04);stroke-width:6}
-.pomo-ring-fill{fill:none;stroke:var(--gold);stroke-width:6;stroke-linecap:round;transition:stroke-dashoffset .5s ease;filter:drop-shadow(0 0 8px rgba(212,168,67,.3))}
-.pomo-time{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.pomo-time .time{font-family:var(--font-display);font-size:var(--fs-3xl);color:var(--gold-light);font-style:italic}
-.pomo-time .phase{font-size:var(--fs-xs);color:var(--text-muted);text-transform:uppercase;letter-spacing:.12em;margin-top:4px;font-weight:500}
-.pomo-controls{display:flex;gap:var(--spacing-sm);justify-content:center;flex-wrap:wrap}
-.pomo-sessions{display:flex;gap:6px;justify-content:center;margin:var(--spacing-md) 0}
-.pomo-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.06);transition:var(--transition)}
-.pomo-dot.done{background:var(--gold)}
-.pomo-dot.active{background:var(--gold-light);box-shadow:0 0 10px var(--gold-glow)}
+/* ══ POMODORO ══ */
+.pom-display{text-align:center;padding:18px 0 14px;}
+.pom-ring{width:110px;height:110px;margin:0 auto 12px;position:relative;}
+.pom-svg{width:100%;height:100%;transform:rotate(-90deg);}
+.pom-track{fill:none;stroke:var(--s2);stroke-width:8;}
+.pom-progress{fill:none;stroke:url(#pomGrad);stroke-width:8;stroke-linecap:round;stroke-dasharray:283;stroke-dashoffset:283;transition:stroke-dashoffset .5s linear;}
+.pom-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1px;}
+.pom-time{font-size:22px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums;}
+.pom-label{font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;}
+.pom-btns{display:flex;gap:8px;justify-content:center;}
+.pom-btn{background:var(--s2);border:1.5px solid var(--brd);border-radius:var(--rs);padding:10px 20px;font-family:'Sora',sans-serif;font-size:12px;font-weight:700;color:var(--text);cursor:pointer;transition:background .2s,transform .15s,border-color .2s;}
+.pom-btn:active{transform:scale(.93);}
+.pom-btn.go{background:var(--a2);border-color:var(--a2);color:#fff;}
+[data-mode=contrast] .pom-btn.go{background:var(--accent);border-color:var(--accent);color:#000;}
+.pom-mode-row{display:flex;gap:6px;margin-bottom:10px;justify-content:center;}
+.pom-mode{background:var(--s2);border:1.5px solid var(--brd);border-radius:var(--rx);padding:6px 12px;font-size:10px;font-weight:700;color:var(--muted);cursor:pointer;transition:background .2s,border-color .2s;}
+.pom-mode.on{background:rgba(74,144,217,.12);border-color:var(--a2);color:var(--a2);}
 
-/* ═══ SOUND MIXER ═══ */
-.sound-section{padding:0 var(--spacing-md);margin-bottom:var(--spacing-lg)}
-.sound-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--spacing-sm)}
-.sound-btn{background:var(--bg-glass);border:1.5px solid rgba(255,255,255,.04);border-radius:var(--radius-lg);padding:var(--spacing-md) var(--spacing-xs);text-align:center;transition:var(--transition);cursor:pointer;min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
-.sound-btn:hover{border-color:rgba(212,168,67,.2);transform:translateY(-2px)}
-.sound-btn.active{border-color:var(--gold);background:rgba(212,168,67,.06)}
-.sound-btn .snd-icon{font-size:1.8rem;transition:transform .3s var(--ease-out-back)}
-.sound-btn:hover .snd-icon{transform:scale(1.1)}
-.sound-btn .snd-name{font-size:var(--fs-xs);color:var(--text-secondary);font-weight:400}
-.sound-vol{width:100%;margin-top:4px;accent-color:var(--gold);height:3px;opacity:0;transition:opacity .3s ease}
-.sound-btn.active .sound-vol{opacity:1}
+/* ══ AMBIENT SOUNDS ══ */
+.sound-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;}
+.sound-btn{background:var(--s2);border:1.5px solid var(--brd);border-radius:var(--rs);padding:13px 8px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;transition:background .2s,border-color .2s,transform .15s;}
+.sound-btn:active{transform:scale(.93);}
+.sound-btn.on{background:rgba(76,175,80,.1);border-color:var(--a3);}
+.sound-ico{font-size:22px;}
+.sound-lbl{font-size:10px;font-weight:600;color:var(--muted);}
+.sound-btn.on .sound-lbl{color:var(--a3);}
 
-/* ═══ TODOS ═══ */
-.todo-input-row{display:flex;gap:var(--spacing-xs);padding:0 var(--spacing-md);margin-bottom:var(--spacing-sm)}
-.todo-input{flex:1;background:var(--bg-glass);backdrop-filter:var(--blur);border:1.5px solid rgba(255,255,255,.06);border-radius:var(--radius);padding:14px 18px;color:var(--text-primary);font-size:var(--fs-base);font-family:var(--font-body);transition:var(--transition);min-height:50px}
-.todo-input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,168,67,.08)}
-.priority-row{display:flex;gap:var(--spacing-xs);padding:0 var(--spacing-md);margin-bottom:var(--spacing-md)}
-.priority-btn{flex:1;padding:10px;border-radius:var(--radius-sm);font-size:var(--fs-sm);font-weight:600;background:var(--bg-glass);color:var(--text-muted);border:1.5px solid transparent;transition:var(--transition);min-height:42px}
-.priority-btn.active-urgent{border-color:var(--danger);color:var(--danger);background:rgba(224,85,85,.06)}
-.priority-btn.active-normal{border-color:var(--warning);color:var(--warning);background:rgba(224,168,50,.06)}
-.priority-btn.active-calm{border-color:var(--accent-emerald);color:var(--accent-emerald);background:rgba(79,212,164,.06)}
-.todo-tabs{display:flex;gap:var(--spacing-xs);padding:0 var(--spacing-md);margin-bottom:var(--spacing-md)}
-.todo-tab{flex:1;padding:10px;border-radius:var(--radius);background:var(--bg-glass);color:var(--text-muted);font-size:var(--fs-sm);font-weight:600;transition:var(--transition);min-height:42px;text-align:center;border:1.5px solid transparent}
-.todo-tab.active{background:linear-gradient(135deg,var(--gold-dark),var(--gold));color:var(--bg-primary)}
-.todo-list{padding:0 var(--spacing-md)}
-.todo-item{display:flex;align-items:center;gap:var(--spacing-sm);background:var(--bg-glass);border:1px solid rgba(255,255,255,.04);border-radius:var(--radius);padding:var(--spacing-sm) var(--spacing-md);margin-bottom:var(--spacing-xs);transition:var(--transition);min-height:54px;animation:fadeUp .3s var(--ease-out-expo) forwards}
-.todo-item.done{opacity:.4}
-.todo-item.done .todo-text{text-decoration:line-through;text-decoration-color:var(--text-muted)}
-.todo-check{width:24px;height:24px;border-radius:50%;border:2px solid rgba(212,168,67,.35);background:transparent;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:var(--transition);cursor:pointer;color:transparent;font-size:.65rem}
-.todo-check.checked{background:var(--gold);border-color:var(--gold);color:var(--bg-primary)}
-.todo-text{flex:1;font-size:var(--fs-sm);font-weight:400}
-.todo-priority-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.todo-delete{background:none;color:var(--text-muted);font-size:var(--fs-lg);padding:4px 8px;border-radius:var(--radius-sm);transition:var(--transition);opacity:.3}
-.todo-delete:hover{color:var(--danger);opacity:1}
+/* ══ JOURNAL ══ */
+.journal-ta{width:100%;background:var(--s2);border:1.5px solid var(--brd);border-radius:var(--rs);padding:12px;font-family:'Sora',sans-serif;font-size:.80rem;color:var(--text);resize:none;outline:none;min-height:90px;transition:border-color .2s,background var(--tr);}
+.journal-ta:focus{border-color:var(--a2);}
+.journal-ta::placeholder{color:var(--muted);}
+.journal-save{margin-top:8px;width:100%;background:var(--primary);color:#fff;border:none;border-radius:var(--rs);padding:12px;font-family:'Sora',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;transition:opacity .2s,transform .15s;}
+.journal-save:active{opacity:.88;transform:scale(.98);}
+[data-mode=contrast] .journal-save{background:var(--accent);color:#000;}
 
-/* ═══ GAMES ═══ */
-.games-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--spacing-sm);padding:0 var(--spacing-md)}
-.game-card{background:var(--bg-glass);backdrop-filter:var(--blur);border:1px solid rgba(255,255,255,.04);border-radius:var(--radius-xl);padding:var(--spacing-lg) var(--spacing-md);text-align:center;cursor:pointer;transition:var(--transition);min-height:140px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--spacing-xs);position:relative;overflow:hidden}
-.game-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 100%,var(--gold-glow),transparent 70%);opacity:0;transition:opacity .4s ease}
-.game-card:hover{transform:translateY(-4px);border-color:rgba(212,168,67,.15)}
-.game-card:hover::before{opacity:1}
-.game-card .game-icon{font-size:2.6rem;transition:transform .4s var(--ease-out-back)}
-.game-card:hover .game-icon{transform:scale(1.1) translateY(-2px)}
-.game-card .game-name{font-family:var(--font-display);font-size:var(--fs-lg);color:var(--text-primary);font-style:italic}
-.game-card .game-xp{font-size:var(--fs-xs);color:var(--text-muted);font-weight:300}
+/* ══ MINI GAMES ══ */
+.games-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.game-card{background:var(--surface);border:1px solid var(--brd);border-radius:var(--r);padding:15px 12px;cursor:pointer;position:relative;overflow:hidden;transition:transform var(--tr),background var(--tr);display:flex;flex-direction:column;gap:4px;}
+.game-card:active{transform:scale(.96);}
+.game-ico{font-size:26px;}
+.game-name{font-size:.82rem;font-weight:700;color:var(--text);}
+.game-xp{font-size:10px;color:var(--muted);}
+.game-xp span{color:var(--a2);font-weight:700;}
 
-.memory-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:0 var(--spacing-md);max-width:380px;margin:0 auto}
-.memory-card{aspect-ratio:1;background:var(--bg-glass);border:1.5px solid rgba(255,255,255,.06);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:1.8rem;cursor:pointer;transition:all .35s var(--ease-out-expo);min-height:68px;user-select:none}
-.memory-card:not(.flipped):not(.matched)::after{content:'✦';color:var(--gold-dark);opacity:.3;font-size:1rem}
-.memory-card.flipped{background:rgba(212,168,67,.08);border-color:var(--gold)}
-.memory-card.matched{background:rgba(79,212,164,.08);border-color:var(--accent-emerald)}
-.memory-card:not(.flipped):not(.matched):hover{border-color:rgba(212,168,67,.25);transform:scale(1.04)}
+/* MEMORY GAME */
+.mem-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:12px;}
+.mem-card{aspect-ratio:1;background:var(--a2);border-radius:var(--rx);display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;transition:transform var(--sp),background .2s;user-select:none;}
+.mem-card.back{background:var(--s2);font-size:0;}
+.mem-card.matched{background:rgba(76,175,80,.2);border:2px solid var(--a3);}
+.mem-card:active{transform:scale(.9);}
 
-.quiz-container{padding:0 var(--spacing-md)}
-.quiz-question{font-family:var(--font-display);font-size:var(--fs-xl);color:var(--text-primary);margin-bottom:var(--spacing-lg);text-align:center;line-height:1.4;font-style:italic}
-.quiz-options{display:flex;flex-direction:column;gap:var(--spacing-sm)}
-.quiz-option{background:var(--bg-glass);border:1.5px solid rgba(255,255,255,.05);border-radius:var(--radius);padding:var(--spacing-md) var(--spacing-md) var(--spacing-md) var(--spacing-lg);font-size:var(--fs-base);color:var(--text-primary);text-align:left;transition:var(--transition);min-height:54px;position:relative}
-.quiz-option::before{content:'';position:absolute;left:14px;top:50%;transform:translateY(-50%);width:9px;height:9px;border-radius:50%;border:2px solid rgba(255,255,255,.12);transition:var(--transition)}
-.quiz-option:hover{border-color:rgba(212,168,67,.25)}
-.quiz-option.correct{border-color:var(--accent-emerald);background:rgba(79,212,164,.08)}
-.quiz-option.correct::before{background:var(--accent-emerald);border-color:var(--accent-emerald)}
-.quiz-option.wrong{border-color:var(--danger);background:rgba(224,85,85,.08)}
-.quiz-option.wrong::before{background:var(--danger);border-color:var(--danger)}
-.quiz-progress{display:flex;gap:6px;justify-content:center;margin-bottom:var(--spacing-md)}
-.quiz-dot{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.06);transition:var(--transition)}
-.quiz-dot.answered{background:var(--gold)}
-.quiz-dot.current{background:var(--gold-light);box-shadow:0 0 10px var(--gold-glow)}
+/* BREATHING */
+.breath-wrap{display:flex;flex-direction:column;align-items:center;padding:10px 0;}
+.breath-circle{width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,var(--a2),var(--a4));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;transition:transform 4s ease,opacity 1s ease;margin-bottom:14px;}
+.breath-circle.inhale{transform:scale(1.5);}
+.breath-circle.exhale{transform:scale(1);}
+.breath-lbl{font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px;}
+.breath-sub{font-size:11px;color:var(--muted);}
+.breath-startbtn{margin-top:14px;background:var(--a4);color:#fff;border:none;border-radius:var(--rs);padding:11px 28px;font-family:'Sora',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:opacity .2s;}
 
-.puzzle-container{padding:0 var(--spacing-md);text-align:center}
-.puzzle-scrambled{font-family:var(--font-display);font-size:var(--fs-3xl);color:var(--gold);letter-spacing:.2em;margin-bottom:var(--spacing-md);font-style:italic}
-.puzzle-hint{font-size:var(--fs-sm);color:var(--text-muted);font-style:italic;margin-bottom:var(--spacing-md);min-height:2em;font-weight:300}
+/* ══ PROGRESS / DASHBOARD ══ */
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:12px;}
+.stat-box{background:var(--surface);border:1px solid var(--brd);border-radius:var(--rs);padding:11px 8px;text-align:center;transition:background var(--tr);}
+.stat-num{font-size:20px;font-weight:700;color:var(--text);}
+.stat-lbl{font-size:9.5px;color:var(--muted);font-weight:600;margin-top:2px;}
+.week-row{display:flex;gap:5px;align-items:flex-end;height:60px;margin-bottom:14px;}
+.week-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;height:100%;}
+.week-bar{width:100%;background:var(--s2);border-radius:4px;transition:height .5s cubic-bezier(.4,0,.2,1),background var(--tr);margin-top:auto;}
+.week-bar.today{background:linear-gradient(180deg,var(--a2),var(--a4));}
+.week-day{font-size:9px;color:var(--muted);font-weight:600;}
+.badges-row{display:flex;gap:8px;flex-wrap:wrap;}
+.badge-item{display:flex;flex-direction:column;align-items:center;gap:4px;width:52px;}
+.badge-ico{width:46px;height:46px;border-radius:50%;border:2px solid var(--brd);display:flex;align-items:center;justify-content:center;font-size:20px;background:var(--s2);transition:background var(--tr);position:relative;}
+.badge-ico.earned{background:linear-gradient(135deg,rgba(232,93,74,.15),rgba(155,89,182,.15));border-color:var(--accent);}
+.badge-lbl{font-size:9px;color:var(--muted);font-weight:600;text-align:center;line-height:1.3;}
 
-.breath-container{padding:0 var(--spacing-md);text-align:center}
-.breath-visual{position:relative;width:200px;height:200px;margin:var(--spacing-lg) auto}
-.breath-circle{width:100%;height:100%;border-radius:50%;background:radial-gradient(circle,rgba(212,168,67,.12),rgba(212,168,67,.02));border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;transition:all 4s ease-in-out}
-.breath-circle.inhale{transform:scale(1.3);border-color:var(--accent-emerald);background:radial-gradient(circle,rgba(79,212,164,.12),rgba(79,212,164,.02))}
-.breath-circle.exhale{transform:scale(.7);border-color:var(--accent-sky);background:radial-gradient(circle,rgba(79,184,212,.12),rgba(79,184,212,.02))}
-.breath-circle.hold{border-color:var(--gold-light)}
-.breath-ring{position:absolute;inset:-15px;border-radius:50%;border:1px solid rgba(212,168,67,.08);animation:pulseRing 3s ease-in-out infinite}
-.breath-text{font-family:var(--font-display);font-size:var(--fs-xl);color:var(--gold-light);font-style:italic;z-index:1}
-.breath-timer{font-size:var(--fs-3xl);font-family:var(--font-display);color:var(--gold);margin-top:var(--spacing-sm)}
-.breath-score{font-size:var(--fs-sm);color:var(--text-secondary);margin-top:var(--spacing-sm);font-weight:300}
-.breath-tap-zone{width:100%;padding:var(--spacing-lg);background:var(--bg-glass);border:1.5px dashed rgba(212,168,67,.15);border-radius:var(--radius-xl);margin:var(--spacing-md) 0;cursor:pointer;transition:var(--transition);min-height:70px;display:flex;align-items:center;justify-content:center}
-.breath-tap-zone:active{background:rgba(212,168,67,.06);border-style:solid;transform:scale(.98)}
+/* ══ ACCESSIBILITY ══ */
+.a11y-card{background:var(--surface);border-radius:var(--r);overflow:hidden;border:1px solid var(--brd);box-shadow:var(--shd);transition:background var(--tr),border-color var(--tr);}
+.a11y-row{display:flex;align-items:center;gap:10px;padding:13px 15px;border-bottom:1px solid var(--brd);cursor:pointer;min-height:58px;transition:background var(--tr),border-color var(--tr);}
+.a11y-row:last-child{border-bottom:none;}
+.a11y-row:active{background:var(--s2);}
+.a11y-ico{font-size:18px;width:30px;text-align:center;flex-shrink:0;}
+.a11y-info{flex:1;min-width:0;}
+.a11y-t{font-size:.83rem;font-weight:600;color:var(--text);margin-bottom:1px;}
+.a11y-d{font-size:.68rem;color:var(--muted);line-height:1.4;}
+.f-step{display:flex;align-items:center;gap:5px;flex-shrink:0;}
+.f-val{font-size:11px;font-weight:700;color:var(--text);min-width:20px;text-align:center;}
+.f-btn{width:26px;height:26px;border-radius:50%;background:var(--s2);border:none;cursor:pointer;font-size:14px;color:var(--text);font-weight:700;display:flex;align-items:center;justify-content:center;transition:background var(--tr),transform .15s;}
+.f-btn:active{transform:scale(.86);}
+.f-btn:disabled{opacity:.28;cursor:default;}
+.tog{width:43px;height:24px;background:var(--s2);border-radius:99px;position:relative;cursor:pointer;transition:background .28s;flex-shrink:0;border:none;outline:none;}
+.tog.on{background:var(--a2);}
+.tog.grn.on{background:var(--a3);}
+.tog::after{content:'';position:absolute;top:2px;left:2px;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform .3s cubic-bezier(.34,1.56,.64,1);box-shadow:0 2px 5px rgba(0,0,0,.18);}
+.tog.on::after{transform:translateX(19px);}
+.mode-row{display:flex;gap:6px;}
+.mchip{flex:1;border:1.5px solid var(--brd);background:var(--surface);border-radius:var(--rs);padding:9px 5px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;transition:border-color var(--tr),background var(--tr),transform .15s;font-family:'Sora',sans-serif;}
+.mchip:active{transform:scale(.94);}
+.mchip.on{border-color:var(--a2);background:rgba(74,144,217,.08);}
+.mchip-ico{font-size:16px;}
+.mchip-lbl{font-size:9.5px;font-weight:600;color:var(--muted);}
+.mchip.on .mchip-lbl{color:var(--a2);}
+.sr-btn{width:100%;background:var(--primary);color:#fff;border:none;border-radius:var(--rs);padding:12px 15px;font-family:'Sora',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .2s,transform .15s;min-height:46px;}
+[data-mode=contrast] .sr-btn{background:var(--accent);color:#000;}
+.sr-btn:active{transform:scale(.98);opacity:.9;}
 
-/* ═══ DASHBOARD ═══ */
-.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--spacing-sm);padding:0 var(--spacing-md);margin-bottom:var(--spacing-lg)}
-.stat-card{background:var(--bg-glass);backdrop-filter:var(--blur);border:1px solid rgba(255,255,255,.04);border-radius:var(--radius-lg);padding:var(--spacing-md);text-align:center;position:relative;overflow:hidden}
-.stat-card::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:40%;height:1px;background:linear-gradient(90deg,transparent,rgba(212,168,67,.25),transparent)}
-.stat-value{font-family:var(--font-display);font-size:var(--fs-2xl);color:var(--gold);font-style:italic}
-.stat-label{font-size:var(--fs-xs);color:var(--text-muted);margin-top:4px;text-transform:uppercase;letter-spacing:.1em;font-weight:500}
-.stat-card.streak .stat-value{animation:streakFlame 2s ease-in-out infinite}
-.chart-container{padding:0 var(--spacing-md);margin-bottom:var(--spacing-lg)}
-.chart-card{background:var(--bg-glass);backdrop-filter:var(--blur);border:1px solid rgba(255,255,255,.04);border-radius:var(--radius-xl);padding:var(--spacing-lg)}
-.chart-title{font-family:var(--font-display);font-size:var(--fs-lg);color:var(--text-primary);margin-bottom:var(--spacing-md);font-style:italic}
-.bar-chart{display:flex;align-items:flex-end;justify-content:space-between;gap:var(--spacing-xs);height:140px;padding-top:var(--spacing-sm)}
-.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
-.bar{width:100%;background:linear-gradient(to top,var(--gold-dark),var(--gold));border-radius:4px 4px 0 0;transition:height .8s var(--ease-out-expo);min-width:16px;position:relative}
-.bar::after{content:'';position:absolute;inset:0;background:linear-gradient(rgba(255,255,255,.12),transparent);border-radius:inherit}
-.bar-label{font-size:var(--fs-xs);color:var(--text-muted);font-weight:300}
-.bar-value{font-size:.65rem;color:var(--gold-light)}
+/* ══ PROGRESS BAR (onboarding-style) ══ */
+.prog-card{background:var(--surface);border-radius:var(--r);padding:16px;border:1px solid var(--brd);box-shadow:var(--shd);transition:background var(--tr);}
+.prog-hdr{display:flex;justify-content:space-between;margin-bottom:3px;}
+.prog-lbl{font-size:.84rem;font-weight:600;color:var(--text);}
+.prog-pct{font-size:.84rem;font-weight:700;color:var(--accent);}
+.prog-slbl{font-size:.68rem;color:var(--muted);margin-bottom:10px;}
+.prog-track{height:6px;background:var(--s2);border-radius:99px;overflow:hidden;margin-bottom:12px;transition:background var(--tr);}
+.prog-fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent),#FF8A65);border-radius:99px;transition:width .9s cubic-bezier(.4,0,.2,1);}
+.steps-row{display:flex;gap:6px;}
+.step-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;}
+.sdot{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;transition:background var(--tr),color var(--tr),transform var(--sp);}
+.sdot.done{background:var(--accent);color:#fff;}
+.sdot.active{background:var(--a2);color:#fff;box-shadow:0 0 0 3px rgba(74,144,217,.22);}
+.sdot.pending{background:var(--s2);color:var(--muted);}
+.sdot:hover{transform:scale(1.12);}
+.sname{font-size:9.5px;color:var(--muted);text-align:center;font-weight:500;}
+.prog-btn{width:100%;margin-top:12px;background:linear-gradient(135deg,var(--a2),#3A7BC8);color:#fff;border:none;border-radius:var(--rs);padding:10px;font-family:'Sora',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer;transition:opacity .2s,transform .15s;}
+.prog-btn:active{opacity:.88;transform:scale(.98);}
+.prog-btn:disabled{opacity:.38;cursor:default;}
 
-/* Mood chart */
-.mood-chart{display:flex;align-items:flex-end;justify-content:space-between;gap:var(--spacing-xs);height:80px;margin-top:var(--spacing-sm)}
-.mood-chart-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
-.mood-chart-bar{width:100%;border-radius:4px 4px 0 0;min-width:16px;transition:height .8s var(--ease-out-expo)}
-.mood-chart-label{font-size:.6rem;color:var(--text-muted)}
+/* Footer */
+.footer-note{margin:0 15px;padding:10px 14px;background:rgba(74,144,217,.06);border-radius:var(--rs);border:1px solid var(--brd);font-size:.68rem;color:var(--muted);line-height:1.6;text-align:center;transition:background var(--tr),border-color var(--tr);}
+.swipe-hint{text-align:center;font-size:9.5px;color:var(--muted);padding:7px 0 2px;opacity:.45;}
+.spacer{height:16px;}
 
-.badges-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--spacing-sm);padding:0 var(--spacing-md)}
-.badge{text-align:center;padding:var(--spacing-sm);border-radius:var(--radius-lg);background:var(--bg-glass);border:1px solid rgba(255,255,255,.04);transition:var(--transition)}
-.badge.unlocked{border-color:rgba(212,168,67,.15);background:rgba(212,168,67,.04)}
-.badge.locked{opacity:.25;filter:grayscale(1)}
-.badge .badge-icon{font-size:1.6rem;display:block;margin-bottom:4px}
-.badge .badge-name{font-size:.6rem;color:var(--text-muted);line-height:1.2;font-weight:400}
+/* ══ BOTTOM NAV ══ */
+.bnav{background:var(--surface);border-top:1px solid var(--brd);display:grid;grid-template-columns:repeat(5,1fr);padding:7px 0 20px;transition:background var(--tr),border-color var(--tr);}
+.ni{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;padding:6px 2px;border-radius:10px;border:none;background:transparent;font-family:'Sora',sans-serif;transition:transform .18s;}
+.ni:active{transform:scale(.85);}
+.ni-w{position:relative;}
+.ni-ico{font-size:17px;}
+.ni-badge{position:absolute;top:-4px;right:-6px;width:14px;height:14px;background:var(--accent);border-radius:50%;font-size:7px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;border:1.5px solid var(--surface);transition:transform .2s;}
+.ni-lbl{font-size:8.5px;font-weight:600;color:var(--muted);}
+.ni.on .ni-lbl{color:var(--accent);}
+.ni-dot{width:3px;height:3px;background:var(--accent);border-radius:50%;display:none;}
+.ni.on .ni-dot{display:block;}
 
-/* ═══ COACH BUBBLE ═══ */
-.coach-section{padding:0 var(--spacing-md);margin-bottom:var(--spacing-lg)}
-.coach-bubble{background:var(--bg-glass);backdrop-filter:var(--blur);border:1px solid rgba(212,168,67,.08);border-radius:var(--radius-xl);padding:var(--spacing-lg);position:relative;overflow:hidden}
-.coach-bubble::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,rgba(212,168,67,.03),transparent 50%);pointer-events:none}
-.coach-avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--gold-dark),var(--gold));display:flex;align-items:center;justify-content:center;font-size:1rem;margin-bottom:var(--spacing-sm);box-shadow:0 4px 16px rgba(212,168,67,.15)}
-.coach-text{font-family:var(--font-display);font-size:var(--fs-lg);color:var(--text-primary);font-style:italic;line-height:1.5}
-.coach-actions{display:flex;gap:var(--spacing-xs);margin-top:var(--spacing-md);flex-wrap:wrap}
+/* Toast */
+.toast{position:fixed;top:24px;left:50%;transform:translateX(-50%) translateY(-90px);background:var(--primary);color:#fff;padding:8px 16px;border-radius:99px;font-size:11.5px;font-weight:600;z-index:999;transition:transform .32s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;box-shadow:var(--shd2);pointer-events:none;}
+[data-mode=contrast] .toast{background:var(--accent);color:#000;}
+.toast.show{transform:translateX(-50%) translateY(0);}
 
-/* ═══ ONBOARDING ═══ */
-.onboarding{position:fixed;inset:0;background:var(--bg-primary);z-index:2000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:var(--spacing-lg);overflow:hidden}
-.onboarding::before{content:'';position:absolute;top:20%;left:50%;transform:translate(-50%,-50%);width:300px;height:300px;background:radial-gradient(circle,rgba(212,168,67,.06),transparent 70%);animation:morphBlob 8s ease-in-out infinite;pointer-events:none}
-.onboarding.hidden{display:none}
-.onb-step{display:none;flex-direction:column;align-items:center;text-align:center;width:100%;max-width:420px;animation:fadeUp .6s var(--ease-out-expo) forwards}
-.onb-step.active{display:flex}
-.onb-logo{font-family:var(--font-display);font-size:var(--fs-hero);background:linear-gradient(135deg,var(--gold-light),var(--gold),var(--gold-dark));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:var(--spacing-xs);line-height:1.1;font-style:italic}
-.onb-title{font-family:var(--font-display);font-size:var(--fs-2xl);color:var(--text-primary);margin-bottom:var(--spacing-sm);font-style:italic}
-.onb-subtitle{font-size:var(--fs-base);color:var(--text-secondary);margin-bottom:var(--spacing-lg);line-height:1.5;font-weight:300}
-.onb-options{display:flex;flex-wrap:wrap;gap:var(--spacing-sm);justify-content:center;margin-bottom:var(--spacing-lg);width:100%}
-.onb-option{background:var(--bg-glass);border:1.5px solid rgba(255,255,255,.06);border-radius:var(--radius-lg);padding:var(--spacing-md);cursor:pointer;transition:var(--transition);min-width:125px;flex:1;max-width:165px;min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
-.onb-option:hover{border-color:rgba(212,168,67,.25);transform:translateY(-2px)}
-.onb-option.selected{border-color:var(--gold);background:rgba(212,168,67,.06)}
-.onb-option .opt-icon{font-size:2rem}
-.onb-option .opt-label{font-size:var(--fs-sm);color:var(--text-primary);font-weight:500}
-.onb-dots{display:flex;gap:8px;margin-bottom:var(--spacing-lg)}
-.onb-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.08);transition:var(--transition)}
-.onb-dot.active{background:var(--gold);width:24px}
-.onb-name-input{background:var(--bg-glass);border:1.5px solid rgba(212,168,67,.12);border-radius:var(--radius-lg);padding:18px 24px;font-size:var(--fs-lg);color:var(--text-primary);text-align:center;width:100%;max-width:300px;margin-bottom:var(--spacing-lg);font-family:var(--font-body);transition:var(--transition)}
-.onb-name-input:focus{border-color:var(--gold);box-shadow:0 0 0 4px rgba(212,168,67,.08)}
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.a1{animation:fadeUp .42s .05s both}.a2{animation:fadeUp .42s .12s both}.a3{animation:fadeUp .42s .18s both}
+.a4{animation:fadeUp .42s .24s both}.a5{animation:fadeUp .42s .30s both}.a6{animation:fadeUp .42s .36s both}
 
-.game-header{display:flex;justify-content:space-between;align-items:center;padding:0 var(--spacing-md);margin-bottom:var(--spacing-md)}
-.game-score{font-family:var(--font-display);font-size:var(--fs-lg);color:var(--gold);font-style:italic}
-.game-back{background:var(--bg-glass);border:1px solid rgba(255,255,255,.06);color:var(--text-secondary);padding:8px 16px;border-radius:var(--radius);font-size:var(--fs-sm);min-height:38px;transition:var(--transition)}
-.game-back:hover{border-color:rgba(212,168,67,.2);color:var(--gold)}
-
-.toast{position:fixed;top:56px;left:50%;transform:translateX(-50%) translateY(-120px);background:rgba(10,10,18,.92);backdrop-filter:var(--blur);border:1px solid rgba(212,168,67,.15);color:var(--gold-light);padding:var(--spacing-sm) var(--spacing-lg);border-radius:var(--radius-xl);font-size:var(--fs-sm);font-weight:600;z-index:3000;transition:transform .5s var(--ease-out-expo);pointer-events:none;white-space:nowrap;box-shadow:0 8px 32px rgba(0,0,0,.5)}
-.toast.show{transform:translateX(-50%) translateY(0)}
-
-.level-overlay{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:2500;display:none;align-items:center;justify-content:center;flex-direction:column;gap:var(--spacing-md)}
-.level-overlay.show{display:flex}
-.level-overlay .level-badge{font-size:5rem;animation:levelUp .8s var(--ease-out-back) forwards}
-.level-overlay .level-text{font-family:var(--font-display);font-size:var(--fs-2xl);color:var(--gold);font-style:italic}
-.level-overlay .level-sub{color:var(--text-secondary);font-size:var(--fs-base);font-weight:300}
-.confetti-piece{position:fixed;z-index:3001;pointer-events:none;animation:confetti 2s ease-out forwards}
-
-.empty-state{text-align:center;padding:var(--spacing-2xl) var(--spacing-md);color:var(--text-muted)}
-.empty-state .empty-icon{font-size:2.5rem;margin-bottom:var(--spacing-sm);opacity:.3}
-.empty-state p{font-size:var(--fs-sm);font-weight:300}
-
-/* ═══ MOTIVATIONAL TICKER ═══ */
-.ticker-wrap{overflow:hidden;margin:0 var(--spacing-md) var(--spacing-lg);border-radius:var(--radius);background:rgba(212,168,67,.03);border:1px solid rgba(212,168,67,.06);padding:10px 0}
-.ticker-inner{display:flex;white-space:nowrap;animation:ticker 30s linear infinite}
-.ticker-inner span{font-size:var(--fs-xs);color:var(--text-muted);padding:0 var(--spacing-lg);font-weight:300;letter-spacing:.04em}
-
-@media(max-width:480px){
-.app{padding-bottom:90px}
-.memory-grid{gap:6px}
-.badges-grid{gap:6px}
-.mood-grid{gap:4px}
-.mood-btn{min-height:66px;padding:8px 4px}
-.mood-btn .emoji{font-size:1.5rem}
-.sound-grid{grid-template-columns:repeat(2,1fr)}
-}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+/* Tab pages */
+.tab-page{display:none;}
+.tab-page.show{display:block;}
 </style>
 </head>
 <body>
-
-<div class="mesh-bg" aria-hidden="true">
-<div class="orb"></div><div class="orb"></div><div class="orb"></div>
-<div class="grid-overlay"></div>
-</div>
-<canvas id="particleCanvas" aria-hidden="true"></canvas>
-
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
-<div class="level-overlay" id="levelOverlay" role="dialog" aria-label="Level Up">
-<div class="level-badge" id="levelBadge">⭐</div>
-<div class="level-text" id="levelText"></div>
-<div class="level-sub" id="levelSub"></div>
-<button class="btn btn-gold btn-lg" onclick="closeLevelUp()" style="margin-top:20px">OK</button>
-</div>
+<div class="phone" id="app">
 
 <!-- ═══ ONBOARDING ═══ -->
-<div class="onboarding" id="onboarding" role="dialog" aria-label="Onboarding">
-<div class="onb-step active" data-step="1">
-<div class="onb-logo">Coaching AI</div>
-<div class="onb-subtitle" data-i18n="onb_welcome_sub" style="margin-top:8px">Cum te cheamă?</div>
-<input type="text" class="onb-name-input" id="onbName" placeholder="Numele tău" data-i18n-placeholder="onb_name_ph" aria-label="Nume" autocomplete="name">
-<div class="onb-dots"><span class="onb-dot active"></span><span class="onb-dot"></span><span class="onb-dot"></span></div>
-<button class="btn btn-gold btn-lg" onclick="onbNext(1)" data-i18n="onb_next">Continuă</button>
-</div>
-<div class="onb-step" data-step="2">
-<div class="onb-title" data-i18n="onb_inspire">Ce te inspiră?</div>
-<div class="onb-subtitle" data-i18n="onb_inspire_sub">Alege una sau mai multe</div>
-<div class="onb-options" id="onbInterests">
-<div class="onb-option" data-val="mindfulness" tabindex="0" role="checkbox" aria-checked="false"><span class="opt-icon">🧘</span><span class="opt-label" data-i18n="int_mindfulness">Mindfulness</span></div>
-<div class="onb-option" data-val="creativity" tabindex="0" role="checkbox" aria-checked="false"><span class="opt-icon">🎨</span><span class="opt-label" data-i18n="int_creativity">Creativitate</span></div>
-<div class="onb-option" data-val="sleep" tabindex="0" role="checkbox" aria-checked="false"><span class="opt-icon">🌙</span><span class="opt-label" data-i18n="int_sleep">Somn bun</span></div>
-<div class="onb-option" data-val="gratitude" tabindex="0" role="checkbox" aria-checked="false"><span class="opt-icon">🙏</span><span class="opt-label" data-i18n="int_gratitude">Recunoștință</span></div>
-<div class="onb-option" data-val="nature" tabindex="0" role="checkbox" aria-checked="false"><span class="opt-icon">🌿</span><span class="opt-label" data-i18n="int_nature">Natură</span></div>
-<div class="onb-option" data-val="social" tabindex="0" role="checkbox" aria-checked="false"><span class="opt-icon">💛</span><span class="opt-label" data-i18n="int_social">Conexiuni</span></div>
-</div>
-<div class="onb-dots"><span class="onb-dot"></span><span class="onb-dot active"></span><span class="onb-dot"></span></div>
-<button class="btn btn-gold btn-lg" onclick="onbNext(2)" data-i18n="onb_next">Continuă</button>
-</div>
-<div class="onb-step" data-step="3">
-<div style="font-size:4rem;margin-bottom:16px;animation:float 3s ease-in-out infinite">✦</div>
-<div class="onb-title" id="onbGreeting" data-i18n="onb_ready">Pregătit?</div>
-<div class="onb-subtitle" data-i18n="onb_ready_sub">Începi de la Nivel 1, cu 0 XP. Fiecare acțiune contează.</div>
-<div class="onb-dots"><span class="onb-dot"></span><span class="onb-dot"></span><span class="onb-dot active"></span></div>
-<button class="btn btn-gold btn-lg" onclick="onbFinish()" data-i18n="onb_start">Să începem ✦</button>
-</div>
+<div class="ob" id="ob">
+  <div class="ob-dots">
+    <div class="ob-dot cur" id="od1"></div>
+    <div class="ob-dot" id="od2"></div>
+    <div class="ob-dot" id="od3"></div>
+  </div>
+
+  <!-- Step 1: Nume -->
+  <div class="ob-step show" id="obs1">
+    <div class="ob-ico">👋</div>
+    <div class="ob-title">Bun venit!</div>
+    <p class="ob-sub">Cum te numești? Vom personaliza experiența pentru tine.</p>
+    <input class="ob-inp" id="obName" placeholder="Prenumele tău..." maxlength="20" autocomplete="off"/>
+    <button class="ob-btn" onclick="obNext(1)">Continuă →</button>
+  </div>
+
+  <!-- Step 2: Interese -->
+  <div class="ob-step" id="obs2">
+    <div class="ob-ico">✨</div>
+    <div class="ob-title">Ce te inspiră?</div>
+    <p class="ob-sub">Alege una sau mai multe teme pentru ritual-ul tău zilnic.</p>
+    <div class="interest-grid">
+      <div class="int-chip" onclick="this.classList.toggle('sel')"><span class="int-ico">🧘</span><span class="int-lbl">Mindfulness</span></div>
+      <div class="int-chip" onclick="this.classList.toggle('sel')"><span class="int-ico">🎨</span><span class="int-lbl">Creativitate</span></div>
+      <div class="int-chip" onclick="this.classList.toggle('sel')"><span class="int-ico">🌙</span><span class="int-lbl">Somn bun</span></div>
+      <div class="int-chip" onclick="this.classList.toggle('sel')"><span class="int-ico">🙏</span><span class="int-lbl">Recunoștință</span></div>
+      <div class="int-chip" onclick="this.classList.toggle('sel')"><span class="int-ico">🌿</span><span class="int-lbl">Natură</span></div>
+      <div class="int-chip" onclick="this.classList.toggle('sel')"><span class="int-ico">💛</span><span class="int-lbl">Conexiuni</span></div>
+    </div>
+    <button class="ob-btn" onclick="obNext(2)">Continuă →</button>
+  </div>
+
+  <!-- Step 3: Ready -->
+  <div class="ob-step" id="obs3">
+    <div class="ob-ico">✦</div>
+    <div class="ob-title">Pregătit?</div>
+    <div class="ob-xp-preview">
+      <p>Începi de la <strong>Nivel 1</strong> cu <strong>0 XP</strong>.<br>Fiecare acțiune contează.</p>
+    </div>
+    <button class="ob-btn" onclick="finishOB()">Să începem ✦</button>
+  </div>
 </div>
 
-<!-- ═══ A11Y BAR ═══ -->
-<div class="a11y-bar" role="toolbar" aria-label="Setări accesibilitate">
-<button onclick="toggleLargeText()" id="btnLargeText" aria-pressed="false">Aa+</button>
-<button onclick="toggleContrast()" id="btnContrast" aria-pressed="false">◑</button>
-<button onclick="toggleLang()" class="lang-toggle" id="btnLang" aria-label="Switch language">RO</button>
+<!-- ═══ DYNAMIC ISLAND ═══ -->
+<div class="di-wrap">
+  <div class="di" id="di" onclick="toggleDI()">
+    <div class="di-cam"></div><div class="di-pulse"></div>
+    <span class="di-txt" id="diTxt"></span>
+  </div>
 </div>
 
-<div class="app" id="mainApp" style="display:none">
-
-<!-- ═══ HOME ═══ -->
-<div class="page active" id="pageHome" role="main">
-<div class="header">
-<div class="logo">Coaching<span class="ai-tag">AI</span></div>
-<div class="subtitle" id="greetingSub" data-i18n="greeting_sub">Bunele obiceiuri încep aici</div>
+<!-- STATUS BAR -->
+<div class="sbar">
+  <span class="stime" id="clock">--:--</span>
+  <div class="sicons">
+    <div class="sig"><span></span><span></span><span></span><span></span></div>
+    <span class="s5g">5G</span>
+    <div class="bat"><div class="batf"></div></div>
+  </div>
 </div>
 
-<div class="xp-section">
-<div class="xp-card">
-<div class="xp-info">
-<span class="xp-level" id="xpLevel">Level 1</span>
-<span class="xp-points" id="xpPoints">0 / 100 XP</span>
-</div>
-<div class="xp-bar-bg" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" id="xpBarBg">
-<div class="xp-bar-fill" id="xpBarFill" style="width:0%"></div>
-</div>
-</div>
-</div>
-
-<!-- Motivational Ticker -->
-<div class="ticker-wrap" aria-hidden="true">
-<div class="ticker-inner" id="tickerInner"></div>
-</div>
-
-<div class="mood-section">
-<h3 data-i18n="mood_title">Cum te simți?</h3>
-<div class="mood-grid" role="radiogroup" aria-label="Stare de spirit" id="moodGrid">
-<button class="mood-btn" data-mood="great" role="radio" aria-checked="false"><span class="emoji">😊</span><span class="label" data-i18n="mood_great">Excelent</span></button>
-<button class="mood-btn" data-mood="good" role="radio" aria-checked="false"><span class="emoji">🙂</span><span class="label" data-i18n="mood_good">Bine</span></button>
-<button class="mood-btn" data-mood="ok" role="radio" aria-checked="false"><span class="emoji">😐</span><span class="label" data-i18n="mood_ok">OK</span></button>
-<button class="mood-btn" data-mood="low" role="radio" aria-checked="false"><span class="emoji">😔</span><span class="label" data-i18n="mood_low">Obosit</span></button>
-<button class="mood-btn" data-mood="bad" role="radio" aria-checked="false"><span class="emoji">😢</span><span class="label" data-i18n="mood_bad">Greu</span></button>
-</div>
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="greet">
+    <span class="gsub" id="gsub">Bun venit</span>
+    <div class="gname">
+      <span class="ndisp" id="nDisp" onclick="startEdit()">Andrei</span>
+      <span class="npen" onclick="startEdit()">✏️</span>
+      <div class="nedit" id="nEdit">
+        <input class="ninp" id="nInp" maxlength="20" placeholder="Numele tău"/>
+        <button class="nok" onclick="saveName()">OK</button>
+      </div>
+    </div>
+  </div>
+  <div class="xp-topbar">
+    <div class="xp-row">
+      <span class="xp-lbl" id="lvlLbl">Nivel 1</span>
+      <span class="xp-val" id="xpLbl">0 / 100 XP</span>
+    </div>
+    <div class="xp-track"><div class="xp-fill" id="xpFill" style="width:0%"></div></div>
+  </div>
+  <div class="topright">
+    <button class="ibtn helpbtn" onclick="showToast('Apasă orice element 💡')" aria-label="Ajutor">?</button>
+    <button class="ibtn avbtn" id="avBtn" onclick="showToast('Profilul tău 👤')">A</button>
+  </div>
 </div>
 
-<h2 class="section-title"><span class="accent">✦</span> <span data-i18n="ritual_title">Ritualul Zilei</span></h2>
-<div class="ritual-section">
-<div class="ritual-card">
-<div class="ritual-quote" id="ritualQuote">"Fiecare zi e o nouă șansă de a fi mai bun."</div>
-<div class="ritual-author" id="ritualAuthor">— Coaching AI</div>
-<div class="ritual-action">
-<button class="btn btn-gold" onclick="completeRitual()" id="ritualBtn" data-i18n="ritual_done">Am citit ✦ +15 XP</button>
-<button class="btn btn-outline btn-sm" onclick="newRitual()" data-i18n="ritual_new">Alt citat</button>
-</div>
-</div>
-</div>
+<!-- SCROLL WRAP -->
+<div class="swrap">
+  <div class="ptr" id="ptr"><div class="ptr-sp" id="ptrSp"></div><span id="ptrTxt">Trage pentru reîmprospătare</span></div>
 
-<!-- ═══ HABITS ═══ -->
-<h2 class="section-title"><span class="accent">✦</span> <span data-i18n="habits_title">Obiceiuri</span></h2>
-<div class="habits-section" id="habitsSection"></div>
+  <!-- SKELETON -->
+  <div class="skel-screen" id="skelScreen">
+    <div class="sk sk-hero"></div>
+    <div class="sk sk-card"></div><div class="sk sk-card"></div>
+    <div class="sk sk-half"></div><div class="sk sk-half"></div>
+  </div>
 
-<h2 class="section-title"><span class="accent">✦</span> <span data-i18n="coach_title">Coach AI</span></h2>
-<div class="coach-section">
-<div class="coach-bubble">
-<div class="coach-avatar">✦</div>
-<div class="coach-text" id="coachText">Bine ai venit! Sunt aici să te ghidez.</div>
-<div class="coach-actions">
-<button class="btn btn-sm btn-outline" onclick="coachTip('motivation')" data-i18n="coach_motivate">Motivează-mă</button>
-<button class="btn btn-sm btn-outline" onclick="coachTip('calm')" data-i18n="coach_calm">Liniștește-mă</button>
-<button class="btn btn-sm btn-outline" onclick="coachTip('focus')" data-i18n="coach_focus">Focus</button>
-</div>
-</div>
-</div>
-</div>
+  <!-- MAIN -->
+  <div class="scr" id="main" style="display:none">
 
-<!-- ═══ TASKS ═══ -->
-<div class="page" id="pageTasks" role="main">
-<div class="header">
-<div class="logo" style="font-size:var(--fs-xl)">Sarcini</div>
-<div class="subtitle" data-i18n="tasks_sub">Organizează-ți ziua</div>
-</div>
-<div class="todo-input-row">
-<input type="text" class="todo-input" id="todoInput" placeholder="Adaugă o sarcină..." data-i18n-placeholder="todo_ph" aria-label="Sarcină nouă" maxlength="120">
-<button class="btn btn-gold" onclick="addTodo()" aria-label="Adaugă" style="padding:14px 20px;font-size:1.3rem">+</button>
-</div>
-<div class="priority-row" role="radiogroup" aria-label="Prioritate">
-<button class="priority-btn" id="priUrgent" onclick="setPriority('urgent')" data-i18n="pri_urgent">🔴 Urgent</button>
-<button class="priority-btn active-normal" id="priNormal" onclick="setPriority('normal')" data-i18n="pri_normal">🟡 Normal</button>
-<button class="priority-btn" id="priCalm" onclick="setPriority('calm')" data-i18n="pri_calm">🟢 Calm</button>
-</div>
+    <!-- ── TAB: ACASĂ ── -->
+    <div class="tab-page show" id="tab-home">
 
-<!-- Pomodoro Timer -->
-<h2 class="section-title" style="margin-top:var(--spacing-md)"><span class="accent">⏱</span> <span data-i18n="pomo_title">Pomodoro</span></h2>
-<div class="pomo-container" id="pomoContainer"></div>
+      <!-- HERO -->
+      <div class="hero a1">
+        <div class="hbadge"><span class="hbdot"></span> CoachingAI · Accesibil</div>
+        <h1 id="heroH">Cum te pot ajuta azi?</h1>
+        <p>Ritualuri zilnice, obiceiuri sănătoase și coaching personalizat.</p>
+      </div>
 
-<div class="todo-tabs">
-<button class="todo-tab active" onclick="setTodoTab('active')" id="tabActive" data-i18n="tab_active">Active</button>
-<button class="todo-tab" onclick="setTodoTab('done')" id="tabDone" data-i18n="tab_done">Finalizate</button>
-</div>
-<div class="todo-list" id="todoList" role="list"></div>
-</div>
+      <!-- MOOD -->
+      <div class="mood-row a2">
+        <div class="mood-btn" onclick="selMood(this,'😊','Excelent')"><span class="mood-ico">😊</span><span class="mood-lbl">Excelent</span></div>
+        <div class="mood-btn" onclick="selMood(this,'🙂','Bine')"><span class="mood-ico">🙂</span><span class="mood-lbl">Bine</span></div>
+        <div class="mood-btn" onclick="selMood(this,'😐','OK')"><span class="mood-ico">😐</span><span class="mood-lbl">OK</span></div>
+        <div class="mood-btn" onclick="selMood(this,'😔','Obosit')"><span class="mood-ico">😔</span><span class="mood-lbl">Obosit</span></div>
+        <div class="mood-btn" onclick="selMood(this,'😢','Greu')"><span class="mood-ico">😢</span><span class="mood-lbl">Greu</span></div>
+      </div>
 
-<!-- ═══ FOCUS ═══ -->
-<div class="page" id="pageFocus" role="main">
-<div class="header">
-<div class="logo" style="font-size:var(--fs-xl)">Focus</div>
-<div class="subtitle" data-i18n="focus_sub">Relaxare și concentrare</div>
-</div>
+      <!-- RITUAL ZILNIC -->
+      <div class="sec a3">
+        <div class="sec-t">✦ Ritualul Zilei</div>
+        <div class="quote-card">
+          <div class="quote-text" id="quoteText">"Fiecare zi e o nouă șansă de a fi mai bun."</div>
+          <div class="quote-author">— Coaching AI</div>
+          <div class="quote-actions">
+            <button class="qbtn primary" onclick="readRitual()">Am citit ✦ +15 XP</button>
+            <button class="qbtn" onclick="nextQuote()">Alt citat</button>
+          </div>
+        </div>
+      </div>
 
-<!-- Sound Mixer -->
-<h2 class="section-title"><span class="accent">🎧</span> <span data-i18n="sound_title">Sunete Ambientale</span></h2>
-<div class="sound-section">
-<div class="sound-grid" id="soundGrid"></div>
-</div>
+      <!-- ACȚIUNI RAPIDE -->
+      <div class="sec a4">
+        <div class="sec-t">Acțiuni rapide</div>
+        <div class="acard" onclick="ripple(event,this);switchTab('tab-tasks');showToast('Sarcini deschise 📋')">
+          <div class="aico b">📋</div>
+          <div class="atxt"><div class="atit">Sarcini de azi</div><div class="adesc">Organizează-ți ziua eficient</div></div>
+          <div class="aarr">›</div>
+        </div>
+        <div class="acard" onclick="ripple(event,this);switchTab('tab-focus');showToast('Focus activat 🧘')">
+          <div class="aico p">🧘</div>
+          <div class="atxt"><div class="atit">Sesiune Focus</div><div class="adesc">Pomodoro + sunete ambientale</div></div>
+          <div class="aarr">›</div>
+        </div>
+        <div class="acard" onclick="ripple(event,this);switchTab('tab-games');showToast('Jocuri deschise 🎮')">
+          <div class="aico r">🎮</div>
+          <div class="atxt"><div class="atit">Mini Jocuri</div><div class="adesc">Antrenează-ți mintea, câștigă XP</div></div>
+          <div class="aarr">›</div>
+        </div>
+      </div>
 
-<!-- Journal -->
-<h2 class="section-title"><span class="accent">📝</span> <span data-i18n="journal_title">Jurnal</span></h2>
-<div class="journal-section">
-<div class="journal-prompts" id="journalPrompts"></div>
-<textarea class="journal-textarea" id="journalInput" placeholder="Scrie ce simți..." data-i18n-placeholder="journal_ph" maxlength="500"></textarea>
-<div style="display:flex;gap:var(--spacing-xs);margin-top:var(--spacing-sm)">
-<button class="btn btn-gold btn-sm" onclick="saveJournal()" data-i18n="journal_save">Salvează +10 XP</button>
-</div>
-<div class="journal-entries" id="journalEntries"></div>
-</div>
-</div>
+      <!-- PROFIL PROGRESS -->
+      <div class="sec a5">
+        <div class="sec-t">Progres profil</div>
+        <div class="prog-card">
+          <div class="prog-hdr"><span class="prog-lbl">Configurare profil</span><span class="prog-pct" id="pPct">0%</span></div>
+          <div class="prog-slbl" id="pLbl">Pasul 1 din 3</div>
+          <div class="prog-track"><div class="prog-fill" id="pFill"></div></div>
+          <div class="steps-row">
+            <div class="step-item" onclick="goStep(1)"><div class="sdot done" id="s1">✓</div><div class="sname">Date de bază</div></div>
+            <div class="step-item" onclick="goStep(2)"><div class="sdot active" id="s2">2</div><div class="sname">Preferințe</div></div>
+            <div class="step-item" onclick="goStep(3)"><div class="sdot pending" id="s3">3</div><div class="sname">Confirmare</div></div>
+          </div>
+          <button class="prog-btn" id="pBtn" onclick="advStep()">Continuă la pasul următor →</button>
+        </div>
+      </div>
 
-<!-- ═══ GAMES ═══ -->
-<div class="page" id="pageGames" role="main">
-<div class="header">
-<div class="logo" style="font-size:var(--fs-xl)">Mini Jocuri</div>
-<div class="subtitle" data-i18n="games_sub">Antrenează-ți mintea</div>
-</div>
-<div id="gameSelect">
-<div class="games-grid">
-<div class="game-card" onclick="startGame('memory')" tabindex="0" role="button"><span class="game-icon">🃏</span><span class="game-name" data-i18n="game_memory">Memory</span><span class="game-xp">+50–100 XP</span></div>
-<div class="game-card" onclick="startGame('quiz')" tabindex="0" role="button"><span class="game-icon">🧠</span><span class="game-name" data-i18n="game_quiz">Quiz</span><span class="game-xp">+20–100 XP</span></div>
-<div class="game-card" onclick="startGame('puzzle')" tabindex="0" role="button"><span class="game-icon">🔤</span><span class="game-name" data-i18n="game_puzzle">Puzzle</span><span class="game-xp">+30–80 XP</span></div>
-<div class="game-card" onclick="startGame('breathing')" tabindex="0" role="button"><span class="game-icon">🌬️</span><span class="game-name" data-i18n="game_breathing">Respirație</span><span class="game-xp">+20–80 XP</span></div>
-</div>
-</div>
-<div id="gameArea" style="display:none"></div>
-</div>
+      <!-- OBICEIURI -->
+      <div class="sec a6">
+        <div class="sec-t">✦ Obiceiuri</div>
+        <div class="card">
+          <div class="habit-item">
+            <div class="habit-check" id="h1" onclick="togHabit('h1',10)"></div>
+            <div class="habit-info"><div class="habit-name">🧘 Meditație 5 min</div><div class="habit-streak">🔥 0 zile la rând</div></div>
+            <div class="habit-xp">+10 XP</div>
+          </div>
+          <div class="habit-item">
+            <div class="habit-check" id="h2" onclick="togHabit('h2',15)"></div>
+            <div class="habit-info"><div class="habit-name">💧 8 pahare apă</div><div class="habit-streak">🔥 0 zile la rând</div></div>
+            <div class="habit-xp">+15 XP</div>
+          </div>
+          <div class="habit-item">
+            <div class="habit-check" id="h3" onclick="togHabit('h3',20)"></div>
+            <div class="habit-info"><div class="habit-name">📚 Citit 20 min</div><div class="habit-streak">🔥 0 zile la rând</div></div>
+            <div class="habit-xp">+20 XP</div>
+          </div>
+          <div class="habit-item">
+            <div class="habit-check" id="h4" onclick="togHabit('h4',10)"></div>
+            <div class="habit-info"><div class="habit-name">🌿 Mers pe jos</div><div class="habit-streak">🔥 0 zile la rând</div></div>
+            <div class="habit-xp">+10 XP</div>
+          </div>
+        </div>
+      </div>
 
-<!-- ═══ DASHBOARD ═══ -->
-<div class="page" id="pageDash" role="main">
-<div class="header">
-<div class="logo" style="font-size:var(--fs-xl)">Dashboard</div>
-<div class="subtitle" data-i18n="dash_sub">Progresul tău</div>
-</div>
-<div class="stats-grid" id="statsGrid">
-<div class="stat-card"><div class="stat-value" id="statXP">0</div><div class="stat-label">XP Total</div></div>
-<div class="stat-card"><div class="stat-value" id="statLevel">1</div><div class="stat-label">Level</div></div>
-<div class="stat-card"><div class="stat-value" id="statRituals">0</div><div class="stat-label" data-i18n="stat_rituals">Ritualuri</div></div>
-<div class="stat-card"><div class="stat-value" id="statTasks">0</div><div class="stat-label" data-i18n="stat_tasks">Sarcini</div></div>
-<div class="stat-card"><div class="stat-value" id="statGames">0</div><div class="stat-label" data-i18n="stat_games">Jocuri</div></div>
-<div class="stat-card streak"><div class="stat-value" id="statStreak">0 🔥</div><div class="stat-label" data-i18n="stat_streak">Zile la rând</div></div>
-</div>
-<div class="chart-container">
-<div class="chart-card">
-<div class="chart-title" data-i18n="chart_weekly">Activitate Săptămânală</div>
-<div class="bar-chart" id="barChart"></div>
-</div>
-</div>
-<div class="chart-container">
-<div class="chart-card">
-<div class="chart-title" data-i18n="chart_mood">Istoricul Dispoziției</div>
-<div class="mood-chart" id="moodChartArea"></div>
-</div>
-</div>
-<h2 class="section-title"><span class="accent">✦</span> <span data-i18n="badges_title">Insigne</span></h2>
-<div class="badges-grid" id="badgesGrid"></div>
-</div>
+      <!-- COACH AI -->
+      <div class="sec" style="padding-bottom:0">
+        <div class="sec-t">✦ Coach AI</div>
+        <div class="card">
+          <div class="coach-bubble" id="coachBubble">✦ Bine ai venit! Sunt aici să te ghidez spre obiceiuri mai bune.</div>
+          <div class="coach-chip-row">
+            <div class="coach-chip" onclick="coachMsg(this,'motivate')">Motivează-mă</div>
+            <div class="coach-chip" onclick="coachMsg(this,'calm')">Liniștește-mă</div>
+            <div class="coach-chip" onclick="coachMsg(this,'focus')">Focus</div>
+          </div>
+        </div>
+      </div>
 
-<!-- ═══ NAV ═══ -->
-<nav class="nav" role="navigation" aria-label="Navigare">
-<div class="nav-inner">
-<button class="nav-btn active" onclick="goPage('Home')" data-page="Home"><span class="nav-icon">🏠</span><span class="nav-label" data-i18n="nav_home">Acasă</span></button>
-<button class="nav-btn" onclick="goPage('Tasks')" data-page="Tasks"><span class="nav-icon">📋</span><span class="nav-label" data-i18n="nav_tasks">Sarcini</span></button>
-<button class="nav-btn" onclick="goPage('Focus')" data-page="Focus"><span class="nav-icon">🧘</span><span class="nav-label" data-i18n="nav_focus">Focus</span></button>
-<button class="nav-btn" onclick="goPage('Games')" data-page="Games"><span class="nav-icon">🎮</span><span class="nav-label" data-i18n="nav_games">Jocuri</span></button>
-<button class="nav-btn" onclick="goPage('Dash')" data-page="Dash"><span class="nav-icon">📊</span><span class="nav-label" data-i18n="nav_dash">Progres</span></button>
-</div>
+      <div class="spacer"></div>
+    </div>
+
+    <!-- ── TAB: SARCINI ── -->
+    <div class="tab-page" id="tab-tasks">
+      <div class="hero a1">
+        <div class="hbadge"><span class="hbdot"></span> Sarcini</div>
+        <h1>Organizează-ți ziua</h1>
+        <p>Adaugă sarcini și bifează-le pe măsură ce avansezi.</p>
+      </div>
+      <div class="sec a2">
+        <div class="sec-t">Adaugă sarcină</div>
+        <div class="card" style="display:flex;gap:8px;align-items:center;">
+          <input id="taskInp" style="flex:1;background:var(--s2);border:1.5px solid var(--brd);border-radius:var(--rx);padding:10px 12px;font-family:'Sora',sans-serif;font-size:.82rem;color:var(--text);outline:none;caret-color:var(--a2);" placeholder="Nouă sarcină..."/>
+          <select id="taskPrio" style="background:var(--s2);border:1.5px solid var(--brd);border-radius:var(--rx);padding:10px 6px;font-family:'Sora',sans-serif;font-size:.80rem;color:var(--text);outline:none;">
+            <option value="red">🔴 Urgent</option>
+            <option value="yellow">🟡 Normal</option>
+            <option value="green">🟢 Calm</option>
+          </select>
+          <button onclick="addTask()" style="background:var(--a2);color:#fff;border:none;border-radius:var(--rx);width:36px;height:36px;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">+</button>
+        </div>
+      </div>
+      <div class="sec a3">
+        <div class="sec-t">Lista de azi</div>
+        <div class="card" id="taskList"><div style="text-align:center;color:var(--muted);font-size:.80rem;padding:20px 0;">Nicio sarcină. Adaugă una mai sus! ✦</div></div>
+      </div>
+      <div class="spacer"></div>
+    </div>
+
+    <!-- ── TAB: FOCUS ── -->
+    <div class="tab-page" id="tab-focus">
+      <div class="hero a1">
+        <div class="hbadge"><span class="hbdot"></span> Focus</div>
+        <h1>Concentrare profundă</h1>
+        <p>Pomodoro + sunete ambientale pentru stare de flow.</p>
+      </div>
+
+      <!-- POMODORO -->
+      <div class="sec a2">
+        <div class="sec-t">⏱ Pomodoro</div>
+        <div class="card">
+          <div class="pom-mode-row">
+            <div class="pom-mode on" id="pm-focus" onclick="setPomMode('focus',this)">Focus 25'</div>
+            <div class="pom-mode" id="pm-short" onclick="setPomMode('short',this)">Pauză 5'</div>
+            <div class="pom-mode" id="pm-long" onclick="setPomMode('long',this)">Pauză 15'</div>
+          </div>
+          <div class="pom-display">
+            <div class="pom-ring">
+              <svg class="pom-svg" viewBox="0 0 100 100">
+                <defs><linearGradient id="pomGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#4A90D9"/><stop offset="100%" stop-color="#9B59B6"/></linearGradient></defs>
+                <circle class="pom-track" cx="50" cy="50" r="45"/>
+                <circle class="pom-progress" id="pomCirc" cx="50" cy="50" r="45"/>
+              </svg>
+              <div class="pom-center">
+                <div class="pom-time" id="pomTime">25:00</div>
+                <div class="pom-label" id="pomLbl">Focus</div>
+              </div>
+            </div>
+            <div class="pom-btns">
+              <button class="pom-btn" onclick="pomReset()">↺ Reset</button>
+              <button class="pom-btn go" id="pomBtn" onclick="pomToggle()">▶ Start</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AMBIENT SOUNDS -->
+      <div class="sec a3">
+        <div class="sec-t">🎧 Sunete Ambientale</div>
+        <div class="card">
+          <div class="sound-grid">
+            <div class="sound-btn" onclick="togSound(this,'🌧️')"><span class="sound-ico">🌧️</span><span class="sound-lbl">Ploaie</span></div>
+            <div class="sound-btn" onclick="togSound(this,'🌊')"><span class="sound-ico">🌊</span><span class="sound-lbl">Ocean</span></div>
+            <div class="sound-btn" onclick="togSound(this,'🌿')"><span class="sound-ico">🌿</span><span class="sound-lbl">Natură</span></div>
+            <div class="sound-btn" onclick="togSound(this,'🔥')"><span class="sound-ico">🔥</span><span class="sound-lbl">Foc</span></div>
+            <div class="sound-btn" onclick="togSound(this,'☕')"><span class="sound-ico">☕</span><span class="sound-lbl">Cafenea</span></div>
+            <div class="sound-btn" onclick="togSound(this,'🎵')"><span class="sound-ico">🎵</span><span class="sound-lbl">LoFi</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- JOURNAL -->
+      <div class="sec a4">
+        <div class="sec-t">📝 Jurnal</div>
+        <div class="card">
+          <textarea class="journal-ta" id="journalTa" placeholder="Cum te simți azi? Ce vrei să realizezi?"></textarea>
+          <button class="journal-save" onclick="saveJournal()">Salvează intrarea +10 XP</button>
+        </div>
+      </div>
+      <div class="spacer"></div>
+    </div>
+
+    <!-- ── TAB: JOCURI ── -->
+    <div class="tab-page" id="tab-games">
+      <div class="hero a1">
+        <div class="hbadge"><span class="hbdot"></span> Mini Jocuri</div>
+        <h1>Antrenează-ți mintea</h1>
+        <p>Câștigă XP și debloachează insigne.</p>
+      </div>
+      <div class="sec a2">
+        <div class="sec-t">Alege un joc</div>
+        <div class="games-grid">
+          <div class="game-card" onclick="startGame('memory')">
+            <div class="game-ico">🃏</div>
+            <div class="game-name">Memory</div>
+            <div class="game-xp">+<span>50–100 XP</span></div>
+          </div>
+          <div class="game-card" onclick="startGame('breath')">
+            <div class="game-ico">🌬️</div>
+            <div class="game-name">Respirație</div>
+            <div class="game-xp">+<span>20–40 XP</span></div>
+          </div>
+          <div class="game-card" onclick="quizStart()">
+            <div class="game-ico">🧠</div>
+            <div class="game-name">Quiz</div>
+            <div class="game-xp">+<span>20–60 XP</span></div>
+          </div>
+          <div class="game-card" onclick="showToast('Puzzle — în curând! 🔤')">
+            <div class="game-ico">🔤</div>
+            <div class="game-name">Puzzle</div>
+            <div class="game-xp">+<span>30–80 XP</span></div>
+          </div>
+        </div>
+      </div>
+      <!-- Game Area -->
+      <div class="sec a3" id="gameArea" style="display:none">
+        <div class="sec-t" id="gameSectTitle">Joc</div>
+        <div class="card" id="gameContent"></div>
+      </div>
+      <div class="spacer"></div>
+    </div>
+
+    <!-- ── TAB: PROGRES ── -->
+    <div class="tab-page" id="tab-progress">
+      <div class="hero a1">
+        <div class="hbadge"><span class="hbdot"></span> Dashboard</div>
+        <h1>Progresul tău</h1>
+        <p>Urmărește evoluția și câștigă insigne.</p>
+      </div>
+      <div class="sec a2">
+        <div class="sec-t">Statistici</div>
+        <div class="stats-grid">
+          <div class="stat-box"><div class="stat-num" id="statXP">0</div><div class="stat-lbl">XP Total</div></div>
+          <div class="stat-box"><div class="stat-num" id="statLvl">1</div><div class="stat-lbl">Nivel</div></div>
+          <div class="stat-box"><div class="stat-num" id="statStreak">0🔥</div><div class="stat-lbl">Zile la rând</div></div>
+          <div class="stat-box"><div class="stat-num" id="statRituals">0</div><div class="stat-lbl">Ritualuri</div></div>
+          <div class="stat-box"><div class="stat-num" id="statTasks">0</div><div class="stat-lbl">Sarcini</div></div>
+          <div class="stat-box"><div class="stat-num" id="statGames">0</div><div class="stat-lbl">Jocuri</div></div>
+        </div>
+      </div>
+      <div class="sec a3">
+        <div class="sec-t">Activitate săptămânală</div>
+        <div class="card">
+          <div class="week-row" id="weekBars"></div>
+        </div>
+      </div>
+      <div class="sec a4">
+        <div class="sec-t">Insigne</div>
+        <div class="card">
+          <div class="badges-row" id="badgesRow"></div>
+        </div>
+      </div>
+
+      <!-- ACCESIBILITATE -->
+      <div class="sec a5">
+        <div class="sec-t">Setări de accesibilitate</div>
+        <div class="mode-row" style="margin-bottom:8px">
+          <div class="mchip on" id="mc-light" onclick="setMode('light',this)"><span class="mchip-ico">☀️</span><span class="mchip-lbl">Luminos</span></div>
+          <div class="mchip" id="mc-dark" onclick="setMode('dark',this)"><span class="mchip-ico">🌙</span><span class="mchip-lbl">Întunecat</span></div>
+          <div class="mchip" id="mc-contrast" onclick="setMode('contrast',this)"><span class="mchip-ico">◑</span><span class="mchip-lbl">Contrast</span></div>
+        </div>
+        <div class="a11y-card">
+          <div class="a11y-row" style="cursor:default">
+            <div class="a11y-ico">🔤</div>
+            <div class="a11y-info"><div class="a11y-t">Dimensiune text</div><div class="a11y-d">Normal → Mare → Foarte mare</div></div>
+            <div class="f-step">
+              <button class="f-btn" id="fMinus" onclick="chFont(-1)" disabled>−</button>
+              <span class="f-val" id="fVal">A</span>
+              <button class="f-btn" id="fPlus" onclick="chFont(1)">+</button>
+            </div>
+          </div>
+          <div class="a11y-row" onclick="togSimplified(this)" role="switch" aria-checked="false" tabindex="0">
+            <div class="a11y-ico">✦</div>
+            <div class="a11y-info"><div class="a11y-t">Mod simplificat</div><div class="a11y-d">Ascunde informația secundară.</div></div>
+            <button class="tog" tabindex="-1"></button>
+          </div>
+          <div class="a11y-row" onclick="togMotion(this)" role="switch" aria-checked="false" tabindex="0">
+            <div class="a11y-ico">🎞️</div>
+            <div class="a11y-info"><div class="a11y-t">Reduce animațiile</div><div class="a11y-d">Pentru sensibili la mișcare.</div></div>
+            <button class="tog grn" tabindex="-1"></button>
+          </div>
+          <div class="a11y-row" style="cursor:default;padding-bottom:16px;flex-direction:column;align-items:stretch;gap:0">
+            <button class="sr-btn" onclick="haptic();showToast('Screen reader pornit 🔊')"><span style="font-size:15px">🔊</span>Citește ecranul</button>
+          </div>
+        </div>
+      </div>
+      <div class="spacer"></div>
+    </div>
+
+  </div><!-- /scr -->
+</div><!-- /swrap -->
+
+<!-- BOTTOM NAV -->
+<nav class="bnav">
+  <button class="ni on" onclick="switchTab('tab-home');setNav(this)" aria-label="Acasă">
+    <div class="ni-w"><span class="ni-ico">🏠</span></div><span class="ni-lbl">Acasă</span><div class="ni-dot"></div>
+  </button>
+  <button class="ni" onclick="switchTab('tab-tasks');setNav(this)" aria-label="Sarcini">
+    <div class="ni-w"><span class="ni-ico">📋</span><div class="ni-badge" id="nb-tasks">2</div></div><span class="ni-lbl">Sarcini</span><div class="ni-dot"></div>
+  </button>
+  <button class="ni" onclick="switchTab('tab-focus');setNav(this)" aria-label="Focus">
+    <div class="ni-w"><span class="ni-ico">🧘</span></div><span class="ni-lbl">Focus</span><div class="ni-dot"></div>
+  </button>
+  <button class="ni" onclick="switchTab('tab-games');setNav(this)" aria-label="Jocuri">
+    <div class="ni-w"><span class="ni-ico">🎮</span></div><span class="ni-lbl">Jocuri</span><div class="ni-dot"></div>
+  </button>
+  <button class="ni" onclick="switchTab('tab-progress');setNav(this)" aria-label="Progres">
+    <div class="ni-w"><span class="ni-ico">📊</span></div><span class="ni-lbl">Progres</span><div class="ni-dot"></div>
+  </button>
 </nav>
-</div>
+
+</div><!-- /phone -->
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
-// ═══ PARTICLES ═══
-(function(){
-const canvas=document.getElementById('particleCanvas'),ctx=canvas.getContext('2d');
-let particles=[],W,H;
-const reduced=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
-function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
-window.addEventListener('resize',resize);resize();
-function P(){this.x=Math.random()*W;this.y=Math.random()*H;this.vx=(Math.random()-.5)*.12;this.vy=(Math.random()-.5)*.12;this.r=Math.random()*1.5+.4;this.a=Math.random()*.25+.04}
-if(!reduced){for(let i=0;i<35;i++)particles.push(new P());
-(function loop(){ctx.clearRect(0,0,W,H);particles.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=W;if(p.x>W)p.x=0;if(p.y<0)p.y=H;if(p.y>H)p.y=0;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=`rgba(212,168,67,${p.a})`;ctx.fill()});
-for(let i=0;i<particles.length;i++)for(let j=i+1;j<particles.length;j++){const dx=particles[i].x-particles[j].x,dy=particles[i].y-particles[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<100){ctx.beginPath();ctx.moveTo(particles[i].x,particles[i].y);ctx.lineTo(particles[j].x,particles[j].y);ctx.strokeStyle=`rgba(212,168,67,${.03*(1-d/100)})`;ctx.lineWidth=.5;ctx.stroke()}}
-requestAnimationFrame(loop)})()}
-})();
-
-// ═══ STATE ═══
-const STATE={lang:'ro',name:'',interests:[],xp:0,level:1,rituals:0,tasksCompleted:0,gamesPlayed:0,streak:0,lastActive:null,mood:null,todos:[],weeklyXP:[0,0,0,0,0,0,0],badges:{},onboarded:false,highContrast:false,largeText:false,currentPriority:'normal',todoTab:'active',ritualDone:false,
-habits:[{id:1,icon:'💧',name:'Hidratare',nameEn:'Hydration',days:{}},{id:2,icon:'🏃',name:'Mișcare',nameEn:'Exercise',days:{}},{id:3,icon:'📖',name:'Citit',nameEn:'Reading',days:{}}],
-journal:[],moodHistory:[],
-pomoState:'idle',pomoTime:25*60,pomoSession:0,
-habitEmoji:'💧'
-};
-
-// ═══ I18N ═══
-const I18N={
-ro:{onb_welcome_sub:'Cum te cheamă?',onb_name_ph:'Numele tău',onb_next:'Continuă',onb_inspire:'Ce te inspiră?',onb_inspire_sub:'Alege una sau mai multe',int_mindfulness:'Mindfulness',int_creativity:'Creativitate',int_sleep:'Somn bun',int_gratitude:'Recunoștință',int_nature:'Natură',int_social:'Conexiuni',onb_ready:'Pregătit?',onb_ready_sub:'Începi de la Nivel 1, cu 0 XP. Fiecare acțiune contează.',onb_start:'Să începem ✦',greeting_sub:'Bunele obiceiuri încep aici',mood_title:'Cum te simți?',mood_great:'Excelent',mood_good:'Bine',mood_ok:'OK',mood_low:'Obosit',mood_bad:'Greu',ritual_title:'Ritualul Zilei',ritual_done:'Am citit ✦ +15 XP',ritual_new:'Alt citat',coach_title:'Coach AI',coach_motivate:'Motivează-mă',coach_calm:'Liniștește-mă',coach_focus:'Focus',tasks_sub:'Organizează-ți ziua',todo_ph:'Adaugă o sarcină...',pri_urgent:'🔴 Urgent',pri_normal:'🟡 Normal',pri_calm:'🟢 Calm',tab_active:'Active',tab_done:'Finalizate',games_sub:'Antrenează-ți mintea',game_memory:'Memory',game_quiz:'Quiz',game_puzzle:'Puzzle',game_breathing:'Respirație',dash_sub:'Progresul tău',stat_rituals:'Ritualuri',stat_tasks:'Sarcini',stat_games:'Jocuri',stat_streak:'Zile la rând',chart_weekly:'Activitate Săptămânală',chart_mood:'Istoricul Dispoziției',badges_title:'Insigne',nav_home:'Acasă',nav_tasks:'Sarcini',nav_focus:'Focus',nav_games:'Jocuri',nav_dash:'Progres',toast_xp:'+{n} XP',toast_levelup:'Nivel {n}! 🌟',toast_ritual:'Ritual completat!',toast_badge:'Insignă: {name}!',back:'← Înapoi',moves:'Mutări',score:'Scor',question:'Întrebarea',hint:'Indiciu',correct:'Corect!',wrong:'Incorect',game_over:'Joc terminat!',xp_earned:'Ai câștigat {n} XP!',start:'Start',tap_rhythm:'Apasă în ritmul respirației',inhale:'Inspiră',exhale:'Expiră',hold:'Ține',round:'Runda',no_todos:'Nicio sarcină încă.',no_done:'Nicio sarcină finalizată.',greeting_morning:'Bună dimineața',greeting_afternoon:'Bună ziua',greeting_evening:'Bună seara',try_again:'Încearcă din nou',next_word:'Cuvânt nou',
-habits_title:'Obiceiuri',add_habit_ph:'Obicei nou...',focus_sub:'Relaxare și concentrare',sound_title:'Sunete Ambientale',journal_title:'Jurnal',journal_ph:'Scrie ce simți...',journal_save:'Salvează +10 XP',pomo_title:'Pomodoro',pomo_work:'Concentrare',pomo_break:'Pauză',
-journal_prompts_list:['Sunt recunoscător pentru...','Astăzi am învățat...','Mă face fericit...','Vreau să...'],
-coach_texts:{motivation:['Ești mai puternic decât crezi. Fiecare pas mic contează.','Nu contează viteza, contează direcția.','Astăzi este ziua ta. Fă un lucru care te face mândru.','Succesul vine din constanță, nu din perfecțiune.'],calm:['Oprește-te un moment. Respiră. Ești exact unde trebuie.','Pacea vine din interior. Lasă grijile să treacă.','Ai voie să te odihnești. Odihna e înțelepciune.','Corpul tău cere liniște. Ascultă-l cu blândețe.'],focus:['Concentrează-te pe un singur lucru. Restul poate aștepta.','Mintea ta e puternică. Alege un obiectiv mic.','Fă o pauză de 2 minute, apoi revino cu energie.','Împarte sarcinile mari în bucăți mici.']},
-ticker:['Fiecare zi e o nouă șansă','Fii blând cu tine','Respiră adânc','Progresul bate perfecțiunea','Un pas la un moment dat','Recunoștința transformă totul','Tu ești suficient']},
-en:{onb_welcome_sub:"What's your name?",onb_name_ph:'Your name',onb_next:'Continue',onb_inspire:'What inspires you?',onb_inspire_sub:'Choose one or more',int_mindfulness:'Mindfulness',int_creativity:'Creativity',int_sleep:'Better Sleep',int_gratitude:'Gratitude',int_nature:'Nature',int_social:'Connections',onb_ready:'Ready?',onb_ready_sub:'Level 1 with 0 XP. Every action counts.',onb_start:"Let's begin ✦",greeting_sub:'Good habits start here',mood_title:'How do you feel?',mood_great:'Great',mood_good:'Good',mood_ok:'OK',mood_low:'Tired',mood_bad:'Tough',ritual_title:'Daily Ritual',ritual_done:"Done ✦ +15 XP",ritual_new:'New quote',coach_title:'AI Coach',coach_motivate:'Motivate me',coach_calm:'Calm me',coach_focus:'Focus',tasks_sub:'Organize your day',todo_ph:'Add a task...',pri_urgent:'🔴 Urgent',pri_normal:'🟡 Normal',pri_calm:'🟢 Calm',tab_active:'Active',tab_done:'Completed',games_sub:'Train your mind',game_memory:'Memory',game_quiz:'Quiz',game_puzzle:'Puzzle',game_breathing:'Breathing',dash_sub:'Your progress',stat_rituals:'Rituals',stat_tasks:'Tasks',stat_games:'Games',stat_streak:'Day Streak',chart_weekly:'Weekly Activity',chart_mood:'Mood History',badges_title:'Badges',nav_home:'Home',nav_tasks:'Tasks',nav_focus:'Focus',nav_games:'Games',nav_dash:'Progress',toast_xp:'+{n} XP',toast_levelup:'Level {n}! 🌟',toast_ritual:'Ritual completed!',toast_badge:'Badge: {name}!',back:'← Back',moves:'Moves',score:'Score',question:'Question',hint:'Hint',correct:'Correct!',wrong:'Incorrect',game_over:'Game Over!',xp_earned:'You earned {n} XP!',start:'Start',tap_rhythm:'Tap to the rhythm',inhale:'Inhale',exhale:'Exhale',hold:'Hold',round:'Round',no_todos:'No tasks yet.',no_done:'No completed tasks.',greeting_morning:'Good morning',greeting_afternoon:'Good afternoon',greeting_evening:'Good evening',try_again:'Try again',next_word:'New word',
-habits_title:'Habits',add_habit_ph:'New habit...',focus_sub:'Relax & focus',sound_title:'Ambient Sounds',journal_title:'Journal',journal_ph:'Write how you feel...',journal_save:'Save +10 XP',pomo_title:'Pomodoro',pomo_work:'Focus',pomo_break:'Break',
-journal_prompts_list:["I'm grateful for...","Today I learned...","Makes me happy...","I want to..."],
-coach_texts:{motivation:["You're stronger than you think. Every step counts.","Direction matters more than speed.","Today is your day. Do one thing that makes you proud.","Consistency beats perfection."],calm:["Pause. Breathe. You're exactly where you need to be.","Peace comes from within. Let worries pass.","Rest isn't laziness, it's wisdom.","Your body asks for peace. Listen gently."],focus:["Focus on one thing. The rest can wait.","Your mind is powerful. Choose one small goal.","Take a 2-min break, then come back fresh.","Break big tasks into small pieces."]},
-ticker:['Every day is a new chance','Be gentle with yourself','Breathe deeply','Progress beats perfection','One step at a time','Gratitude transforms everything','You are enough']}
-};
-
-const QUOTES={
-ro:[['"Fiecare zi e o nouă șansă de a fi mai bun."','— Coaching AI'],['"Liniștea interioară este cel mai mare dar."','— Proverb'],['"Nu contează cât de încet mergi, atât timp cât nu te oprești."','— Confucius'],['"Fii blând cu tine. Faci tot ce poți."','— Coaching AI'],['"Recunoștința transformă ceea ce avem în suficient."','— Melody Beattie'],['"Fericirea nu e o destinație, e o călătorie."','— Coaching AI'],['"Un zâmbet schimbă totul."','— Coaching AI'],['"Curajul nu e absența fricii, ci decizia că altceva e mai important."','— Ambrose Redmoon']],
-en:[['"Every day is a new chance to be better."','— Coaching AI'],['"Inner peace is the greatest gift."','— Proverb'],['"It does not matter how slowly you go, as long as you do not stop."','— Confucius'],['"Be gentle with yourself. You\'re doing your best."','— Coaching AI'],['"Gratitude turns what we have into enough."','— Melody Beattie'],['"Happiness is not a destination, it\'s a journey."','— Coaching AI'],['"A smile changes everything."','— Coaching AI'],['"Courage is not the absence of fear, but the decision that something else is more important."','— Ambrose Redmoon']]
-};
-
-const BADGES=[
-{id:'first_light',icon:'🌅',ro:'Prima Lumină',en:'First Light',check:s=>s.xp>0},
-{id:'zen_master',icon:'🧘',ro:'Maestru Zen',en:'Zen Master',check:s=>s.rituals>=5},
-{id:'scholar',icon:'📚',ro:'Erudit',en:'Scholar',check:s=>s.gamesPlayed>=3},
-{id:'explorer',icon:'🧭',ro:'Explorer',en:'Explorer',check:s=>s.level>=3},
-{id:'organizer',icon:'📋',ro:'Organizator',en:'Organizer',check:s=>s.tasksCompleted>=10},
-{id:'memory_king',icon:'👑',ro:'Rege al Memoriei',en:'Memory King',check:s=>s.gamesPlayed>=5},
-{id:'streak_fire',icon:'🔥',ro:'Flacăra',en:'Flame',check:s=>s.streak>=3},
-{id:'champion',icon:'🏆',ro:'Campion',en:'Champion',check:s=>s.level>=5},
-{id:'writer',icon:'✍️',ro:'Scriitor',en:'Writer',check:s=>s.journal.length>=5},
-{id:'habitual',icon:'⚡',ro:'Disciplinat',en:'Disciplined',check:s=>{let c=0;s.habits.forEach(h=>{if(Object.keys(h.days).length>=7)c++});return c>=1}},
-{id:'focus_guru',icon:'🎯',ro:'Guru Focus',en:'Focus Guru',check:s=>s.pomoSession>=4},
-{id:'legend',icon:'💎',ro:'Legendă',en:'Legend',check:s=>s.level>=10}
+const app=document.getElementById('app');
+let toastTmr,xp=0,level=1,rituals=0,tasksCompleted=0,gamesPlayed=0;
+const quotes=[
+  '"Fiecare zi e o nouă șansă de a fi mai bun."',
+  '"Disciplina este libertatea pe care ți-o dai ție însuți."',
+  '"Progresul mic, repetat zilnic, creează schimbări mari."',
+  '"Mintea ta este cea mai puternică unealtă pe care o ai."',
+  '"Obiceiurile bune sunt greu de format, ușor de trăit cu ele."',
 ];
+let qIdx=0;
 
-const QUIZ_DATA={
-ro:[{q:'Ce practică ajută la reducerea stresului?',options:['Meditația','Mâncatul rapid','Statul pe telefon','Amânarea'],correct:0},{q:'Care este beneficiul somnului de calitate?',options:['Memorie mai bună','Mai mult stres','Mai puțină energie','Concentrare slabă'],correct:0},{q:'Ce înseamnă mindfulness?',options:['Atenție la prezent','Gândire la trecut','Planificare excesivă','Ignorare'],correct:0},{q:'Ce ajută la o stare de spirit bună?',options:['Mișcare fizică','Izolarea','Critica de sine','Lipsa somnului'],correct:0},{q:'Ce stimulează creativitatea?',options:['Plimbările în natură','Statul în casă','Rutina rigidă','Multitasking'],correct:0},{q:'Care e cheia fericirii pe termen lung?',options:['Relațiile sănătoase','Banii','Faima','Competiția'],correct:0},{q:'Ce hormon e eliberat în timpul exercițiilor fizice?',options:['Endorfine','Insulină','Cortizol','Melatonină'],correct:0},{q:'Câte ore de somn sunt recomandate pentru adulți?',options:['7-9 ore','4-5 ore','10-12 ore','3-4 ore'],correct:0}],
-en:[{q:'What practice helps reduce stress?',options:['Meditation','Eating fast','Phone scrolling','Procrastination'],correct:0},{q:'What is a benefit of quality sleep?',options:['Better memory','More stress','Less energy','Poor focus'],correct:0},{q:'What does mindfulness mean?',options:['Attention to present','Thinking about past','Over-planning','Ignoring'],correct:0},{q:'What helps maintain a good mood?',options:['Physical exercise','Isolation','Self-criticism','Sleep deprivation'],correct:0},{q:'What stimulates creativity?',options:['Nature walks','Staying indoors','Rigid routine','Multitasking'],correct:0},{q:'Key to long-term happiness?',options:['Healthy relationships','Money','Fame','Competition'],correct:0},{q:'What hormone is released during exercise?',options:['Endorphins','Insulin','Cortisol','Melatonin'],correct:0},{q:'How many hours of sleep are recommended for adults?',options:['7-9 hours','4-5 hours','10-12 hours','3-4 hours'],correct:0}]
-};
+/* ── CLOCK + GREETING ── */
+function tick(){const n=new Date();document.getElementById('clock').textContent=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');}
+tick();setInterval(tick,15000);
+function greet(){const h=new Date().getHours(),s=document.getElementById('gsub');if(h>=5&&h<12)s.textContent='Bună dimineața';else if(h>=12&&h<18)s.textContent='Bună ziua';else if(h>=18&&h<22)s.textContent='Bună seara';else s.textContent='Noapte bună';}
+greet();
 
-const PUZZLE_WORDS={
-ro:[{word:'LINIȘTE',hint:'Pace interioară'},{word:'BUCURIE',hint:'Sentiment de fericire'},{word:'CURAJ',hint:'Puterea de a face față'},{word:'SPERANȚĂ',hint:'Credința în bine'},{word:'ARMONIE',hint:'Echilibru interior'},{word:'RĂBDARE',hint:'Virtutea așteptării'},{word:'PUTERE',hint:'Forță interioară'},{word:'ZÂMBET',hint:'Expresie a fericirii'}],
-en:[{word:'PEACE',hint:'Inner calm'},{word:'JOY',hint:'Happiness'},{word:'COURAGE',hint:'Facing difficulties'},{word:'HOPE',hint:'Belief in good'},{word:'HARMONY',hint:'Inner balance'},{word:'PATIENCE',hint:'Virtue of waiting'},{word:'STRENGTH',hint:'Inner power'},{word:'SMILE',hint:'Expression of happiness'}]
-};
+/* ── SKELETON ── */
+setTimeout(()=>{const sk=document.getElementById('skelScreen'),mn=document.getElementById('main');sk.style.transition='opacity .3s';sk.style.opacity='0';setTimeout(()=>{sk.style.display='none';mn.style.display='block';setTimeout(()=>applyStep(curStep),200);},300);},1400);
 
-const SOUNDS=[
-{id:'rain',icon:'🌧️',ro:'Ploaie',en:'Rain'},
-{id:'forest',icon:'🌲',ro:'Pădure',en:'Forest'},
-{id:'ocean',icon:'🌊',ro:'Ocean',en:'Ocean'},
-{id:'fire',icon:'🔥',ro:'Foc',en:'Fire'},
-{id:'wind',icon:'💨',ro:'Vânt',en:'Wind'},
-{id:'birds',icon:'🐦',ro:'Păsări',en:'Birds'}
-];
+/* ── ONBOARDING ── */
+let obStep=1;
+const ob=document.getElementById('ob');
+function obDots(n){[1,2,3].forEach(i=>{const d=document.getElementById('od'+i);d.className='ob-dot'+(i===n?' cur':'');});}
+function obNext(from){
+  if(from===1){const v=document.getElementById('obName').value.trim();if(!v){document.getElementById('obName').style.borderColor='var(--accent)';return;}applyName(v);}
+  obStep=from+1;
+  document.getElementById('obs'+from).classList.remove('show');
+  document.getElementById('obs'+obStep).classList.add('show');
+  obDots(obStep);
+}
+function finishOB(){
+  ob.classList.add('hide');
+  gainXP(0,'Bun venit! 🎉');
+  showToast('Bun venit, '+document.getElementById('nDisp').textContent+'! ✦');
+}
+function checkOB(){const s=localStorage.getItem('uName');if(!s){ob.classList.remove('hide');setTimeout(()=>document.getElementById('obName').focus(),400);}else applyName(s);}
 
-// ═══ HELPERS ═══
-function t(k){return I18N[STATE.lang]?.[k]||k}
-function save(){try{localStorage.setItem('CoachingAI2',JSON.stringify(STATE))}catch(e){}}
-function load(){try{const d=JSON.parse(localStorage.getItem('CoachingAI2'));if(d)Object.assign(STATE,d)}catch(e){}}
-function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
-function showToast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2200)}
-function todayKey(){return new Date().toISOString().split('T')[0]}
-function dayLabel(offset){const d=new Date();d.setDate(d.getDate()-offset);return d.toLocaleDateString(STATE.lang==='ro'?'ro-RO':'en-US',{weekday:'short'}).slice(0,2).toUpperCase()}
+/* ── NAME ── */
+function applyName(n){
+  const s=(n||'').trim()||'Utilizator';
+  document.getElementById('nDisp').textContent=s;
+  document.getElementById('avBtn').textContent=s[0].toUpperCase();
+  document.getElementById('heroH').textContent='Cum te pot ajuta azi, '+s+'?';
+  localStorage.setItem('uName',s);
+}
+function startEdit(){document.getElementById('nDisp').style.display='none';document.querySelector('.npen').style.display='none';document.getElementById('nEdit').classList.add('on');const i=document.getElementById('nInp');i.value=document.getElementById('nDisp').textContent;i.focus();i.select();}
+function saveName(){const v=document.getElementById('nInp').value.trim();applyName(v||document.getElementById('nDisp').textContent);document.getElementById('nEdit').classList.remove('on');document.getElementById('nDisp').style.display='';document.querySelector('.npen').style.display='';document.getElementById('nDisp').style.color='var(--a2)';setTimeout(()=>document.getElementById('nDisp').style.color='',700);showToast('Nume salvat ✓');}
+document.getElementById('nInp').addEventListener('keydown',e=>{if(e.key==='Enter')saveName();if(e.key==='Escape'){document.getElementById('nEdit').classList.remove('on');document.getElementById('nDisp').style.display='';document.querySelector('.npen').style.display='';}});
 
-function addXP(n,silent){
-STATE.xp+=n;const today=new Date().getDay();STATE.weeklyXP[today]=(STATE.weeklyXP[today]||0)+n;
-const needed=STATE.level*100;
-if(STATE.xp>=needed){STATE.level++;STATE.xp-=needed;showLevelUp()}
-updateXPBar();if(!silent)showToast(t('toast_xp').replace('{n}',n));
-checkBadges();save();
+/* ── TOAST ── */
+function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(toastTmr);toastTmr=setTimeout(()=>t.classList.remove('show'),2400);}
+
+/* ── HAPTIC ── */
+function haptic(){app.classList.remove('hap');void app.offsetWidth;app.classList.add('hap');setTimeout(()=>app.classList.remove('hap'),250);if(navigator.vibrate)navigator.vibrate([28,10,28]);}
+
+/* ── RIPPLE ── */
+function ripple(e,el){const r=document.createElement('div');r.classList.add('ripple');const rc=el.getBoundingClientRect(),sz=Math.max(rc.width,rc.height)*.7;r.style.cssText=`width:${sz}px;height:${sz}px;left:${e.clientX-rc.left-sz/2}px;top:${e.clientY-rc.top-sz/2}px`;el.appendChild(r);setTimeout(()=>r.remove(),500);}
+
+/* ── XP / LEVELS ── */
+function gainXP(amt,msg){
+  xp+=amt;
+  const lvlThresh=level*100;
+  if(xp>=lvlThresh){level++;xp-=lvlThresh;haptic();showToast('🏆 Nivel '+level+' deblocat!');}
+  updateXPBar();
+  updateStats();
+  if(msg&&amt>0)showToast('+'+amt+' XP — '+msg);
+  localStorage.setItem('xp',xp);localStorage.setItem('level',level);
 }
 function updateXPBar(){
-const needed=STATE.level*100,pct=Math.min((STATE.xp/needed)*100,100);
-document.getElementById('xpBarFill').style.width=pct+'%';
-document.getElementById('xpLevel').textContent='Level '+STATE.level;
-document.getElementById('xpPoints').textContent=STATE.xp+' / '+needed+' XP';
-const bar=document.getElementById('xpBarBg');bar.setAttribute('aria-valuenow',STATE.xp);bar.setAttribute('aria-valuemax',needed);
+  const cap=level*100,pct=Math.min(100,(xp/cap)*100);
+  document.getElementById('xpFill').style.width=pct+'%';
+  document.getElementById('lvlLbl').textContent='Nivel '+level;
+  document.getElementById('xpLbl').textContent=xp+' / '+cap+' XP';
 }
-function showLevelUp(){const ol=document.getElementById('levelOverlay');document.getElementById('levelText').textContent=t('toast_levelup').replace('{n}',STATE.level);document.getElementById('levelSub').textContent=STATE.lang==='ro'?'Continuă tot așa!':'Keep it up!';ol.classList.add('show');spawnConfetti()}
-function closeLevelUp(){document.getElementById('levelOverlay').classList.remove('show')}
-function spawnConfetti(){const colors=['#D4A843','#F0D58A','#4FD4A4','#4FB8D4','#E05577','#A455E0'];for(let i=0;i<30;i++){const el=document.createElement('div');el.className='confetti-piece';el.style.cssText=`left:${Math.random()*100}vw;top:-10px;width:${5+Math.random()*7}px;height:${5+Math.random()*7}px;background:${colors[Math.floor(Math.random()*colors.length)]};border-radius:${Math.random()>.5?'50%':'2px'};animation-delay:${Math.random()*.8}s;animation-duration:${1.5+Math.random()}s`;document.body.appendChild(el);setTimeout(()=>el.remove(),3000)}}
-function checkBadges(){BADGES.forEach(b=>{if(!STATE.badges[b.id]&&b.check(STATE)){STATE.badges[b.id]=true;showToast(t('toast_badge').replace('{name}',STATE.lang==='ro'?b.ro:b.en))}});renderBadges()}
-
-// ═══ A11Y ═══
-function toggleLargeText(){STATE.largeText=!STATE.largeText;document.documentElement.setAttribute('data-large-text',STATE.largeText);document.getElementById('btnLargeText').classList.toggle('active',STATE.largeText);save()}
-function toggleContrast(){STATE.highContrast=!STATE.highContrast;document.documentElement.setAttribute('data-high-contrast',STATE.highContrast);document.getElementById('btnContrast').classList.toggle('active',STATE.highContrast);save()}
-function toggleLang(){STATE.lang=STATE.lang==='ro'?'en':'ro';document.getElementById('btnLang').textContent=STATE.lang.toUpperCase();document.documentElement.lang=STATE.lang;applyI18N();newRitual();renderHabits();renderJournal();renderSounds();renderJournalPrompts();renderTicker();renderPomodoro();save()}
-function applyI18N(){document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.getAttribute('data-i18n');if(I18N[STATE.lang]?.[k])el.textContent=I18N[STATE.lang][k]});document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{const k=el.getAttribute('data-i18n-placeholder');if(I18N[STATE.lang]?.[k])el.placeholder=I18N[STATE.lang][k]})}
-
-// ═══ ONBOARDING ═══
-function onbNext(step){
-if(step===1){STATE.name=document.getElementById('onbName').value.trim()||'';document.getElementById('onbGreeting').textContent=(STATE.lang==='ro'?'Bine ai venit, ':'Welcome, ')+STATE.name+'!'}
-if(step===2){STATE.interests=[...document.querySelectorAll('#onbInterests .onb-option.selected')].map(o=>o.dataset.val)}
-document.querySelector(`.onb-step[data-step="${step}"]`).classList.remove('active');
-document.querySelector(`.onb-step[data-step="${step+1}"]`).classList.add('active');
-}
-function onbFinish(){STATE.onboarded=true;document.getElementById('onboarding').classList.add('hidden');document.getElementById('mainApp').style.display='block';save();initApp()}
-document.querySelectorAll('#onbInterests .onb-option').forEach(opt=>{opt.addEventListener('click',()=>{opt.classList.toggle('selected');opt.setAttribute('aria-checked',opt.classList.contains('selected'))});opt.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();opt.click()}})});
-
-// ═══ NAV ═══
-function goPage(name){
-document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-document.getElementById('page'+name).classList.add('active');
-document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.page===name));
-if(name==='Dash')renderDashboard();
-if(name==='Games'){document.getElementById('gameSelect').style.display='';document.getElementById('gameArea').style.display='none'}
-if(name==='Tasks'){renderTodos();renderPomodoro()}
-if(name==='Focus'){renderSounds();renderJournalPrompts();renderJournal()}
-window.scrollTo({top:0,behavior:'smooth'});
+function updateStats(){
+  document.getElementById('statXP').textContent=xp;
+  document.getElementById('statLvl').textContent=level;
+  document.getElementById('statRituals').textContent=rituals;
+  document.getElementById('statTasks').textContent=tasksCompleted;
+  document.getElementById('statGames').textContent=gamesPlayed;
 }
 
-// ═══ MOOD ═══
-document.getElementById('moodGrid').addEventListener('click',e=>{
-const btn=e.target.closest('.mood-btn');if(!btn)return;
-document.querySelectorAll('.mood-btn').forEach(b=>{b.classList.remove('selected');b.setAttribute('aria-checked','false')});
-btn.classList.add('selected');btn.setAttribute('aria-checked','true');
-STATE.mood=btn.dataset.mood;
-const moodVal={great:5,good:4,ok:3,low:2,bad:1}[btn.dataset.mood]||3;
-STATE.moodHistory.push({date:todayKey(),val:moodVal,mood:btn.dataset.mood});
-if(STATE.moodHistory.length>30)STATE.moodHistory=STATE.moodHistory.slice(-30);
-addXP(5);updateCoachForMood();save();
-});
-function updateCoachForMood(){
-const texts={ro:{great:'Minunat! Energia ta e contagioasă!',good:'E o zi bună pentru pași mici, dar siguri.',ok:'E OK să fii doar OK. Hai să facem ceva frumos.',low:'Oboseala e normală. Azi facem lucruri blânde.',bad:'Ești curajos că recunoști asta. Sunt aici.'},en:{great:"Wonderful! Your energy is contagious!",good:"A good day for small steady steps.",ok:"It's OK to just be OK. Let's do something nice.",low:"Tiredness is normal. Let's be gentle today.",bad:"You're brave to acknowledge this. I'm here."}};
-if(STATE.mood&&texts[STATE.lang]?.[STATE.mood])document.getElementById('coachText').textContent=texts[STATE.lang][STATE.mood];
+/* ── MOOD ── */
+function selMood(el,ico,lbl){document.querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');showToast('Dispoziție: '+ico+' '+lbl);gainXP(5,'Dispoziție înregistrată');}
+
+/* ── RITUAL ── */
+function readRitual(){rituals++;gainXP(15,'Ritual zilnic');document.querySelector('.qbtn.primary').textContent='Citit ✓';document.querySelector('.qbtn.primary').disabled=true;checkBadges();}
+function nextQuote(){qIdx=(qIdx+1)%quotes.length;document.getElementById('quoteText').textContent=quotes[qIdx];}
+
+/* ── HABITS ── */
+function togHabit(id,xpAmt){
+  const el=document.getElementById(id);
+  if(el.classList.contains('done')){el.classList.remove('done');gainXP(-xpAmt,'Obicei debifat');}
+  else{el.classList.add('done');gainXP(xpAmt,'Obicei bifat ✓');haptic();}
 }
 
-// ═══ RITUAL ═══
-function newRitual(){const q=QUOTES[STATE.lang];const r=q[Math.floor(Math.random()*q.length)];document.getElementById('ritualQuote').textContent=r[0];document.getElementById('ritualAuthor').textContent=r[1];STATE.ritualDone=false;const btn=document.getElementById('ritualBtn');btn.disabled=false;btn.style.opacity='1'}
-function completeRitual(){if(STATE.ritualDone)return;STATE.ritualDone=true;STATE.rituals++;const btn=document.getElementById('ritualBtn');btn.disabled=true;btn.style.opacity='.5';addXP(15);showToast(t('toast_ritual'));save()}
-
-// ═══ COACH ═══
-function coachTip(type){const texts=I18N[STATE.lang].coach_texts[type];document.getElementById('coachText').textContent=texts[Math.floor(Math.random()*texts.length)]}
-
-// ═══ TICKER ═══
-function renderTicker(){
-const items=I18N[STATE.lang].ticker;
-const double=[...items,...items];
-document.getElementById('tickerInner').innerHTML=double.map(t=>`<span>✦ ${t}</span>`).join('');
+/* ── COACH AI ── */
+const coachMsgs={
+  motivate:['Ești capabil de mai mult decât crezi! Fiecare pas contează.','Succesul e suma micilor eforturi repetate zilnic.','Nu te opri acum — cea mai bună versiune a ta te așteaptă!'],
+  calm:['Respiră adânc. Ești în siguranță. Totul va fi bine.','Lasă gândurile să treacă ca norii pe cer.','Prezentul e singurul moment real. Fii aici.'],
+  focus:['Elimină distragerile. Un singur lucru la un moment dat.','Setează un timer de 25 min și concentrează-te total.','Mintea clară vine din pauze regulate și odihnă bună.'],
+};
+let coachIdxs={motivate:0,calm:0,focus:0};
+function coachMsg(el,type){
+  document.querySelectorAll('.coach-chip').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');
+  const msgs=coachMsgs[type],idx=coachIdxs[type]%msgs.length;
+  document.getElementById('coachBubble').textContent='✦ '+msgs[idx];
+  coachIdxs[type]++;
+  gainXP(5,'Coach AI consultat');
 }
 
-// ═══ HABITS ═══
-function renderHabits(){
-const sec=document.getElementById('habitsSection');
-const tk=todayKey();
-const days=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);days.push({key:d.toISOString().split('T')[0],label:dayLabel(i),isToday:i===0})}
-let html=STATE.habits.map(h=>{
-const name=STATE.lang==='en'&&h.nameEn?h.nameEn:h.name;
-const streak=calcHabitStreak(h);
-return`<div class="habit-row"><div class="habit-icon">${h.icon}</div><div class="habit-info"><div class="habit-name">${esc(name)}</div><div class="habit-streak">${streak>0?streak+'🔥':''}</div></div><div class="habit-days">${days.map(d=>`<button class="habit-day ${h.days[d.key]?'done':''} ${d.isToday?'today':''}" onclick="toggleHabitDay(${h.id},'${d.key}')" title="${d.key}">${d.label}</button>`).join('')}</div><button class="habit-delete" onclick="deleteHabit(${h.id})">×</button></div>`}).join('');
-
-const emojis=['💧','🏃','📖','🧘','💤','🥗','🎨','💊','🚿','📝'];
-html+=`<div class="add-habit-row"><input type="text" class="add-habit-input" id="habitInput" placeholder="${t('add_habit_ph')}" maxlength="30"><button class="btn btn-gold btn-sm" onclick="addHabit()">+</button></div>`;
-html+=`<div class="emoji-pick">${emojis.map(e=>`<button onclick="pickHabitEmoji('${e}')" class="${STATE.habitEmoji===e?'selected':''}">${e}</button>`).join('')}</div>`;
-sec.innerHTML=html;
+/* ── TASKS ── */
+let tasks=[];
+function addTask(){
+  const inp=document.getElementById('taskInp'),prio=document.getElementById('taskPrio');
+  const txt=inp.value.trim();if(!txt)return;
+  tasks.push({txt,prio:prio.value,done:false});
+  inp.value='';renderTasks();gainXP(5,'Sarcină adăugată');
+  const nb=document.getElementById('nb-tasks');
+  nb.textContent=tasks.filter(t=>!t.done).length||'';
 }
-function calcHabitStreak(h){let s=0;const d=new Date();while(true){const k=d.toISOString().split('T')[0];if(h.days[k])s++;else break;d.setDate(d.getDate()-1);if(s>365)break}return s}
-function toggleHabitDay(id,key){const h=STATE.habits.find(x=>x.id===id);if(!h)return;if(h.days[key]){delete h.days[key]}else{h.days[key]=true;addXP(5)}renderHabits();save()}
-function deleteHabit(id){STATE.habits=STATE.habits.filter(h=>h.id!==id);renderHabits();save()}
-function pickHabitEmoji(e){STATE.habitEmoji=e;document.querySelectorAll('.emoji-pick button').forEach(b=>b.classList.toggle('selected',b.textContent===e))}
-function addHabit(){const inp=document.getElementById('habitInput');const name=inp.value.trim();if(!name)return;STATE.habits.push({id:Date.now(),icon:STATE.habitEmoji,name,nameEn:name,days:{}});inp.value='';renderHabits();save()}
-
-// ═══ JOURNAL ═══
-function renderJournalPrompts(){
-const prompts=I18N[STATE.lang].journal_prompts_list;
-document.getElementById('journalPrompts').innerHTML=prompts.map(p=>`<button class="journal-prompt" onclick="fillJournalPrompt('${esc(p)}')">${p}</button>`).join('');
+function renderTasks(){
+  const list=document.getElementById('taskList');
+  if(!tasks.length){list.innerHTML='<div style="text-align:center;color:var(--muted);font-size:.80rem;padding:20px 0">Nicio sarcină. Adaugă una mai sus! ✦</div>';return;}
+  const icons={red:'🔴',yellow:'🟡',green:'🟢'};
+  list.innerHTML=tasks.map((t,i)=>`<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--brd);cursor:pointer;" onclick="doneTask(${i})">
+    <div style="width:24px;height:24px;border-radius:50%;border:2px solid var(--brd);display:flex;align-items:center;justify-content:center;flex-shrink:0;${t.done?'background:var(--a3);border-color:var(--a3);':''}font-size:${t.done?'13px':'0'};">${t.done?'✓':''}</div>
+    <div style="flex:1;font-size:.82rem;color:var(--text);text-decoration:${t.done?'line-through':'none'};opacity:${t.done?.6:1}">${icons[t.prio]} ${t.txt}</div>
+  </div>`).join('');
 }
-function fillJournalPrompt(text){document.getElementById('journalInput').value=text;document.getElementById('journalInput').focus()}
-function saveJournal(){
-const inp=document.getElementById('journalInput');
-const text=inp.value.trim();if(!text)return;
-STATE.journal.unshift({date:new Date().toLocaleString(STATE.lang==='ro'?'ro-RO':'en-US'),text,mood:STATE.mood||'ok'});
-if(STATE.journal.length>50)STATE.journal=STATE.journal.slice(0,50);
-inp.value='';addXP(10);renderJournal();save();
-}
-function renderJournal(){
-const container=document.getElementById('journalEntries');
-const moodEmoji={great:'😊',good:'🙂',ok:'😐',low:'😔',bad:'😢'};
-container.innerHTML=STATE.journal.slice(0,10).map(e=>`<div class="journal-entry"><div class="journal-entry-date">${e.date}</div><div class="journal-entry-text">${esc(e.text)}</div><div class="journal-entry-mood">${moodEmoji[e.mood]||'😐'}</div></div>`).join('')||`<div class="empty-state"><div class="empty-icon">📝</div><p>${STATE.lang==='ro'?'Nicio intrare încă.':'No entries yet.'}</p></div>`;
+function doneTask(i){
+  if(!tasks[i].done){tasks[i].done=true;tasksCompleted++;gainXP(20,'Sarcină finalizată ✓');haptic();}
+  else{tasks[i].done=false;tasksCompleted=Math.max(0,tasksCompleted-1);}
+  renderTasks();updateStats();checkBadges();
+  const rem=tasks.filter(t=>!t.done).length;
+  const nb=document.getElementById('nb-tasks');nb.textContent=rem||'';
 }
 
-// ═══ SOUNDS ═══
-let activeSounds={};
-function renderSounds(){
-document.getElementById('soundGrid').innerHTML=SOUNDS.map(s=>{
-const name=STATE.lang==='ro'?s.ro:s.en;
-const active=activeSounds[s.id];
-return`<button class="sound-btn ${active?'active':''}" onclick="toggleSound('${s.id}')"><span class="snd-icon">${s.icon}</span><span class="snd-name">${name}</span></button>`}).join('');
+/* ── POMODORO ── */
+let pomRunning=false,pomSeconds=25*60,pomTotal=25*60,pomInterval;
+const pomModes={focus:25*60,short:5*60,long:15*60};
+function setPomMode(m,el){document.querySelectorAll('.pom-mode').forEach(x=>x.classList.remove('on'));el.classList.add('on');pomSeconds=pomTotal=pomModes[m];pomRunning=false;clearInterval(pomInterval);document.getElementById('pomBtn').textContent='▶ Start';renderPom();}
+function renderPom(){
+  const m=Math.floor(pomSeconds/60),s=pomSeconds%60;
+  document.getElementById('pomTime').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  const pct=1-(pomSeconds/pomTotal),circ=document.getElementById('pomCirc');
+  circ.style.strokeDashoffset=283-(283*pct);
 }
-function toggleSound(id){
-if(activeSounds[id]){delete activeSounds[id]}else{activeSounds[id]=true}
-renderSounds();
-showToast(activeSounds[id]?(STATE.lang==='ro'?'Sunet activat':'Sound on'):(STATE.lang==='ro'?'Sunet oprit':'Sound off'));
+function pomToggle(){
+  if(pomRunning){pomRunning=false;clearInterval(pomInterval);document.getElementById('pomBtn').textContent='▶ Start';}
+  else{pomRunning=true;document.getElementById('pomBtn').textContent='⏸ Pauză';pomInterval=setInterval(()=>{pomSeconds--;renderPom();if(pomSeconds<=0){clearInterval(pomInterval);pomRunning=false;document.getElementById('pomBtn').textContent='▶ Start';gainXP(30,'Sesiune Pomodoro finalizată');haptic();showToast('⏱ Sesiune completă! +30 XP');}},1000);}
+}
+function pomReset(){clearInterval(pomInterval);pomRunning=false;pomSeconds=pomTotal;document.getElementById('pomBtn').textContent='▶ Start';renderPom();}
+renderPom();
+
+/* ── SOUNDS ── */
+function togSound(el,ico){el.classList.toggle('on');showToast(el.classList.contains('on')?ico+' Sunet pornit':ico+' Sunet oprit');}
+
+/* ── JOURNAL ── */
+function saveJournal(){const txt=document.getElementById('journalTa').value.trim();if(!txt)return;gainXP(10,'Intrare în jurnal salvată');document.getElementById('journalTa').value='';showToast('Jurnal salvat +10 XP 📝');}
+
+/* ── MINI GAMES ── */
+// Memory
+let memCards=[],memFlipped=[],memMatched=0,memLock=false;
+const memEmojis=['🌟','🎯','🧠','💡','🌈','🎨','🌺','🔮'];
+function startGame(type){
+  document.getElementById('gameArea').style.display='block';
+  if(type==='memory'){
+    document.getElementById('gameSectTitle').textContent='🃏 Memory';
+    memFlipped=[];memMatched=0;memLock=false;
+    memCards=[...memEmojis,...memEmojis].sort(()=>Math.random()-.5);
+    document.getElementById('gameContent').innerHTML=`<div style="text-align:center;margin-bottom:10px;font-size:.80rem;color:var(--muted)">Găsește toate perechile!</div><div class="mem-grid" id="memGrid">`+memCards.map((e,i)=>`<div class="mem-card back" data-idx="${i}" data-val="${e}" onclick="memFlip(this)">${e}</div>`).join('')+'</div>';
+  }
+  if(type==='breath'){
+    document.getElementById('gameSectTitle').textContent='🌬️ Respirație';
+    document.getElementById('gameContent').innerHTML=`<div class="breath-wrap"><div class="breath-circle" id="bCircle">Inspiră</div><div class="breath-lbl" id="bLbl">Pregătire</div><div class="breath-sub" id="bSub">4 sec inspirație · 4 sec expirație</div><button class="breath-startbtn" onclick="startBreath()">Începe</button></div>`;
+  }
+  document.getElementById('gameArea').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function memFlip(el){
+  if(memLock||!el.classList.contains('back')||memFlipped.length>=2)return;
+  el.classList.remove('back');memFlipped.push(el);
+  if(memFlipped.length===2){memLock=true;setTimeout(()=>{
+    if(memFlipped[0].dataset.val===memFlipped[1].dataset.val){memFlipped.forEach(c=>c.classList.add('matched'));memMatched++;if(memMatched===8){gamesPlayed++;gainXP(80,'Memory completat! 🃏');checkBadges();}}
+    else{memFlipped.forEach(c=>c.classList.add('back'));}
+    memFlipped=[];memLock=false;
+  },700);}
+}
+// Breathing
+let breathInterval;
+function startBreath(){
+  clearInterval(breathInterval);let phase=0;
+  const phases=[{l:'Inspiră',s:'4 secunde',cls:'inhale',dur:4000},{l:'Ține',s:'4 secunde',cls:'inhale',dur:4000},{l:'Expiră',s:'4 secunde',cls:'exhale',dur:4000},{l:'Pauză',s:'4 secunde',cls:'exhale',dur:4000}];
+  function nextPhase(){const p=phases[phase%4];document.getElementById('bLbl').textContent=p.l;document.getElementById('bSub').textContent=p.s;const c=document.getElementById('bCircle');c.textContent=p.l;c.className='breath-circle '+(p.cls);phase++;breathInterval=setTimeout(()=>{nextPhase();},p.dur);}
+  nextPhase();
+  setTimeout(()=>{clearTimeout(breathInterval);gamesPlayed++;gainXP(30,'Exercițiu de respirație completat');checkBadges();showToast('Respirație completată +30 XP 🌬️');},64000);
+}
+// Quiz
+const quizQ=[{q:'Care obicei ajută cel mai mult memoria?',a:['Somn regulat','Zahăr mult','Sedentarism'],c:0},{q:'Câte minute de mers pe jos sunt recomandate zilnic?',a:['10 min','30 min','2 ore'],c:1},{q:'Ce face meditația zilnică?',a:['Crește stresul','Reduce anxietatea','Nimic'],c:1}];
+let qCur=0,qScore=0;
+function quizStart(){
+  qCur=0;qScore=0;
+  document.getElementById('gameArea').style.display='block';
+  document.getElementById('gameSectTitle').textContent='🧠 Quiz';
+  renderQuiz();
+}
+function renderQuiz(){
+  if(qCur>=quizQ.length){gamesPlayed++;gainXP(20+qScore*10,'Quiz finalizat!');checkBadges();document.getElementById('gameContent').innerHTML=`<div style="text-align:center;padding:20px"><div style="font-size:40px;margin-bottom:12px">${qScore===quizQ.length?'🏆':'⭐'}</div><div style="font-size:16px;font-weight:700;color:var(--text)">Scor: ${qScore}/${quizQ.length}</div><div style="font-size:12px;color:var(--muted);margin-top:6px">+${20+qScore*10} XP câștigat</div></div>`;return;}
+  const q=quizQ[qCur];
+  document.getElementById('gameContent').innerHTML=`<div style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:14px;line-height:1.5">${qCur+1}. ${q.q}</div>`+q.a.map((a,i)=>`<div onclick="quizAns(${i})" style="background:var(--s2);border:1.5px solid var(--brd);border-radius:var(--rs);padding:11px 14px;margin-bottom:7px;font-size:.80rem;cursor:pointer;color:var(--text);transition:background .2s,border-color .2s;" onmouseenter="this.style.borderColor='var(--a2)'" onmouseleave="this.style.borderColor='var(--brd)'">${['A','B','C'][i]}. ${a}</div>`).join('');
+}
+function quizAns(i){const q=quizQ[qCur];if(i===q.c)qScore++;qCur++;renderQuiz();}
+
+/* ── PROGRESS STEPS ── */
+let curStep=2;
+const sData=[{pct:33,lbl:'Pasul 1 din 3'},{pct:66,lbl:'Pasul 2 din 3'},{pct:100,lbl:'Finalizat! 🎉'}];
+function applyStep(n){
+  const d=sData[n-1];
+  document.getElementById('pFill').style.width=d.pct+'%';
+  document.getElementById('pPct').textContent=d.pct+'%';
+  document.getElementById('pLbl').textContent=d.lbl;
+  [1,2,3].forEach(i=>{const el=document.getElementById('s'+i);el.className='sdot '+(i<n?'done':i===n?'active':'pending');el.textContent=i<n?'✓':i;});
+  const btn=document.getElementById('pBtn');
+  if(n>=3){btn.textContent='Profil completat ✓';btn.disabled=true;haptic();}
+  else{btn.textContent='Continuă la pasul următor →';btn.disabled=false;}
+}
+function advStep(){if(curStep<3){curStep++;applyStep(curStep);gainXP(25,'Pas profil completat');}}
+function goStep(n){if(n<=curStep){applyStep(n);}}
+
+/* ── WEEK BARS ── */
+function renderWeekBars(){
+  const days=['Lu','Ma','Mi','Jo','Vi','Sâ','Du'];
+  const vals=[20,45,30,70,55,0,0];
+  document.getElementById('weekBars').innerHTML=days.map((d,i)=>{
+    const h=Math.max(4,vals[i]*0.9);
+    return`<div class="week-bar-wrap"><div class="week-bar${i===4?' today':''}" style="height:${h}%"></div><div class="week-day">${d}</div></div>`;
+  }).join('');
+}
+renderWeekBars();
+
+/* ── BADGES ── */
+const allBadges=[
+  {ico:'🌟',lbl:'Primul ritual',cond:()=>rituals>=1},
+  {ico:'💪',lbl:'5 obiceiuri',cond:()=>tasksCompleted>=5},
+  {ico:'🎮',lbl:'Primul joc',cond:()=>gamesPlayed>=1},
+  {ico:'🏆',lbl:'Nivel 2',cond:()=>level>=2},
+  {ico:'🔥',lbl:'3 zile la rând',cond:()=>false},
+  {ico:'🧘',lbl:'Focus master',cond:()=>false},
+];
+function checkBadges(){
+  document.getElementById('badgesRow').innerHTML=allBadges.map(b=>`<div class="badge-item"><div class="badge-ico${b.cond()?' earned':''}">${b.ico}</div><div class="badge-lbl">${b.lbl}</div></div>`).join('');
+}
+checkBadges();
+
+/* ── DYNAMIC ISLAND ── */
+let diOpen=false;
+const diMsgs=['3 mesaje noi ✉','Ritual: necitit ✦','Pomodoro gata! ⏱'];let diI=0;
+function toggleDI(){diOpen=!diOpen;document.getElementById('di').classList.toggle('exp',diOpen);document.getElementById('diTxt').textContent=diOpen?diMsgs[diI++%diMsgs.length]:'';}
+setInterval(()=>{if(!diOpen){document.getElementById('diTxt').textContent=diMsgs[diI++%diMsgs.length];document.getElementById('di').classList.add('exp');setTimeout(()=>{if(!diOpen){document.getElementById('di').classList.remove('exp');document.getElementById('diTxt').textContent='';}},3200);}},14000);
+
+/* ── TAB NAVIGATION ── */
+function switchTab(id){
+  document.querySelectorAll('.tab-page').forEach(p=>p.classList.remove('show'));
+  document.getElementById(id).classList.add('show');
+  document.getElementById('main').scrollTop=0;
+}
+function setNav(el){
+  document.querySelectorAll('.ni').forEach(n=>{n.classList.remove('on');n.removeAttribute('aria-current');});
+  el.classList.add('on');el.setAttribute('aria-current','page');haptic();
 }
 
-// ═══ POMODORO ═══
-let pomoInterval=null;
-function renderPomodoro(){
-const g=STATE;
-const mins=Math.floor(g.pomoTime/60);
-const secs=g.pomoTime%60;
-const timeStr=String(mins).padStart(2,'0')+':'+String(secs).padStart(2,'0');
-const total=g.pomoState==='break'?5*60:25*60;
-const pct=1-(g.pomoTime/total);
-const circumference=2*Math.PI*95;
-const offset=circumference*(1-pct);
-const isWork=g.pomoState!=='break';
-const phase=g.pomoState==='idle'?'':isWork?t('pomo_work'):t('pomo_break');
+/* ── PTR ── */
+let ptY=0,ptPull=false,ptD=0;
+const sc=document.getElementById('main'),ptr=document.getElementById('ptr'),ptrTxt=document.getElementById('ptrTxt');
+sc.addEventListener('touchstart',e=>{if(sc.scrollTop===0){ptY=e.touches[0].clientY;ptPull=true;}},{passive:true});
+sc.addEventListener('touchmove',e=>{if(!ptPull)return;ptD=Math.min(65,Math.max(0,e.touches[0].clientY-ptY));if(ptD>5){ptr.style.height=ptD+'px';ptrTxt.textContent=ptD>42?'Eliberează ↑':'Trage pentru reîmprospătare';}},{passive:true});
+sc.addEventListener('touchend',()=>{if(ptD>42){ptr.classList.add('loading');ptrTxt.textContent='Se reîmprospătează...';ptr.style.height='48px';setTimeout(()=>{ptr.style.height='0';ptr.classList.remove('loading');showToast('Reîmprospătat ✓');},1500);}else{ptr.style.height='0';}ptPull=false;ptD=0;});
 
-document.getElementById('pomoContainer').innerHTML=`
-<div class="pomo-ring-wrap">
-<svg class="pomo-ring-svg" viewBox="0 0 200 200">
-<circle class="pomo-ring-bg" cx="100" cy="100" r="95"/>
-<circle class="pomo-ring-fill" cx="100" cy="100" r="95" stroke-dasharray="${circumference}" stroke-dashoffset="${offset}" style="stroke:${isWork?'var(--gold)':'var(--accent-emerald)'}"/>
-</svg>
-<div class="pomo-time"><span class="time">${timeStr}</span><span class="phase">${phase}</span></div>
-</div>
-<div class="pomo-sessions">${[0,1,2,3].map(i=>`<span class="pomo-dot ${i<g.pomoSession?'done':''} ${i===g.pomoSession&&g.pomoState==='work'?'active':''}"></span>`).join('')}</div>
-<div class="pomo-controls">
-${g.pomoState==='idle'?`<button class="btn btn-gold" onclick="startPomo()">${t('start')}</button>`:`<button class="btn btn-outline btn-sm" onclick="resetPomo()">Reset</button>`}
-</div>`;
+/* ── SWIPE NAV ── */
+let swX=0;
+app.addEventListener('touchstart',e=>{swX=e.touches[0].clientX;},{passive:true});
+app.addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-swX;
+  const navs=document.querySelectorAll('.ni');let ai=Array.from(navs).findIndex(n=>n.classList.contains('on'));
+  if(Math.abs(dx)>65){
+    const tabs=['tab-home','tab-tasks','tab-focus','tab-games','tab-progress'];
+    if(dx<0&&ai<navs.length-1){switchTab(tabs[ai+1]);setNav(navs[ai+1]);}
+    if(dx>0&&ai>0){switchTab(tabs[ai-1]);setNav(navs[ai-1]);}
+  }
+},{passive:true});
+
+/* ── ACCESSIBILITY ── */
+const fLvl=['','large','xlarge'],fLbl=['A','AA','AAA'];let fIdx=0;
+function chFont(d){fIdx=Math.max(0,Math.min(2,fIdx+d));document.documentElement.setAttribute('data-font',fLvl[fIdx]);document.getElementById('fVal').textContent=fLbl[fIdx];document.getElementById('fMinus').disabled=fIdx===0;document.getElementById('fPlus').disabled=fIdx===2;showToast('Text: '+['Normal','Mare','Foarte mare'][fIdx]);localStorage.setItem('fIdx',fIdx);}
+function togSimplified(el){const b=el.querySelector('.tog');b.classList.toggle('on');const on=b.classList.contains('on');el.setAttribute('aria-checked',on);showToast(on?'Mod simplificat ✦':'Mod complet activat');}
+function togMotion(el){const b=el.querySelector('.tog');b.classList.toggle('on');const on=b.classList.contains('on');el.setAttribute('aria-checked',on);document.documentElement.setAttribute('data-motion',on?'reduce':'');showToast(on?'Animații reduse 🎞️':'Animații normale');}
+function setMode(m,el){document.querySelectorAll('.mchip').forEach(c=>c.classList.remove('on'));el.classList.add('on');app.setAttribute('data-mode',m==='light'?'':m);showToast({light:'Mod luminos ☀️',dark:'Mod întunecat 🌙',contrast:'Contrast ridicat ◑'}[m]+' activat');localStorage.setItem('aMode',m);}
+
+/* ── RESTORE ── */
+function restore(){
+  const nm=localStorage.getItem('uName');if(nm)applyName(nm);
+  const m=localStorage.getItem('aMode')||'light';if(m!=='light'){app.setAttribute('data-mode',m);const c=document.getElementById('mc-'+m);if(c){document.querySelectorAll('.mchip').forEach(x=>x.classList.remove('on'));c.classList.add('on');}}
+  const fi=parseInt(localStorage.getItem('fIdx')||'0');if(fi>0){fIdx=fi-1;chFont(1);}
+  const sx=parseInt(localStorage.getItem('xp')||'0');const sl=parseInt(localStorage.getItem('level')||'1');xp=sx;level=sl;updateXPBar();
 }
-function startPomo(){
-STATE.pomoState='work';STATE.pomoTime=25*60;save();renderPomodoro();
-clearInterval(pomoInterval);
-pomoInterval=setInterval(()=>{
-STATE.pomoTime--;
-if(STATE.pomoTime<=0){
-if(STATE.pomoState==='work'){STATE.pomoSession++;addXP(20);STATE.pomoState='break';STATE.pomoTime=5*60;showToast(STATE.lang==='ro'?'Pauză! 🎉':'Break time! 🎉')}
-else{STATE.pomoState='work';STATE.pomoTime=25*60;showToast(STATE.lang==='ro'?'Înapoi la treabă!':'Back to work!')}
-save();
-}
-renderPomodoro();
-},1000);
-}
-function resetPomo(){clearInterval(pomoInterval);STATE.pomoState='idle';STATE.pomoTime=25*60;save();renderPomodoro()}
-
-// ═══ TODOS ═══
-function setPriority(p){STATE.currentPriority=p;['urgent','normal','calm'].forEach(pr=>{const btn=document.getElementById('pri'+pr.charAt(0).toUpperCase()+pr.slice(1));btn.classList.remove('active-urgent','active-normal','active-calm');if(pr===p)btn.classList.add('active-'+p)});save()}
-function setTodoTab(tab){STATE.todoTab=tab;document.getElementById('tabActive').classList.toggle('active',tab==='active');document.getElementById('tabDone').classList.toggle('active',tab==='done');renderTodos()}
-function addTodo(){const input=document.getElementById('todoInput');const text=input.value.trim();if(!text)return;STATE.todos.push({id:Date.now(),text,priority:STATE.currentPriority,done:false});input.value='';renderTodos();save()}
-document.getElementById('todoInput').addEventListener('keydown',e=>{if(e.key==='Enter')addTodo()});
-function toggleTodo(id){const todo=STATE.todos.find(t=>t.id===id);if(todo){todo.done=!todo.done;if(todo.done){STATE.tasksCompleted++;addXP(10)}renderTodos();save()}}
-function deleteTodo(id){STATE.todos=STATE.todos.filter(t=>t.id!==id);renderTodos();save()}
-function renderTodos(){
-const list=document.getElementById('todoList');
-const filtered=STATE.todos.filter(t=>STATE.todoTab==='active'?!t.done:t.done);
-const priOrder={urgent:0,normal:1,calm:2};filtered.sort((a,b)=>priOrder[a.priority]-priOrder[b.priority]);
-if(!filtered.length){list.innerHTML=`<div class="empty-state"><div class="empty-icon">${STATE.todoTab==='active'?'📝':'✅'}</div><p>${STATE.todoTab==='active'?t('no_todos'):t('no_done')}</p></div>`;return}
-const priColors={urgent:'var(--danger)',normal:'var(--warning)',calm:'var(--accent-emerald)'};
-list.innerHTML=filtered.map((todo,i)=>`<div class="todo-item ${todo.done?'done':''}" style="animation-delay:${i*50}ms"><button class="todo-check ${todo.done?'checked':''}" onclick="toggleTodo(${todo.id})">${todo.done?'✓':''}</button><span class="todo-text">${esc(todo.text)}</span><span class="todo-priority-dot" style="background:${priColors[todo.priority]}"></span><button class="todo-delete" onclick="deleteTodo(${todo.id})">×</button></div>`).join('')}
-
-// ═══ GAMES ═══
-let gameState={};
-function startGame(type){document.getElementById('gameSelect').style.display='none';document.getElementById('gameArea').style.display='block';gameState={type};if(type==='memory')initMemory();else if(type==='quiz')initQuiz();else if(type==='puzzle')initPuzzle();else if(type==='breathing')initBreathing()}
-function exitGame(){document.getElementById('gameSelect').style.display='';document.getElementById('gameArea').style.display='none';if(gameState.breathTimeout)clearTimeout(gameState.breathTimeout)}
-
-function initMemory(){const emojis=['🌸','🌊','🌙','⭐','🦋','🌈','🍀','🔥'];const pairs=[...emojis,...emojis].sort(()=>Math.random()-.5);gameState={type:'memory',cards:pairs,flipped:[],matched:[],moves:0,locked:false};renderMemory()}
-function renderMemory(){const g=gameState;document.getElementById('gameArea').innerHTML=`<div class="game-header"><button class="game-back" onclick="exitGame()">${t('back')}</button><div class="game-score">${t('moves')}: ${g.moves}</div></div><div class="memory-grid">${g.cards.map((c,i)=>{const show=g.flipped.includes(i)||g.matched.includes(i);const matched=g.matched.includes(i);return`<button class="memory-card ${show?'flipped':''} ${matched?'matched':''}" onclick="flipCard(${i})" ${matched?'disabled':''}>${show?c:''}</button>`}).join('')}</div>`}
-function flipCard(i){const g=gameState;if(g.locked||g.flipped.includes(i)||g.matched.includes(i))return;g.flipped.push(i);renderMemory();if(g.flipped.length===2){g.moves++;g.locked=true;const[a,b]=g.flipped;if(g.cards[a]===g.cards[b]){g.matched.push(a,b);g.flipped=[];g.locked=false;renderMemory();if(g.matched.length===g.cards.length){const xp=Math.max(50,100-g.moves*3);STATE.gamesPlayed++;setTimeout(()=>{addXP(xp);document.getElementById('gameArea').innerHTML+=`<div style="text-align:center;padding:var(--spacing-lg)"><div style="font-size:var(--fs-xl);color:var(--gold);font-family:var(--font-display);margin-bottom:12px;font-style:italic">${t('game_over')}</div><div style="color:var(--text-secondary);margin-bottom:16px;font-weight:300">${t('xp_earned').replace('{n}',xp)}</div><button class="btn btn-gold" onclick="initMemory()">${t('try_again')}</button></div>`},500);save()}}else{setTimeout(()=>{g.flipped=[];g.locked=false;renderMemory()},900)}}}
-
-function initQuiz(){const questions=[...QUIZ_DATA[STATE.lang]].sort(()=>Math.random()-.5).slice(0,5);questions.forEach(q=>{const ct=q.options[q.correct];const sh=[...q.options].sort(()=>Math.random()-.5);q.options=sh;q.correct=sh.indexOf(ct)});gameState={type:'quiz',questions,current:0,score:0,answered:false};renderQuiz()}
-function renderQuiz(){const g=gameState;const q=g.questions[g.current];document.getElementById('gameArea').innerHTML=`<div class="game-header"><button class="game-back" onclick="exitGame()">${t('back')}</button><div class="game-score">${t('score')}: ${g.score}/${g.questions.length}</div></div><div class="quiz-container"><div class="quiz-progress">${g.questions.map((_,i)=>`<span class="quiz-dot ${i<g.current?'answered':''} ${i===g.current?'current':''}"></span>`).join('')}</div><div style="color:var(--text-muted);text-align:center;margin-bottom:8px;font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.1em;font-weight:500">${t('question')} ${g.current+1}/${g.questions.length}</div><div class="quiz-question">${q.q}</div><div class="quiz-options">${q.options.map((opt,i)=>`<button class="quiz-option" onclick="answerQuiz(${i})" ${g.answered?'disabled':''}>${opt}</button>`).join('')}</div></div>`}
-function answerQuiz(i){if(gameState.answered)return;gameState.answered=true;const q=gameState.questions[gameState.current];const btns=document.querySelectorAll('.quiz-option');btns[q.correct].classList.add('correct');if(i===q.correct)gameState.score++;else btns[i].classList.add('wrong');setTimeout(()=>{gameState.current++;gameState.answered=false;if(gameState.current>=gameState.questions.length){const xp=gameState.score*20;STATE.gamesPlayed++;addXP(xp);document.getElementById('gameArea').innerHTML=`<div style="text-align:center;padding:var(--spacing-xl) var(--spacing-md)"><div style="font-size:4rem;margin-bottom:16px">🧠</div><div style="font-size:var(--fs-xl);color:var(--gold);font-family:var(--font-display);margin-bottom:12px;font-style:italic">${t('game_over')}</div><div style="color:var(--text-secondary);margin-bottom:8px;font-weight:300">${t('score')}: ${gameState.score}/${gameState.questions.length}</div><div style="color:var(--gold-light);margin-bottom:24px">${t('xp_earned').replace('{n}',xp)}</div><button class="btn btn-gold" onclick="initQuiz()">${t('try_again')}</button></div>`;save()}else renderQuiz()},1200)}
-
-function initPuzzle(){const words=PUZZLE_WORDS[STATE.lang];const w=words[Math.floor(Math.random()*words.length)];const scrambled=w.word.split('').sort(()=>Math.random()-.5).join('');gameState={type:'puzzle',word:w.word,hint:w.hint,scrambled,attempts:0,showHint:false,solved:false};renderPuzzle()}
-function renderPuzzle(){const g=gameState;document.getElementById('gameArea').innerHTML=`<div class="game-header"><button class="game-back" onclick="exitGame()">${t('back')}</button></div><div class="puzzle-container"><div style="font-size:3rem;margin-bottom:16px">🔤</div><div class="puzzle-scrambled">${g.scrambled}</div><div class="puzzle-hint">${g.showHint?'💡 '+g.hint:''}</div><input type="text" class="todo-input" id="puzzleInput" placeholder="..." style="text-align:center;max-width:280px;margin:0 auto var(--spacing-md);display:block;font-family:var(--font-display);font-size:var(--fs-xl)" maxlength="20" ${g.solved?'disabled':''}><div style="display:flex;gap:var(--spacing-sm);justify-content:center;flex-wrap:wrap"><button class="btn btn-gold" onclick="checkPuzzle()" ${g.solved?'disabled':''}>${t('score')}</button><button class="btn btn-outline btn-sm" onclick="showPuzzleHint()">${t('hint')}</button><button class="btn btn-secondary btn-sm" onclick="initPuzzle()">${t('next_word')}</button></div>${g.solved?`<div style="color:var(--accent-emerald);font-size:var(--fs-lg);margin-top:var(--spacing-md);font-family:var(--font-display);font-style:italic">${t('correct')} ${t('xp_earned').replace('{n}',Math.max(30,80-g.attempts*10))}</div>`:''}</div>`;if(!g.solved)setTimeout(()=>{const inp=document.getElementById('puzzleInput');if(inp)inp.addEventListener('keydown',e=>{if(e.key==='Enter')checkPuzzle()})},50)}
-function checkPuzzle(){const inp=document.getElementById('puzzleInput');if(!inp)return;const val=inp.value.trim().toUpperCase();gameState.attempts++;if(val===gameState.word){gameState.solved=true;const xp=Math.max(30,80-gameState.attempts*10);STATE.gamesPlayed++;addXP(xp);renderPuzzle();save()}else{inp.style.borderColor='var(--danger)';setTimeout(()=>{if(inp)inp.style.borderColor=''},600)}}
-function showPuzzleHint(){gameState.showHint=true;renderPuzzle()}
-
-function initBreathing(){gameState={type:'breathing',phase:'idle',round:0,maxRounds:4,score:0,breathTimeout:null};renderBreathing()}
-function renderBreathing(){const g=gameState;document.getElementById('gameArea').innerHTML=`<div class="game-header"><button class="game-back" onclick="exitGame()">${t('back')}</button><div class="game-score">${t('round')} ${g.round}/${g.maxRounds}</div></div><div class="breath-container"><div class="breath-visual"><div class="breath-ring"></div><div class="breath-circle ${g.phase}" id="breathCircle"><span class="breath-text" id="breathText">${g.phase==='idle'?'✦':g.phase==='inhale'?t('inhale'):g.phase==='exhale'?t('exhale'):t('hold')}</span></div></div><div class="breath-timer" id="breathTimer"></div><div class="breath-score">${t('score')}: ${g.score}</div>${g.phase==='idle'?`<button class="btn btn-gold btn-lg" onclick="startBreathing()" style="margin-top:var(--spacing-md)">${t('start')}</button>`:`<div class="breath-tap-zone" id="breathTap" onclick="breathTap()"><span style="color:var(--text-muted);font-size:var(--fs-sm);font-weight:300">${t('tap_rhythm')}</span></div>`}</div>`}
-function startBreathing(){gameState.phase='inhale';gameState.round=1;gameState.score=0;breathCycle();renderBreathing()}
-function breathCycle(){const phases=['inhale','hold','exhale','hold'],durations=[4000,2000,4000,2000];let i=0;function next(){if(gameState.round>gameState.maxRounds){finishBreathing();return}gameState.phase=phases[i];const circle=document.getElementById('breathCircle'),text=document.getElementById('breathText'),timer=document.getElementById('breathTimer');if(circle){circle.className='breath-circle '+gameState.phase;text.textContent=gameState.phase==='inhale'?t('inhale'):gameState.phase==='exhale'?t('exhale'):t('hold')}let sec=Math.round(durations[i]/1000);if(timer)timer.textContent=sec;const ci=setInterval(()=>{sec--;if(timer)timer.textContent=sec>0?sec:'';if(sec<=0)clearInterval(ci)},1000);i++;if(i>=phases.length){i=0;gameState.round++}gameState.breathTimeout=setTimeout(next,durations[i-1]||durations[0])}next()}
-function breathTap(){if(gameState.phase==='inhale'||gameState.phase==='exhale'){gameState.score+=5;const s=document.querySelector('.breath-score');if(s)s.textContent=t('score')+': '+gameState.score}}
-function finishBreathing(){gameState.phase='idle';clearTimeout(gameState.breathTimeout);const xp=Math.min(80,20+gameState.score);STATE.gamesPlayed++;addXP(xp);document.getElementById('gameArea').innerHTML=`<div style="text-align:center;padding:var(--spacing-xl) var(--spacing-md)"><div style="font-size:4rem;margin-bottom:16px">🌬️</div><div style="font-size:var(--fs-xl);color:var(--gold);font-family:var(--font-display);margin-bottom:12px;font-style:italic">${t('game_over')}</div><div style="color:var(--text-secondary);margin-bottom:8px;font-weight:300">${t('score')}: ${gameState.score}</div><div style="color:var(--gold-light);margin-bottom:24px">${t('xp_earned').replace('{n}',xp)}</div><button class="btn btn-gold" onclick="initBreathing()">${t('try_again')}</button></div>`;save()}
-
-// ═══ DASHBOARD ═══
-function renderDashboard(){
-document.getElementById('statXP').textContent=(STATE.xp+(STATE.level-1)*100).toLocaleString();
-document.getElementById('statLevel').textContent=STATE.level;
-document.getElementById('statRituals').textContent=STATE.rituals;
-document.getElementById('statTasks').textContent=STATE.tasksCompleted;
-document.getElementById('statGames').textContent=STATE.gamesPlayed;
-document.getElementById('statStreak').textContent=STATE.streak+' 🔥';
-renderWeeklyChart();renderMoodChart();renderBadges();
-}
-function renderWeeklyChart(){
-const days=STATE.lang==='ro'?['Lu','Ma','Mi','Jo','Vi','Sâ','Du']:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-const max=Math.max(...STATE.weeklyXP,10);
-document.getElementById('barChart').innerHTML=STATE.weeklyXP.map((v,i)=>`<div class="bar-col"><div class="bar-value">${v}</div><div class="bar" style="height:${(v/max)*100}%;animation:fadeIn .5s ease ${i*80}ms forwards;opacity:0"></div><span class="bar-label">${days[i]}</span></div>`).join('')}
-function renderMoodChart(){
-const container=document.getElementById('moodChartArea');
-const last7=STATE.moodHistory.slice(-7);
-if(!last7.length){container.innerHTML='<div style="text-align:center;color:var(--text-muted);font-size:var(--fs-xs);padding:var(--spacing-md)">'+(STATE.lang==='ro'?'Selectează dispoziția zilnică pentru a vedea graficul':'Select your daily mood to see the chart')+'</div>';return}
-const moodColors={5:'#4FD4A4',4:'#4FB8D4',3:'var(--gold)',2:'#E0A832',1:'#E05577'};
-const max=5;
-container.innerHTML=last7.map((m,i)=>`<div class="mood-chart-col"><div class="mood-chart-bar" style="height:${(m.val/max)*100}%;background:${moodColors[m.val]||'var(--gold)'};animation:fadeIn .5s ease ${i*80}ms forwards;opacity:0"></div><span class="mood-chart-label">${m.date.slice(-2)}</span></div>`).join('');
-}
-function renderBadges(){document.getElementById('badgesGrid').innerHTML=BADGES.map(b=>`<div class="badge ${STATE.badges[b.id]?'unlocked':'locked'}"><span class="badge-icon">${b.icon}</span><span class="badge-name">${STATE.lang==='ro'?b.ro:b.en}</span></div>`).join('')}
-
-// ═══ INIT ═══
-function initApp(){
-updateXPBar();newRitual();renderTodos();renderBadges();renderHabits();renderTicker();renderPomodoro();renderSounds();renderJournalPrompts();renderJournal();applyI18N();
-if(STATE.largeText){document.documentElement.setAttribute('data-large-text','true');document.getElementById('btnLargeText').classList.add('active')}
-if(STATE.highContrast){document.documentElement.setAttribute('data-high-contrast','true');document.getElementById('btnContrast').classList.add('active')}
-const h=new Date().getHours();
-const greeting=h<12?t('greeting_morning'):h<18?t('greeting_afternoon'):t('greeting_evening');
-document.getElementById('greetingSub').textContent=greeting+(STATE.name?', '+STATE.name:'')+'!';
-const today=new Date().toDateString();
-if(STATE.lastActive&&STATE.lastActive!==today){const diff=Math.floor((new Date()-new Date(STATE.lastActive))/86400000);if(diff===1)STATE.streak++;else if(diff>1)STATE.streak=1}else if(!STATE.lastActive)STATE.streak=1;
-STATE.lastActive=today;save();
-}
-
-load();
-if(STATE.onboarded){document.getElementById('onboarding').classList.add('hidden');document.getElementById('mainApp').style.display='block';if(STATE.lang==='en'){document.getElementById('btnLang').textContent='EN';document.documentElement.lang='en'}initApp()}
-else document.getElementById('onboarding').classList.remove('hidden');
+restore();checkOB();
+document.querySelectorAll('[role="switch"]').forEach(el=>el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();el.click();}}));
 </script>
 </body>
 </html>
