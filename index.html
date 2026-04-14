@@ -1,1095 +1,640 @@
 <!DOCTYPE html>
-<html lang="ro">
+<html lang="en" data-theme="light">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
-<title>CoachingAI – Interfață Accesibilă</title>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
-<style>
-/* ══ TOKENS ══ */
-:root{
-  --bg:#F5F2EE;--surface:#FFF;--s2:#F0EDE8;--s3:#E8E4DE;
-  --primary:#1A1A2E;--accent:#E85D4A;--a2:#4A90D9;--a3:#4CAF50;--a4:#9B59B6;
-  --text:#1A1A2E;--muted:#7A7A8C;
-  --brd:rgba(26,26,46,.09);--shd:0 2px 16px rgba(26,26,46,.07);--shd2:0 8px 32px rgba(26,26,46,.13);
-  --r:20px;--rs:12px;--rx:8px;
-  --fz:15px;--tr:.25s cubic-bezier(.4,0,.2,1);--sp:.4s cubic-bezier(.34,1.56,.64,1);
-}
-[data-mode=dark]{--bg:#0F0F13;--surface:#1A1A22;--s2:#22222E;--s3:#2A2A38;--primary:#E8E4DC;--text:#E8E4DC;--muted:#888899;--brd:rgba(255,255,255,.07);--shd:0 2px 16px rgba(0,0,0,.4);--shd2:0 8px 32px rgba(0,0,0,.6);}
-[data-mode=contrast]{--bg:#000;--surface:#0D0D0D;--s2:#1A1A1A;--s3:#222;--primary:#FFF;--accent:#FFD700;--a2:#0FF;--a3:#0F8;--text:#FFF;--muted:#CCC;--brd:rgba(255,255,255,.2);}
-[data-font=large]{--fz:18px;}[data-font=xlarge]{--fz:21px;}
-[data-motion=reduce] *{animation-duration:.01ms!important;transition-duration:.01ms!important;}
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-html{font-size:var(--fz);}
-body{font-family:'Sora',sans-serif;font-size:1rem;background:#B0ACA6;color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;transition:background var(--tr),color var(--tr);background-image:radial-gradient(ellipse at 25% 15%,rgba(232,93,74,.15) 0%,transparent 55%),radial-gradient(ellipse at 75% 85%,rgba(74,144,217,.12) 0%,transparent 55%);}
-
-/* ══ PHONE ══ */
-.phone{width:393px;max-width:100%;background:var(--bg);border-radius:50px;box-shadow:0 40px 100px rgba(0,0,0,.35),0 0 0 1px rgba(0,0,0,.08),inset 0 1px 0 rgba(255,255,255,.4);overflow:hidden;position:relative;transition:background var(--tr);}
-@keyframes haptic{0%,100%{transform:translateX(0)}25%{transform:translateX(-2px)}75%{transform:translateX(2px)}}
-.phone.hap{animation:haptic .22s ease;}
-
-/* ══ ONBOARDING ══ */
-.ob{position:absolute;inset:0;z-index:200;background:var(--primary);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:36px 28px;transition:opacity .4s,transform .4s;}
-.ob.hide{opacity:0;pointer-events:none;transform:scale(1.04);}
-.ob-step{display:none;width:100%;flex-direction:column;align-items:center;gap:0;}
-.ob-step.show{display:flex;}
-.ob-ico{font-size:48px;margin-bottom:16px;}
-.ob-title{font-family:'DM Serif Display',serif;font-size:26px;color:#fff;text-align:center;margin-bottom:8px;line-height:1.2;}
-.ob-sub{font-size:12.5px;color:rgba(255,255,255,.48);text-align:center;line-height:1.65;margin-bottom:24px;}
-.ob-inp{width:100%;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.18);border-radius:var(--rs);padding:13px 16px;font-family:'Sora',sans-serif;font-size:15px;color:#fff;outline:none;caret-color:var(--accent);transition:border-color .2s;margin-bottom:11px;}
-.ob-inp::placeholder{color:rgba(255,255,255,.3);}
-.ob-inp:focus{border-color:var(--accent);}
-.ob-btn{width:100%;background:var(--accent);color:#fff;border:none;border-radius:var(--rs);padding:14px;font-family:'Sora',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s,transform .15s;margin-top:4px;}
-.ob-btn:active{opacity:.88;transform:scale(.98);}
-.interest-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;margin-bottom:16px;}
-.int-chip{background:rgba(255,255,255,.09);border:1.5px solid rgba(255,255,255,.15);border-radius:var(--rs);padding:12px 8px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;transition:background .2s,border-color .2s;font-family:'Sora',sans-serif;}
-.int-chip.sel{background:rgba(232,93,74,.25);border-color:var(--accent);}
-.int-ico{font-size:22px;}
-.int-lbl{font-size:11px;color:rgba(255,255,255,.75);font-weight:600;}
-.ob-xp-preview{background:rgba(255,255,255,.08);border-radius:var(--rs);padding:16px;width:100%;text-align:center;margin-bottom:16px;}
-.ob-xp-preview p{font-size:12px;color:rgba(255,255,255,.55);line-height:1.6;}
-.ob-xp-preview strong{color:#fff;}
-.ob-dots{display:flex;gap:6px;margin-bottom:20px;}
-.ob-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.25);}
-.ob-dot.cur{background:var(--accent);width:20px;border-radius:4px;}
-
-/* ══ DYNAMIC ISLAND ══ */
-.di-wrap{background:var(--surface);padding:12px 24px 0;display:flex;justify-content:center;transition:background var(--tr);}
-.di{width:118px;height:34px;background:#000;border-radius:20px;display:flex;align-items:center;justify-content:center;gap:8px;position:relative;transition:width var(--sp);cursor:pointer;overflow:hidden;}
-.di.exp{width:200px;}
-.di-cam{width:10px;height:10px;background:#111;border-radius:50%;border:2px solid #2a2a2a;flex-shrink:0;}
-.di-pulse{width:6px;height:6px;background:var(--accent);border-radius:50%;opacity:.8;animation:dip 2s ease infinite;flex-shrink:0;}
-@keyframes dip{0%,100%{opacity:.8;transform:scale(1)}50%{opacity:.3;transform:scale(.7)}}
-.di-txt{font-size:10px;color:rgba(255,255,255,.7);font-weight:600;opacity:0;transition:opacity .3s;white-space:nowrap;}
-.di.exp .di-txt{opacity:1;}
-
-/* ══ STATUS BAR ══ */
-.sbar{background:var(--surface);padding:5px 22px 9px;display:flex;justify-content:space-between;align-items:center;transition:background var(--tr);}
-.stime{font-size:14px;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums;}
-.sicons{display:flex;align-items:center;gap:5px;}
-.sig{display:flex;gap:2px;align-items:flex-end;}
-.sig span{width:3px;border-radius:1px;background:var(--text);}
-.sig span:nth-child(1){height:4px}.sig span:nth-child(2){height:7px}.sig span:nth-child(3){height:10px}.sig span:nth-child(4){height:13px}
-.s5g{font-size:11px;font-weight:700;color:var(--text);}
-.bat{width:24px;height:13px;border:1.5px solid var(--text);border-radius:3px;position:relative;}
-.bat::after{content:'';position:absolute;right:-4px;top:50%;transform:translateY(-50%);width:2.5px;height:6px;background:var(--text);border-radius:0 2px 2px 0;}
-.batf{position:absolute;left:1.5px;top:1.5px;bottom:1.5px;width:82%;background:#4CAF50;border-radius:1px;}
-
-/* ══ TOP BAR ══ */
-.topbar{background:var(--surface);padding:12px 16px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--brd);transition:background var(--tr),border-color var(--tr);}
-.greet{display:flex;flex-direction:column;gap:1px;}
-.gsub{font-size:10px;color:var(--muted);font-weight:600;letter-spacing:.07em;text-transform:uppercase;}
-.gname{font-family:'DM Serif Display',serif;font-size:20px;color:var(--text);font-style:italic;display:flex;align-items:center;gap:5px;}
-.ndisp{cursor:pointer;border-bottom:1.5px dashed var(--accent);padding-bottom:1px;transition:opacity .2s,color .3s;}
-.ndisp:hover{opacity:.7;}
-.npen{font-size:11px;opacity:.4;cursor:pointer;transition:opacity .2s;}
-.npen:hover{opacity:1;}
-.nedit{display:none;align-items:center;gap:5px;}
-.nedit.on{display:flex;}
-.ninp{font-family:'DM Serif Display',serif;font-size:20px;font-style:italic;color:var(--text);background:transparent;border:none;border-bottom:2px solid var(--a2);outline:none;width:100px;caret-color:var(--a2);}
-.nok{background:var(--a2);color:#fff;border:none;border-radius:var(--rx);padding:4px 9px;font-family:'Sora',sans-serif;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;transition:opacity .2s,transform .15s;}
-.nok:active{opacity:.85;transform:scale(.93);}
-.topright{display:flex;align-items:center;gap:6px;}
-.ibtn{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;transition:transform .2s,background var(--tr);position:relative;}
-.ibtn:active{transform:scale(.88);}
-.helpbtn{background:var(--s2);font-size:15px;color:var(--muted);}
-.avbtn{background:linear-gradient(135deg,var(--accent),#C0392B);font-size:14px;font-weight:700;color:#fff;box-shadow:0 3px 10px rgba(232,93,74,.33);}
-
-/* XP BAR in topbar */
-.xp-topbar{flex:1;margin:0 10px;display:flex;flex-direction:column;gap:3px;}
-.xp-row{display:flex;justify-content:space-between;align-items:center;}
-.xp-lbl{font-size:10px;font-weight:700;color:var(--muted);}
-.xp-val{font-size:10px;font-weight:700;color:var(--a2);}
-.xp-track{height:5px;background:var(--s2);border-radius:99px;overflow:hidden;}
-.xp-fill{height:100%;background:linear-gradient(90deg,var(--a2),var(--a4));border-radius:99px;transition:width .6s cubic-bezier(.4,0,.2,1);}
-
-/* ══ SKELETON ══ */
-.skel-screen{padding:16px;display:flex;flex-direction:column;gap:11px;}
-.sk{background:linear-gradient(90deg,var(--s2) 25%,var(--s3) 50%,var(--s2) 75%);background-size:200% 100%;border-radius:var(--rs);animation:shim 1.4s ease infinite;}
-@keyframes shim{0%{background-position:200% 0}100%{background-position:-200% 0}}
-.sk-hero{height:115px;border-radius:var(--r);}
-.sk-card{height:68px;}.sk-half{height:50px;}
-
-/* ══ SCROLL / PTR ══ */
-.swrap{position:relative;overflow:hidden;}
-.ptr{position:absolute;top:0;left:0;right:0;height:0;overflow:hidden;display:flex;align-items:center;justify-content:center;background:var(--s2);gap:8px;font-size:11px;color:var(--muted);font-weight:600;transition:height .28s,background var(--tr);}
-.ptr-sp{width:16px;height:16px;border:2px solid var(--brd);border-top-color:var(--a2);border-radius:50%;animation:spin .65s linear infinite;display:none;}
-.ptr.loading .ptr-sp{display:block;}
-@keyframes spin{to{transform:rotate(360deg)}}
-.scr{overflow-y:auto;max-height:650px;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;}
-.scr::-webkit-scrollbar{width:0;}
-
-/* ══ HERO ══ */
-.hero{background:var(--primary);padding:22px 20px 26px;position:relative;overflow:hidden;transition:background var(--tr);}
-.hero::before{content:'';position:absolute;top:-70px;right:-70px;width:200px;height:200px;background:var(--accent);border-radius:50%;opacity:.11;}
-.hero::after{content:'';position:absolute;bottom:-50px;left:-50px;width:160px;height:160px;background:var(--a2);border-radius:50%;opacity:.09;}
-.hbadge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.13);border-radius:20px;padding:4px 11px;font-size:10px;color:rgba(255,255,255,.6);font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:12px;}
-.hbdot{width:6px;height:6px;background:#4CAF50;border-radius:50%;display:inline-block;animation:pulse 2s ease infinite;}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.hero h1{font-family:'DM Serif Display',serif;font-size:22px;color:#fff;line-height:1.25;margin-bottom:7px;}
-.hero p{font-size:12px;color:rgba(255,255,255,.5);line-height:1.65;max-width:260px;}
-
-/* MOOD ROW */
-.mood-row{display:flex;gap:6px;padding:14px 15px 0;}
-.mood-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;background:var(--surface);border:1.5px solid var(--brd);border-radius:var(--rs);padding:9px 4px;cursor:pointer;transition:border-color .2s,transform .15s,background var(--tr);}
-.mood-btn:active{transform:scale(.92);}
-.mood-btn.sel{border-color:var(--a2);background:rgba(74,144,217,.08);}
-.mood-ico{font-size:20px;}
-.mood-lbl{font-size:9px;font-weight:600;color:var(--muted);}
-
-/* ══ SECTIONS ══ */
-.sec{padding:16px 15px 0;}
-.sec-t{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;padding-left:3px;}
-
-/* ══ CARDS ══ */
-.card{background:var(--surface);border-radius:var(--r);padding:16px;border:1px solid var(--brd);box-shadow:var(--shd);transition:background var(--tr),border-color var(--tr);}
-.card+.card{margin-top:8px;}
-
-/* Action card */
-.acard{background:var(--surface);border-radius:var(--r);padding:15px;margin-bottom:7px;display:flex;align-items:center;gap:12px;border:1px solid var(--brd);box-shadow:var(--shd);cursor:pointer;position:relative;overflow:hidden;transition:transform var(--tr),background var(--tr),border-color var(--tr);min-height:66px;}
-.acard:active{transform:scale(.975);}
-.ripple{position:absolute;border-radius:50%;background:rgba(74,144,217,.15);transform:scale(0);animation:rip .5s ease-out forwards;pointer-events:none;}
-@keyframes rip{to{transform:scale(4);opacity:0}}
-.aico{width:43px;height:43px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;}
-.aico.r{background:rgba(232,93,74,.11);}.aico.b{background:rgba(74,144,217,.11);}.aico.g{background:rgba(76,175,80,.11);}.aico.p{background:rgba(155,89,182,.11);}
-.atxt{flex:1;min-width:0;}
-.atit{font-size:.86rem;font-weight:600;color:var(--text);margin-bottom:2px;}
-.adesc{font-size:.70rem;color:var(--muted);line-height:1.45;}
-.aarr{width:27px;height:27px;background:var(--s2);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px;flex-shrink:0;transition:transform var(--tr);}
-.acard:active .aarr{transform:translateX(3px);}
-
-/* ══ RITUAL / QUOTE ══ */
-.quote-card{background:var(--primary);border-radius:var(--r);padding:18px 16px;position:relative;overflow:hidden;transition:background var(--tr);}
-.quote-card::before{content:'✦';position:absolute;top:-8px;right:12px;font-size:60px;color:rgba(255,255,255,.04);}
-.quote-text{font-family:'DM Serif Display',serif;font-size:15px;font-style:italic;color:#fff;line-height:1.55;margin-bottom:10px;}
-.quote-author{font-size:11px;color:rgba(255,255,255,.45);font-weight:600;}
-.quote-actions{display:flex;gap:8px;margin-top:14px;}
-.qbtn{flex:1;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:var(--rs);padding:10px;font-family:'Sora',sans-serif;font-size:11px;font-weight:700;color:#fff;cursor:pointer;transition:background .2s,transform .15s;}
-.qbtn:active{transform:scale(.95);}
-.qbtn.primary{background:var(--accent);border-color:var(--accent);}
-
-/* ══ HABITS ══ */
-.habit-item{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--brd);}
-.habit-item:last-child{border-bottom:none;padding-bottom:0;}
-.habit-check{width:26px;height:26px;border-radius:50%;border:2px solid var(--brd);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:border-color .2s,background .2s,transform var(--sp);flex-shrink:0;font-size:0;}
-.habit-check.done{background:var(--a3);border-color:var(--a3);font-size:13px;}
-.habit-check.done::after{content:'✓';color:#fff;font-weight:700;}
-.habit-info{flex:1;}
-.habit-name{font-size:.83rem;font-weight:600;color:var(--text);}
-.habit-streak{font-size:.68rem;color:var(--muted);}
-.habit-xp{font-size:10px;font-weight:700;color:var(--a2);background:rgba(74,144,217,.1);padding:2px 7px;border-radius:99px;}
-
-/* ══ COACH AI ══ */
-.coach-chip-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
-.coach-chip{background:var(--s2);border:1.5px solid var(--brd);border-radius:99px;padding:7px 13px;font-family:'Sora',sans-serif;font-size:11px;font-weight:600;color:var(--text);cursor:pointer;transition:background .2s,border-color .2s,transform .15s;}
-.coach-chip:active{transform:scale(.93);}
-.coach-chip.sel{background:rgba(155,89,182,.15);border-color:var(--a4);color:var(--a4);}
-.coach-bubble{background:rgba(155,89,182,.1);border:1px solid rgba(155,89,182,.2);border-radius:var(--rs);border-top-left-radius:4px;padding:12px 14px;font-size:.80rem;color:var(--text);line-height:1.6;margin-bottom:8px;animation:fadeUp .3s ease both;}
-
-/* ══ POMODORO ══ */
-.pom-display{text-align:center;padding:18px 0 14px;}
-.pom-ring{width:110px;height:110px;margin:0 auto 12px;position:relative;}
-.pom-svg{width:100%;height:100%;transform:rotate(-90deg);}
-.pom-track{fill:none;stroke:var(--s2);stroke-width:8;}
-.pom-progress{fill:none;stroke:url(#pomGrad);stroke-width:8;stroke-linecap:round;stroke-dasharray:283;stroke-dashoffset:283;transition:stroke-dashoffset .5s linear;}
-.pom-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1px;}
-.pom-time{font-size:22px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums;}
-.pom-label{font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;}
-.pom-btns{display:flex;gap:8px;justify-content:center;}
-.pom-btn{background:var(--s2);border:1.5px solid var(--brd);border-radius:var(--rs);padding:10px 20px;font-family:'Sora',sans-serif;font-size:12px;font-weight:700;color:var(--text);cursor:pointer;transition:background .2s,transform .15s,border-color .2s;}
-.pom-btn:active{transform:scale(.93);}
-.pom-btn.go{background:var(--a2);border-color:var(--a2);color:#fff;}
-[data-mode=contrast] .pom-btn.go{background:var(--accent);border-color:var(--accent);color:#000;}
-.pom-mode-row{display:flex;gap:6px;margin-bottom:10px;justify-content:center;}
-.pom-mode{background:var(--s2);border:1.5px solid var(--brd);border-radius:var(--rx);padding:6px 12px;font-size:10px;font-weight:700;color:var(--muted);cursor:pointer;transition:background .2s,border-color .2s;}
-.pom-mode.on{background:rgba(74,144,217,.12);border-color:var(--a2);color:var(--a2);}
-
-/* ══ AMBIENT SOUNDS ══ */
-.sound-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;}
-.sound-btn{background:var(--s2);border:1.5px solid var(--brd);border-radius:var(--rs);padding:13px 8px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;transition:background .2s,border-color .2s,transform .15s;}
-.sound-btn:active{transform:scale(.93);}
-.sound-btn.on{background:rgba(76,175,80,.1);border-color:var(--a3);}
-.sound-ico{font-size:22px;}
-.sound-lbl{font-size:10px;font-weight:600;color:var(--muted);}
-.sound-btn.on .sound-lbl{color:var(--a3);}
-
-/* ══ JOURNAL ══ */
-.journal-ta{width:100%;background:var(--s2);border:1.5px solid var(--brd);border-radius:var(--rs);padding:12px;font-family:'Sora',sans-serif;font-size:.80rem;color:var(--text);resize:none;outline:none;min-height:90px;transition:border-color .2s,background var(--tr);}
-.journal-ta:focus{border-color:var(--a2);}
-.journal-ta::placeholder{color:var(--muted);}
-.journal-save{margin-top:8px;width:100%;background:var(--primary);color:#fff;border:none;border-radius:var(--rs);padding:12px;font-family:'Sora',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;transition:opacity .2s,transform .15s;}
-.journal-save:active{opacity:.88;transform:scale(.98);}
-[data-mode=contrast] .journal-save{background:var(--accent);color:#000;}
-
-/* ══ MINI GAMES ══ */
-.games-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.game-card{background:var(--surface);border:1px solid var(--brd);border-radius:var(--r);padding:15px 12px;cursor:pointer;position:relative;overflow:hidden;transition:transform var(--tr),background var(--tr);display:flex;flex-direction:column;gap:4px;}
-.game-card:active{transform:scale(.96);}
-.game-ico{font-size:26px;}
-.game-name{font-size:.82rem;font-weight:700;color:var(--text);}
-.game-xp{font-size:10px;color:var(--muted);}
-.game-xp span{color:var(--a2);font-weight:700;}
-
-/* MEMORY GAME */
-.mem-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:12px;}
-.mem-card{aspect-ratio:1;background:var(--a2);border-radius:var(--rx);display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;transition:transform var(--sp),background .2s;user-select:none;}
-.mem-card.back{background:var(--s2);font-size:0;}
-.mem-card.matched{background:rgba(76,175,80,.2);border:2px solid var(--a3);}
-.mem-card:active{transform:scale(.9);}
-
-/* BREATHING */
-.breath-wrap{display:flex;flex-direction:column;align-items:center;padding:10px 0;}
-.breath-circle{width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,var(--a2),var(--a4));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;transition:transform 4s ease,opacity 1s ease;margin-bottom:14px;}
-.breath-circle.inhale{transform:scale(1.5);}
-.breath-circle.exhale{transform:scale(1);}
-.breath-lbl{font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px;}
-.breath-sub{font-size:11px;color:var(--muted);}
-.breath-startbtn{margin-top:14px;background:var(--a4);color:#fff;border:none;border-radius:var(--rs);padding:11px 28px;font-family:'Sora',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:opacity .2s;}
-
-/* ══ PROGRESS / DASHBOARD ══ */
-.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:12px;}
-.stat-box{background:var(--surface);border:1px solid var(--brd);border-radius:var(--rs);padding:11px 8px;text-align:center;transition:background var(--tr);}
-.stat-num{font-size:20px;font-weight:700;color:var(--text);}
-.stat-lbl{font-size:9.5px;color:var(--muted);font-weight:600;margin-top:2px;}
-.week-row{display:flex;gap:5px;align-items:flex-end;height:60px;margin-bottom:14px;}
-.week-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;height:100%;}
-.week-bar{width:100%;background:var(--s2);border-radius:4px;transition:height .5s cubic-bezier(.4,0,.2,1),background var(--tr);margin-top:auto;}
-.week-bar.today{background:linear-gradient(180deg,var(--a2),var(--a4));}
-.week-day{font-size:9px;color:var(--muted);font-weight:600;}
-.badges-row{display:flex;gap:8px;flex-wrap:wrap;}
-.badge-item{display:flex;flex-direction:column;align-items:center;gap:4px;width:52px;}
-.badge-ico{width:46px;height:46px;border-radius:50%;border:2px solid var(--brd);display:flex;align-items:center;justify-content:center;font-size:20px;background:var(--s2);transition:background var(--tr);position:relative;}
-.badge-ico.earned{background:linear-gradient(135deg,rgba(232,93,74,.15),rgba(155,89,182,.15));border-color:var(--accent);}
-.badge-lbl{font-size:9px;color:var(--muted);font-weight:600;text-align:center;line-height:1.3;}
-
-/* ══ ACCESSIBILITY ══ */
-.a11y-card{background:var(--surface);border-radius:var(--r);overflow:hidden;border:1px solid var(--brd);box-shadow:var(--shd);transition:background var(--tr),border-color var(--tr);}
-.a11y-row{display:flex;align-items:center;gap:10px;padding:13px 15px;border-bottom:1px solid var(--brd);cursor:pointer;min-height:58px;transition:background var(--tr),border-color var(--tr);}
-.a11y-row:last-child{border-bottom:none;}
-.a11y-row:active{background:var(--s2);}
-.a11y-ico{font-size:18px;width:30px;text-align:center;flex-shrink:0;}
-.a11y-info{flex:1;min-width:0;}
-.a11y-t{font-size:.83rem;font-weight:600;color:var(--text);margin-bottom:1px;}
-.a11y-d{font-size:.68rem;color:var(--muted);line-height:1.4;}
-.f-step{display:flex;align-items:center;gap:5px;flex-shrink:0;}
-.f-val{font-size:11px;font-weight:700;color:var(--text);min-width:20px;text-align:center;}
-.f-btn{width:26px;height:26px;border-radius:50%;background:var(--s2);border:none;cursor:pointer;font-size:14px;color:var(--text);font-weight:700;display:flex;align-items:center;justify-content:center;transition:background var(--tr),transform .15s;}
-.f-btn:active{transform:scale(.86);}
-.f-btn:disabled{opacity:.28;cursor:default;}
-.tog{width:43px;height:24px;background:var(--s2);border-radius:99px;position:relative;cursor:pointer;transition:background .28s;flex-shrink:0;border:none;outline:none;}
-.tog.on{background:var(--a2);}
-.tog.grn.on{background:var(--a3);}
-.tog::after{content:'';position:absolute;top:2px;left:2px;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform .3s cubic-bezier(.34,1.56,.64,1);box-shadow:0 2px 5px rgba(0,0,0,.18);}
-.tog.on::after{transform:translateX(19px);}
-.mode-row{display:flex;gap:6px;}
-.mchip{flex:1;border:1.5px solid var(--brd);background:var(--surface);border-radius:var(--rs);padding:9px 5px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;transition:border-color var(--tr),background var(--tr),transform .15s;font-family:'Sora',sans-serif;}
-.mchip:active{transform:scale(.94);}
-.mchip.on{border-color:var(--a2);background:rgba(74,144,217,.08);}
-.mchip-ico{font-size:16px;}
-.mchip-lbl{font-size:9.5px;font-weight:600;color:var(--muted);}
-.mchip.on .mchip-lbl{color:var(--a2);}
-.sr-btn{width:100%;background:var(--primary);color:#fff;border:none;border-radius:var(--rs);padding:12px 15px;font-family:'Sora',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .2s,transform .15s;min-height:46px;}
-[data-mode=contrast] .sr-btn{background:var(--accent);color:#000;}
-.sr-btn:active{transform:scale(.98);opacity:.9;}
-
-/* ══ PROGRESS BAR (onboarding-style) ══ */
-.prog-card{background:var(--surface);border-radius:var(--r);padding:16px;border:1px solid var(--brd);box-shadow:var(--shd);transition:background var(--tr);}
-.prog-hdr{display:flex;justify-content:space-between;margin-bottom:3px;}
-.prog-lbl{font-size:.84rem;font-weight:600;color:var(--text);}
-.prog-pct{font-size:.84rem;font-weight:700;color:var(--accent);}
-.prog-slbl{font-size:.68rem;color:var(--muted);margin-bottom:10px;}
-.prog-track{height:6px;background:var(--s2);border-radius:99px;overflow:hidden;margin-bottom:12px;transition:background var(--tr);}
-.prog-fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent),#FF8A65);border-radius:99px;transition:width .9s cubic-bezier(.4,0,.2,1);}
-.steps-row{display:flex;gap:6px;}
-.step-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;}
-.sdot{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;transition:background var(--tr),color var(--tr),transform var(--sp);}
-.sdot.done{background:var(--accent);color:#fff;}
-.sdot.active{background:var(--a2);color:#fff;box-shadow:0 0 0 3px rgba(74,144,217,.22);}
-.sdot.pending{background:var(--s2);color:var(--muted);}
-.sdot:hover{transform:scale(1.12);}
-.sname{font-size:9.5px;color:var(--muted);text-align:center;font-weight:500;}
-.prog-btn{width:100%;margin-top:12px;background:linear-gradient(135deg,var(--a2),#3A7BC8);color:#fff;border:none;border-radius:var(--rs);padding:10px;font-family:'Sora',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer;transition:opacity .2s,transform .15s;}
-.prog-btn:active{opacity:.88;transform:scale(.98);}
-.prog-btn:disabled{opacity:.38;cursor:default;}
-
-/* Footer */
-.footer-note{margin:0 15px;padding:10px 14px;background:rgba(74,144,217,.06);border-radius:var(--rs);border:1px solid var(--brd);font-size:.68rem;color:var(--muted);line-height:1.6;text-align:center;transition:background var(--tr),border-color var(--tr);}
-.swipe-hint{text-align:center;font-size:9.5px;color:var(--muted);padding:7px 0 2px;opacity:.45;}
-.spacer{height:16px;}
-
-/* ══ BOTTOM NAV ══ */
-.bnav{background:var(--surface);border-top:1px solid var(--brd);display:grid;grid-template-columns:repeat(5,1fr);padding:7px 0 20px;transition:background var(--tr),border-color var(--tr);}
-.ni{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;padding:6px 2px;border-radius:10px;border:none;background:transparent;font-family:'Sora',sans-serif;transition:transform .18s;}
-.ni:active{transform:scale(.85);}
-.ni-w{position:relative;}
-.ni-ico{font-size:17px;}
-.ni-badge{position:absolute;top:-4px;right:-6px;width:14px;height:14px;background:var(--accent);border-radius:50%;font-size:7px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;border:1.5px solid var(--surface);transition:transform .2s;}
-.ni-lbl{font-size:8.5px;font-weight:600;color:var(--muted);}
-.ni.on .ni-lbl{color:var(--accent);}
-.ni-dot{width:3px;height:3px;background:var(--accent);border-radius:50%;display:none;}
-.ni.on .ni-dot{display:block;}
-
-/* Toast */
-.toast{position:fixed;top:24px;left:50%;transform:translateX(-50%) translateY(-90px);background:var(--primary);color:#fff;padding:8px 16px;border-radius:99px;font-size:11.5px;font-weight:600;z-index:999;transition:transform .32s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;box-shadow:var(--shd2);pointer-events:none;}
-[data-mode=contrast] .toast{background:var(--accent);color:#000;}
-.toast.show{transform:translateX(-50%) translateY(0);}
-
-/* Animations */
-@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
-.a1{animation:fadeUp .42s .05s both}.a2{animation:fadeUp .42s .12s both}.a3{animation:fadeUp .42s .18s both}
-.a4{animation:fadeUp .42s .24s both}.a5{animation:fadeUp .42s .30s both}.a6{animation:fadeUp .42s .36s both}
-
-/* Tab pages */
-.tab-page{display:none;}
-.tab-page.show{display:block;}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>CoachingAI Health Companion</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#f6f3ef;--surface:#ffffff;--surface2:#f1ede8;--surface3:#e7e2db;
+      --text:#1d2233;--muted:#6d7285;--primary:#1a1a2e;--accent:#e85d4a;--accent2:#4a90d9;--success:#42b36b;--purple:#9163d7;
+      --border:rgba(26,26,46,.09);--shadow:0 10px 30px rgba(26,26,46,.08);--shadow2:0 20px 60px rgba(26,26,46,.16);
+      --rxl:28px;--rlg:20px;--rmd:14px;--rsm:10px;--container:1180px;--header:82px;--fz:15px;--tr:.25s cubic-bezier(.4,0,.2,1);
+    }
+    html[data-theme="dark"]{
+      --bg:#0f1117;--surface:#181b23;--surface2:#202532;--surface3:#2a3140;--text:#eceef6;--muted:#9ea6bb;--primary:#eceef6;
+      --border:rgba(255,255,255,.08);--shadow:0 10px 30px rgba(0,0,0,.35);--shadow2:0 20px 60px rgba(0,0,0,.5);
+    }
+    html[data-theme="contrast"]{
+      --bg:#000;--surface:#111;--surface2:#1a1a1a;--surface3:#222;--text:#fff;--muted:#ddd;--primary:#fff;--accent:#ffd700;--accent2:#00e5ff;--success:#00ff99;
+      --border:rgba(255,255,255,.22);
+    }
+    html[data-font="large"]{--fz:17px}
+    html[data-font="xlarge"]{--fz:19px}
+    html[data-motion="reduce"] *{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+    *{box-sizing:border-box} html{font-size:var(--fz);scroll-behavior:smooth} body{margin:0;font-family:'Sora',system-ui,sans-serif;background:radial-gradient(circle at top left,rgba(232,93,74,.12),transparent 30%),radial-gradient(circle at bottom right,rgba(74,144,217,.12),transparent 30%),var(--bg);color:var(--text);transition:background var(--tr),color var(--tr)}
+    button,input,textarea,select{font:inherit} a{text-decoration:none;color:inherit}
+    .shell{width:min(100%,var(--container));margin:0 auto;padding:0 16px 28px}
+    .topbar{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);background:color-mix(in srgb,var(--bg) 84%,transparent);border-bottom:1px solid var(--border)}
+    .topbar-inner{min-height:var(--header);display:flex;align-items:center;justify-content:space-between;gap:16px;width:min(100%,var(--container));margin:0 auto;padding:14px 16px}
+    .brand{display:flex;align-items:center;gap:12px;min-width:0}.brand-mark{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;color:#fff;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--purple));box-shadow:var(--shadow);flex-shrink:0}
+    .eyebrow{display:block;color:var(--muted);font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin-bottom:2px}.brand-title{font-family:'DM Serif Display',serif;font-size:1.4rem;line-height:1;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.brand-title[contenteditable="true"]{cursor:text;padding:2px 6px;border-radius:10px;outline:none;border:1px dashed transparent;transition:border-color var(--tr),background var(--tr)}.brand-title[contenteditable="true"]:hover{border-color:var(--border);background:color-mix(in srgb,var(--surface2) 55%,transparent)}.brand-title[contenteditable="true"]:focus{border-color:color-mix(in srgb,var(--accent2) 45%,transparent);background:color-mix(in srgb,var(--accent2) 10%,var(--surface));white-space:normal;overflow:visible}
+    .toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}.icon-btn,.primary-btn,.ghost-btn,.secondary-btn{border:1px solid var(--border);border-radius:999px;transition:transform var(--tr),background var(--tr),border-color var(--tr),color var(--tr);cursor:pointer}.icon-btn{width:42px;height:42px;display:grid;place-items:center;background:var(--surface);color:var(--text);box-shadow:var(--shadow)}.primary-btn,.secondary-btn,.ghost-btn{min-height:44px;padding:0 16px;font-weight:700}.primary-btn{background:linear-gradient(135deg,var(--accent),#ff8268);color:#fff;border-color:transparent}.secondary-btn{background:var(--accent2);color:#fff;border-color:transparent}.ghost-btn{background:var(--surface);color:var(--text)}
+    .icon-btn:hover,.primary-btn:hover,.secondary-btn:hover,.ghost-btn:hover{transform:translateY(-1px)} .icon-btn:active,.primary-btn:active,.secondary-btn:active,.ghost-btn:active{transform:translateY(0) scale(.98)}
+    .hero{padding:28px 0 18px}.hero-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--rxl);box-shadow:var(--shadow);transition:background var(--tr),border-color var(--tr),transform var(--tr)}
+    .hero-card{position:relative;overflow:hidden;padding:28px;background:radial-gradient(circle at top right,rgba(232,93,74,.13),transparent 26%),radial-gradient(circle at bottom left,rgba(74,144,217,.14),transparent 25%),linear-gradient(135deg,color-mix(in srgb,var(--surface) 86%,var(--surface2)),var(--surface))}
+    .status-pill{display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;background:color-mix(in srgb,var(--surface2) 70%,transparent);border:1px solid var(--border);color:var(--muted);font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}.pulse{width:8px;height:8px;border-radius:50%;background:var(--success);animation:pulse 1.8s infinite}@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
+    .hero h2{margin:0 0 12px;font-family:'DM Serif Display',serif;font-size:clamp(2rem,3vw,3rem);line-height:1.05;max-width:12ch}.hero p{margin:0;color:var(--muted);line-height:1.7;max-width:60ch}.hero-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+    .stats-card{padding:24px;display:grid;gap:14px;align-content:start}.xp-row{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:.9rem;font-weight:700}.muted{color:var(--muted)}.accent{color:var(--accent2)}.progress-track{height:10px;border-radius:999px;background:var(--surface2);overflow:hidden}.progress-fill{height:100%;width:0;border-radius:inherit;background:linear-gradient(90deg,var(--accent2),var(--purple));transition:width .45s cubic-bezier(.4,0,.2,1)}
+    .mini-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.mini-stat{padding:14px;border-radius:var(--rmd);background:var(--surface2);border:1px solid var(--border)}.mini-stat strong{display:block;font-size:1.3rem;margin-bottom:4px}
+    .layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:18px;align-items:start}.sidebar{position:sticky;top:calc(var(--header) + 12px);padding:14px}.nav-list{display:grid;gap:8px}.nav-btn{width:100%;display:flex;align-items:center;gap:12px;padding:14px;border-radius:16px;border:1px solid transparent;background:transparent;color:var(--text);cursor:pointer;transition:background var(--tr),border-color var(--tr),transform var(--tr);text-align:left}.nav-btn:hover{background:var(--surface2);border-color:var(--border);transform:translateX(2px)}.nav-btn.active{background:color-mix(in srgb,var(--accent2) 12%,var(--surface));border-color:color-mix(in srgb,var(--accent2) 28%,transparent)}.nav-icon{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:var(--surface2);flex-shrink:0}
+    .sidebar-card{margin-top:14px;padding:16px;border-radius:18px;background:linear-gradient(180deg,color-mix(in srgb,var(--surface) 82%,var(--surface2)),var(--surface));border:1px solid var(--border)}
+    .sidebar-card h3,.section-head h3{margin:0 0 6px;font-size:.95rem}.sidebar-card p,.section-head p{margin:0;color:var(--muted);line-height:1.6;font-size:.86rem}
+    .content{min-width:0;display:grid;gap:18px}.section{display:none;gap:18px}.section.active{display:grid}.section-head{padding:22px 24px;display:flex;justify-content:space-between;gap:14px;align-items:flex-start}.section-head h2{margin:0 0 6px;font-family:'DM Serif Display',serif;font-size:1.8rem;line-height:1.08}.grid-2,.grid-3,.stats-grid,.settings-grid{display:grid;gap:18px}.grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}.stats-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.settings-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .card{padding:20px}.card h3{margin:0 0 10px;font-size:1rem}.card p{margin:0;color:var(--muted);line-height:1.65;font-size:.9rem}
+    .mood-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.mood-btn{border:1px solid var(--border);border-radius:18px;background:var(--surface);padding:16px 10px;cursor:pointer;display:grid;place-items:center;gap:6px;transition:transform var(--tr),background var(--tr),border-color var(--tr);color:var(--text)}.mood-btn.active{background:color-mix(in srgb,var(--accent2) 12%,var(--surface));border-color:color-mix(in srgb,var(--accent2) 30%,transparent)}.mood-btn span:first-child{font-size:1.5rem}.mood-btn span:last-child{font-size:.8rem;color:var(--muted);font-weight:600}
+    .quote-box{padding:22px;background:linear-gradient(135deg,var(--primary),color-mix(in srgb,var(--primary) 82%,var(--purple)));color:#fff;border-radius:var(--rlg);position:relative;overflow:hidden} html[data-theme="dark"] .quote-box{background:linear-gradient(135deg,#10131b,#24293b)} .quote-box::after{content:'✦';position:absolute;right:16px;top:-6px;font-size:4rem;color:rgba(255,255,255,.08)} .quote-box blockquote{margin:0;font-family:'DM Serif Display',serif;font-size:1.35rem;line-height:1.5}.quote-box footer{margin-top:10px;color:rgba(255,255,255,.64);font-size:.86rem;font-weight:600}.row-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+    .feature-card{display:flex;gap:14px;align-items:flex-start;min-height:100%}.feature-icon{width:50px;height:50px;border-radius:16px;display:grid;place-items:center;background:var(--surface2);font-size:1.35rem;flex-shrink:0}
+    .list{display:grid;gap:10px;margin:0;padding:0;list-style:none}.list-item{display:flex;gap:12px;align-items:center;padding:14px;border:1px solid var(--border);border-radius:16px;background:var(--surface2)}.check{width:28px;height:28px;border-radius:50%;border:2px solid var(--border);display:grid;place-items:center;cursor:pointer;flex-shrink:0;font-size:0;background:transparent;transition:background var(--tr),border-color var(--tr),transform var(--tr)}.check.done{background:var(--success);border-color:var(--success);font-size:.95rem;color:#fff}.tag{padding:4px 8px;border-radius:999px;background:color-mix(in srgb,var(--accent2) 12%,var(--surface));color:var(--accent2);font-size:.75rem;font-weight:700;white-space:nowrap}
+    .coach-box{padding:18px;border-radius:18px;background:color-mix(in srgb,var(--purple) 10%,var(--surface));border:1px solid color-mix(in srgb,var(--purple) 20%,transparent)}.chip-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}.chip{border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:999px;padding:10px 14px;font-weight:700;cursor:pointer}
+    .field,.textarea,.select{width:100%;border-radius:14px;border:1px solid var(--border);background:var(--surface2);color:var(--text);padding:13px 14px;outline:none;transition:border-color var(--tr),background var(--tr),box-shadow var(--tr)}.field:focus,.textarea:focus,.select:focus{border-color:color-mix(in srgb,var(--accent2) 50%,transparent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent2) 14%,transparent)} .textarea{min-height:120px;resize:vertical}
+    .input-row{display:grid;grid-template-columns:minmax(0,1fr) 160px auto;gap:10px}.task-list,.meal-grid,.exercise-grid{display:grid;gap:10px;margin-top:14px}.task-item,.meal-item,.exercise-item{padding:14px;border:1px solid var(--border);border-radius:16px;background:var(--surface2)}.task-item{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center}.priority{font-size:.9rem;white-space:nowrap}.task-done{text-decoration:line-through;opacity:.65}
+    .pomodoro{display:grid;justify-items:center;gap:14px}.mode-row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}.mode-chip{padding:10px 14px;border-radius:999px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;font-weight:700}.mode-chip.active{color:var(--accent2);border-color:color-mix(in srgb,var(--accent2) 35%,transparent);background:color-mix(in srgb,var(--accent2) 12%,var(--surface))}.timer-ring{width:180px;height:180px;position:relative}.timer-ring svg{width:100%;height:100%;transform:rotate(-90deg)}.timer-track{fill:none;stroke:var(--surface2);stroke-width:8}.timer-progress{fill:none;stroke:url(#timerGradient);stroke-width:8;stroke-linecap:round;stroke-dasharray:283;stroke-dashoffset:283;transition:stroke-dashoffset .5s linear}.timer-center{position:absolute;inset:0;display:grid;place-items:center;text-align:center}.timer-time{font-size:2rem;font-weight:700;font-variant-numeric:tabular-nums}
+    .sound-grid,.exercise-grid,.meal-grid{display:grid;gap:12px}.sound-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.exercise-grid,.meal-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.sound-btn{padding:16px 10px;border-radius:18px;border:1px solid var(--border);background:var(--surface2);cursor:pointer;display:grid;gap:6px;justify-items:center;text-align:center;color:var(--text)}.sound-btn.active{border-color:color-mix(in srgb,var(--success) 40%,transparent);background:color-mix(in srgb,var(--success) 10%,var(--surface))}
+    .game-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.game-card{padding:18px;border-radius:20px;border:1px solid var(--border);background:var(--surface);cursor:pointer;transition:transform var(--tr),background var(--tr);color:var(--text)}.game-card:hover{transform:translateY(-2px)}.game-card strong{display:block;margin:8px 0 4px}.game-area{display:none}.game-area.active{display:block}.memory-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:12px}.memory-card{aspect-ratio:1;border-radius:14px;border:1px solid var(--border);background:var(--accent2);color:#fff;display:grid;place-items:center;cursor:pointer;font-size:1.35rem;user-select:none}.memory-card.back{background:var(--surface2);color:transparent}.memory-card.matched{background:color-mix(in srgb,var(--success) 18%,var(--surface));color:var(--text);border-color:color-mix(in srgb,var(--success) 35%,transparent)}
+    .breathing{display:grid;justify-items:center;gap:10px;padding:12px 0}.breathing-circle{width:116px;height:116px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;background:linear-gradient(135deg,var(--accent2),var(--purple));transition:transform 4s ease}.breathing-circle.inhale{transform:scale(1.42)}.breathing-circle.exhale{transform:scale(1)}
+    .stat-card{padding:18px;border-radius:18px;border:1px solid var(--border);background:var(--surface2)}.stat-card strong{display:block;font-size:1.8rem;margin-bottom:4px}.week-bars{display:flex;gap:10px;align-items:end;height:170px;margin-top:8px}.bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%}.bar{width:100%;margin-top:auto;background:var(--surface2);border-radius:12px 12px 6px 6px;transition:height .45s cubic-bezier(.4,0,.2,1)}.bar.today{background:linear-gradient(180deg,var(--accent2),var(--purple))}
+    .badge-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px}.badge-item{display:grid;justify-items:center;gap:8px;text-align:center}.badge-icon{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;background:var(--surface2);border:1px solid var(--border);font-size:1.45rem}.badge-item.earned .badge-icon{background:linear-gradient(135deg,rgba(232,93,74,.15),rgba(145,99,215,.18));border-color:color-mix(in srgb,var(--accent) 45%,transparent)}
+    .setting-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px;border-radius:16px;background:var(--surface2);border:1px solid var(--border)}.toggle{width:52px;height:30px;border-radius:999px;background:var(--surface3);position:relative;border:none;cursor:pointer}.toggle::after{content:'';position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:transform var(--tr);box-shadow:0 2px 6px rgba(0,0,0,.18)}.toggle.active{background:var(--accent2)}.toggle.active::after{transform:translateX(22px)}.font-stepper{display:inline-flex;align-items:center;gap:8px}.step-btn{width:34px;height:34px;border-radius:50%;border:1px solid var(--border);background:var(--surface);cursor:pointer;color:var(--text)}
+    .calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-top:14px}.day-cell{padding:10px 6px;border-radius:14px;border:1px solid var(--border);background:var(--surface2);text-align:center;font-size:.82rem}.day-cell.done{background:color-mix(in srgb,var(--success) 12%,var(--surface));border-color:color-mix(in srgb,var(--success) 35%,transparent)}
+    .reminder-list{display:grid;gap:10px;margin-top:14px}.reminder-item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;border-radius:16px;border:1px solid var(--border);background:var(--surface2)}
+    .daily-plan{padding:16px;border-radius:18px;background:color-mix(in srgb,var(--accent2) 8%,var(--surface));border:1px solid color-mix(in srgb,var(--accent2) 20%,transparent)}
+    .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(120px);background:var(--primary);color:#fff;padding:10px 16px;border-radius:999px;font-size:.85rem;font-weight:700;box-shadow:var(--shadow2);z-index:300;transition:transform var(--tr);pointer-events:none;max-width:calc(100vw - 24px);text-align:center} html[data-theme="dark"] .toast{background:#f3f5fb;color:#111827} .toast.show{transform:translateX(-50%) translateY(0)}
+    .mobile-nav{display:none;position:sticky;bottom:12px;z-index:40;width:min(100%,var(--container));margin:16px auto 0;padding:0 16px}.mobile-nav-inner{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:10px;border-radius:22px;background:color-mix(in srgb,var(--surface) 88%,transparent);border:1px solid var(--border);backdrop-filter:blur(14px);box-shadow:var(--shadow2)}.mobile-tab{border:none;background:transparent;color:var(--muted);display:grid;gap:4px;justify-items:center;padding:8px 4px;border-radius:14px;cursor:pointer;font-size:.72rem;font-weight:700}.mobile-tab.active{color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,transparent)}
+    @media (max-width:1100px){.hero-grid,.layout,.stats-grid,.badge-grid,.settings-grid{grid-template-columns:1fr}.grid-3{grid-template-columns:repeat(2,minmax(0,1fr))}.sidebar{position:static;display:none}.mobile-nav{display:block}.shell{padding-bottom:110px}}
+    @media (max-width:820px){.grid-2,.grid-3,.exercise-grid,.meal-grid,.sound-grid,.game-grid,.mini-stats{grid-template-columns:1fr}.mood-row{grid-template-columns:repeat(3,1fr)}.input-row{grid-template-columns:1fr}.section-head{flex-direction:column;align-items:stretch}.topbar-inner{align-items:flex-start;flex-direction:column}.toolbar{width:100%;justify-content:space-between}.calendar-grid{grid-template-columns:repeat(4,1fr)}}
+    @media (max-width:560px){.shell{padding-left:12px;padding-right:12px}.topbar-inner{padding-left:12px;padding-right:12px}.hero-card,.card,.section-head,.stats-card{padding:18px}.hero h2{max-width:100%}.mood-row{grid-template-columns:repeat(2,1fr)}.memory-grid{grid-template-columns:repeat(4,1fr);gap:6px}.timer-ring{width:156px;height:156px}.brand-title{font-size:1.2rem}.badge-grid{grid-template-columns:repeat(3,1fr)}.calendar-grid{grid-template-columns:repeat(3,1fr)}}
+  </style>
 </head>
 <body>
-<div class="phone" id="app">
-
-<!-- ═══ ONBOARDING ═══ -->
-<div class="ob" id="ob">
-  <div class="ob-dots">
-    <div class="ob-dot cur" id="od1"></div>
-    <div class="ob-dot" id="od2"></div>
-    <div class="ob-dot" id="od3"></div>
-  </div>
-
-  <!-- Step 1: Nume -->
-  <div class="ob-step show" id="obs1">
-    <div class="ob-ico">👋</div>
-    <div class="ob-title">Bun venit!</div>
-    <p class="ob-sub">Cum te numești? Vom personaliza experiența pentru tine.</p>
-    <input class="ob-inp" id="obName" placeholder="Prenumele tău..." maxlength="20" autocomplete="off"/>
-    <button class="ob-btn" onclick="obNext(1)">Continuă →</button>
-  </div>
-
-  <!-- Step 2: Interese -->
-  <div class="ob-step" id="obs2">
-    <div class="ob-ico">✨</div>
-    <div class="ob-title">Ce te inspiră?</div>
-    <p class="ob-sub">Alege una sau mai multe teme pentru ritual-ul tău zilnic.</p>
-    <div class="interest-grid">
-      <div class="int-chip" onclick="this.classList.toggle('sel')"><span class="int-ico">🧘</span><span class="int-lbl">Mindfulness</span></div>
-      <div class="int-chip" onclick="this.classList.toggle('sel')"><span class="int-ico">🎨</span><span class="int-lbl">Creativitate</span></div>
-      <div class="int-chip" onclick="this.classList.toggle('sel')"><span class="int-ico">🌙</span><span class="int-lbl">Somn bun</span></div>
-      <div class="int-chip" onclick="this.classList.toggle('sel')"><span class="int-ico">🙏</span><span class="int-lbl">Recunoștință</span></div>
-      <div class="int-chip" onclick="this.classList.toggle('sel')"><span class="int-ico">🌿</span><span class="int-lbl">Natură</span></div>
-      <div class="int-chip" onclick="this.classList.toggle('sel')"><span class="int-ico">💛</span><span class="int-lbl">Conexiuni</span></div>
-    </div>
-    <button class="ob-btn" onclick="obNext(2)">Continuă →</button>
-  </div>
-
-  <!-- Step 3: Ready -->
-  <div class="ob-step" id="obs3">
-    <div class="ob-ico">✦</div>
-    <div class="ob-title">Pregătit?</div>
-    <div class="ob-xp-preview">
-      <p>Începi de la <strong>Nivel 1</strong> cu <strong>0 XP</strong>.<br>Fiecare acțiune contează.</p>
-    </div>
-    <button class="ob-btn" onclick="finishOB()">Să începem ✦</button>
-  </div>
-</div>
-
-<!-- ═══ DYNAMIC ISLAND ═══ -->
-<div class="di-wrap">
-  <div class="di" id="di" onclick="toggleDI()">
-    <div class="di-cam"></div><div class="di-pulse"></div>
-    <span class="di-txt" id="diTxt"></span>
-  </div>
-</div>
-
-<!-- STATUS BAR -->
-<div class="sbar">
-  <span class="stime" id="clock">--:--</span>
-  <div class="sicons">
-    <div class="sig"><span></span><span></span><span></span><span></span></div>
-    <span class="s5g">5G</span>
-    <div class="bat"><div class="batf"></div></div>
-  </div>
-</div>
-
-<!-- TOP BAR -->
-<div class="topbar">
-  <div class="greet">
-    <span class="gsub" id="gsub">Bun venit</span>
-    <div class="gname">
-      <span class="ndisp" id="nDisp" onclick="startEdit()">Andrei</span>
-      <span class="npen" onclick="startEdit()">✏️</span>
-      <div class="nedit" id="nEdit">
-        <input class="ninp" id="nInp" maxlength="20" placeholder="Numele tău"/>
-        <button class="nok" onclick="saveName()">OK</button>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="brand-mark">✦</div>
+        <div>
+          <span class="eyebrow" id="greetingLabel">Good morning</span>
+          <h1 class="brand-title" id="appTitle" contenteditable="true" spellcheck="false" role="textbox" aria-label="Editable app title">CoachingAI Health Companion</h1>
+        </div>
+      </div>
+      <div class="toolbar">
+        <button class="ghost-btn" id="nameBtn" aria-label="Edit name">Hello, Alex</button>
+        <button class="icon-btn" id="themeBtn" aria-label="Toggle dark mode">🌙</button>
+        <button class="icon-btn" id="helpBtn" aria-label="Help">?</button>
       </div>
     </div>
-  </div>
-  <div class="xp-topbar">
-    <div class="xp-row">
-      <span class="xp-lbl" id="lvlLbl">Nivel 1</span>
-      <span class="xp-val" id="xpLbl">0 / 100 XP</span>
-    </div>
-    <div class="xp-track"><div class="xp-fill" id="xpFill" style="width:0%"></div></div>
-  </div>
-  <div class="topright">
-    <button class="ibtn helpbtn" onclick="showToast('Apasă orice element 💡')" aria-label="Ajutor">?</button>
-    <button class="ibtn avbtn" id="avBtn" onclick="showToast('Profilul tău 👤')">A</button>
-  </div>
-</div>
+  </header>
 
-<!-- SCROLL WRAP -->
-<div class="swrap">
-  <div class="ptr" id="ptr"><div class="ptr-sp" id="ptrSp"></div><span id="ptrTxt">Trage pentru reîmprospătare</span></div>
-
-  <!-- SKELETON -->
-  <div class="skel-screen" id="skelScreen">
-    <div class="sk sk-hero"></div>
-    <div class="sk sk-card"></div><div class="sk sk-card"></div>
-    <div class="sk sk-half"></div><div class="sk sk-half"></div>
-  </div>
-
-  <!-- MAIN -->
-  <div class="scr" id="main" style="display:none">
-
-    <!-- ── TAB: ACASĂ ── -->
-    <div class="tab-page show" id="tab-home">
-
-      <!-- HERO -->
-      <div class="hero a1">
-        <div class="hbadge"><span class="hbdot"></span> CoachingAI · Accesibil</div>
-        <h1 id="heroH">Cum te pot ajuta azi?</h1>
-        <p>Ritualuri zilnice, obiceiuri sănătoase și coaching personalizat.</p>
-      </div>
-
-      <!-- MOOD -->
-      <div class="mood-row a2">
-        <div class="mood-btn" onclick="selMood(this,'😊','Excelent')"><span class="mood-ico">😊</span><span class="mood-lbl">Excelent</span></div>
-        <div class="mood-btn" onclick="selMood(this,'🙂','Bine')"><span class="mood-ico">🙂</span><span class="mood-lbl">Bine</span></div>
-        <div class="mood-btn" onclick="selMood(this,'😐','OK')"><span class="mood-ico">😐</span><span class="mood-lbl">OK</span></div>
-        <div class="mood-btn" onclick="selMood(this,'😔','Obosit')"><span class="mood-ico">😔</span><span class="mood-lbl">Obosit</span></div>
-        <div class="mood-btn" onclick="selMood(this,'😢','Greu')"><span class="mood-ico">😢</span><span class="mood-lbl">Greu</span></div>
-      </div>
-
-      <!-- RITUAL ZILNIC -->
-      <div class="sec a3">
-        <div class="sec-t">✦ Ritualul Zilei</div>
-        <div class="quote-card">
-          <div class="quote-text" id="quoteText">"Fiecare zi e o nouă șansă de a fi mai bun."</div>
-          <div class="quote-author">— Coaching AI</div>
-          <div class="quote-actions">
-            <button class="qbtn primary" onclick="readRitual()">Am citit ✦ +15 XP</button>
-            <button class="qbtn" onclick="nextQuote()">Alt citat</button>
+  <main class="shell">
+    <section class="hero">
+      <div class="hero-grid">
+        <article class="panel hero-card">
+          <div class="status-pill"><span class="pulse"></span> Accessible wellness dashboard</div>
+          <h2 id="heroTitle">How can I support you today, Alex?</h2>
+          <p>A single responsive experience that combines coaching, task planning, focus tools, exercises for people with mobility impairments, and a 7-day meal plan.</p>
+          <div class="hero-actions">
+            <button class="primary-btn" data-target="home">Daily ritual</button>
+            <button class="ghost-btn" data-target="exercises">Exercises</button>
+            <button class="ghost-btn" data-target="diet">Meal plan</button>
           </div>
-        </div>
-      </div>
-
-      <!-- ACȚIUNI RAPIDE -->
-      <div class="sec a4">
-        <div class="sec-t">Acțiuni rapide</div>
-        <div class="acard" onclick="ripple(event,this);switchTab('tab-tasks');showToast('Sarcini deschise 📋')">
-          <div class="aico b">📋</div>
-          <div class="atxt"><div class="atit">Sarcini de azi</div><div class="adesc">Organizează-ți ziua eficient</div></div>
-          <div class="aarr">›</div>
-        </div>
-        <div class="acard" onclick="ripple(event,this);switchTab('tab-focus');showToast('Focus activat 🧘')">
-          <div class="aico p">🧘</div>
-          <div class="atxt"><div class="atit">Sesiune Focus</div><div class="adesc">Pomodoro + sunete ambientale</div></div>
-          <div class="aarr">›</div>
-        </div>
-        <div class="acard" onclick="ripple(event,this);switchTab('tab-games');showToast('Jocuri deschise 🎮')">
-          <div class="aico r">🎮</div>
-          <div class="atxt"><div class="atit">Mini Jocuri</div><div class="adesc">Antrenează-ți mintea, câștigă XP</div></div>
-          <div class="aarr">›</div>
-        </div>
-      </div>
-
-      <!-- PROFIL PROGRESS -->
-      <div class="sec a5">
-        <div class="sec-t">Progres profil</div>
-        <div class="prog-card">
-          <div class="prog-hdr"><span class="prog-lbl">Configurare profil</span><span class="prog-pct" id="pPct">0%</span></div>
-          <div class="prog-slbl" id="pLbl">Pasul 1 din 3</div>
-          <div class="prog-track"><div class="prog-fill" id="pFill"></div></div>
-          <div class="steps-row">
-            <div class="step-item" onclick="goStep(1)"><div class="sdot done" id="s1">✓</div><div class="sname">Date de bază</div></div>
-            <div class="step-item" onclick="goStep(2)"><div class="sdot active" id="s2">2</div><div class="sname">Preferințe</div></div>
-            <div class="step-item" onclick="goStep(3)"><div class="sdot pending" id="s3">3</div><div class="sname">Confirmare</div></div>
+        </article>
+        <aside class="panel stats-card">
+          <div class="xp-row"><span id="levelLabel">Level 1</span><span class="accent" id="xpLabel">0 / 100 XP</span></div>
+          <div class="progress-track"><div class="progress-fill" id="xpFill"></div></div>
+          <div class="mini-stats">
+            <div class="mini-stat"><strong id="ritualCount">0</strong><span class="muted">Rituals</span></div>
+            <div class="mini-stat"><strong id="taskCount">0</strong><span class="muted">Tasks done</span></div>
+            <div class="mini-stat"><strong id="gameCount">0</strong><span class="muted">Games played</span></div>
+            <div class="mini-stat"><strong id="streakCount">0</strong><span class="muted">Day streak</span></div>
           </div>
-          <button class="prog-btn" id="pBtn" onclick="advStep()">Continuă la pasul următor →</button>
+        </aside>
+      </div>
+    </section>
+
+    <div class="layout">
+      <aside class="panel sidebar">
+        <nav class="nav-list">
+          <button class="nav-btn active" data-section="home"><span class="nav-icon">🏠</span><span>Home</span></button>
+          <button class="nav-btn" data-section="tasks"><span class="nav-icon">📋</span><span>Tasks</span></button>
+          <button class="nav-btn" data-section="focus"><span class="nav-icon">🧘</span><span>Focus</span></button>
+          <button class="nav-btn" data-section="coach"><span class="nav-icon">🤖</span><span>Coach</span></button>
+          <button class="nav-btn" data-section="goals"><span class="nav-icon">🎯</span><span>Goals</span></button>
+          <button class="nav-btn" data-section="health"><span class="nav-icon">💚</span><span>Health</span></button>
+          <button class="nav-btn" data-section="exercises"><span class="nav-icon">♿</span><span>Exercises</span></button>
+          <button class="nav-btn" data-section="diet"><span class="nav-icon">🥗</span><span>Meal plan</span></button>
+          <button class="nav-btn" data-section="games"><span class="nav-icon">🎮</span><span>Games</span></button>
+          <button class="nav-btn" data-section="progress"><span class="nav-icon">📊</span><span>Progress</span></button>
+          <button class="nav-btn" data-section="settings"><span class="nav-icon">⚙️</span><span>Settings</span></button>
+        </nav>
+        <div class="sidebar-card">
+          <h3>What is fixed now</h3>
+          <p>This is one valid HTML file. No duplicate <code>&lt;html&gt;</code> tags, no missing CSS/JS files, and everything opens directly in a browser.</p>
         </div>
-      </div>
+      </aside>
 
-      <!-- OBICEIURI -->
-      <div class="sec a6">
-        <div class="sec-t">✦ Obiceiuri</div>
-        <div class="card">
-          <div class="habit-item">
-            <div class="habit-check" id="h1" onclick="togHabit('h1',10)"></div>
-            <div class="habit-info"><div class="habit-name">🧘 Meditație 5 min</div><div class="habit-streak">🔥 0 zile la rând</div></div>
-            <div class="habit-xp">+10 XP</div>
+      <div class="content">
+        <section class="section active" id="section-home">
+          <div class="panel section-head"><div><h2>Home</h2><p>Daily check-in, ritual, habits, coaching prompts, and quick actions.</p></div><div class="tag">Accessible UI</div></div>
+          <div class="grid-2">
+            <article class="panel card">
+              <h3>Mood check-in</h3>
+              <p>Track how you feel before starting your day.</p>
+              <div class="mood-row" style="margin-top:16px">
+                <button class="mood-btn" data-mood="Great"><span>😊</span><span>Great</span></button>
+                <button class="mood-btn" data-mood="Good"><span>🙂</span><span>Good</span></button>
+                <button class="mood-btn" data-mood="Okay"><span>😐</span><span>Okay</span></button>
+                <button class="mood-btn" data-mood="Tired"><span>😔</span><span>Tired</span></button>
+                <button class="mood-btn" data-mood="Overwhelmed"><span>😣</span><span>Hard day</span></button>
+              </div>
+            </article>
+            <article class="panel card">
+              <h3>Coach AI</h3>
+              <div class="coach-box" id="coachBubble">✦ Welcome. I am here to help you build healthier routines, one small step at a time.</div>
+              <div class="chip-row">
+                <button class="chip" data-coach="motivate">Motivate me</button>
+                <button class="chip" data-coach="calm">Calm me down</button>
+                <button class="chip" data-coach="focus">Help me focus</button>
+              </div>
+            </article>
           </div>
-          <div class="habit-item">
-            <div class="habit-check" id="h2" onclick="togHabit('h2',15)"></div>
-            <div class="habit-info"><div class="habit-name">💧 8 pahare apă</div><div class="habit-streak">🔥 0 zile la rând</div></div>
-            <div class="habit-xp">+15 XP</div>
-          </div>
-          <div class="habit-item">
-            <div class="habit-check" id="h3" onclick="togHabit('h3',20)"></div>
-            <div class="habit-info"><div class="habit-name">📚 Citit 20 min</div><div class="habit-streak">🔥 0 zile la rând</div></div>
-            <div class="habit-xp">+20 XP</div>
-          </div>
-          <div class="habit-item">
-            <div class="habit-check" id="h4" onclick="togHabit('h4',10)"></div>
-            <div class="habit-info"><div class="habit-name">🌿 Mers pe jos</div><div class="habit-streak">🔥 0 zile la rând</div></div>
-            <div class="habit-xp">+10 XP</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- COACH AI -->
-      <div class="sec" style="padding-bottom:0">
-        <div class="sec-t">✦ Coach AI</div>
-        <div class="card">
-          <div class="coach-bubble" id="coachBubble">✦ Bine ai venit! Sunt aici să te ghidez spre obiceiuri mai bune.</div>
-          <div class="coach-chip-row">
-            <div class="coach-chip" onclick="coachMsg(this,'motivate')">Motivează-mă</div>
-            <div class="coach-chip" onclick="coachMsg(this,'calm')">Liniștește-mă</div>
-            <div class="coach-chip" onclick="coachMsg(this,'focus')">Focus</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="spacer"></div>
-    </div>
-
-    <!-- ── TAB: SARCINI ── -->
-    <div class="tab-page" id="tab-tasks">
-      <div class="hero a1">
-        <div class="hbadge"><span class="hbdot"></span> Sarcini</div>
-        <h1>Organizează-ți ziua</h1>
-        <p>Adaugă sarcini și bifează-le pe măsură ce avansezi.</p>
-      </div>
-      <div class="sec a2">
-        <div class="sec-t">Adaugă sarcină</div>
-        <div class="card" style="display:flex;gap:8px;align-items:center;">
-          <input id="taskInp" style="flex:1;background:var(--s2);border:1.5px solid var(--brd);border-radius:var(--rx);padding:10px 12px;font-family:'Sora',sans-serif;font-size:.82rem;color:var(--text);outline:none;caret-color:var(--a2);" placeholder="Nouă sarcină..."/>
-          <select id="taskPrio" style="background:var(--s2);border:1.5px solid var(--brd);border-radius:var(--rx);padding:10px 6px;font-family:'Sora',sans-serif;font-size:.80rem;color:var(--text);outline:none;">
-            <option value="red">🔴 Urgent</option>
-            <option value="yellow">🟡 Normal</option>
-            <option value="green">🟢 Calm</option>
-          </select>
-          <button onclick="addTask()" style="background:var(--a2);color:#fff;border:none;border-radius:var(--rx);width:36px;height:36px;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">+</button>
-        </div>
-      </div>
-      <div class="sec a3">
-        <div class="sec-t">Lista de azi</div>
-        <div class="card" id="taskList"><div style="text-align:center;color:var(--muted);font-size:.80rem;padding:20px 0;">Nicio sarcină. Adaugă una mai sus! ✦</div></div>
-      </div>
-      <div class="spacer"></div>
-    </div>
-
-    <!-- ── TAB: FOCUS ── -->
-    <div class="tab-page" id="tab-focus">
-      <div class="hero a1">
-        <div class="hbadge"><span class="hbdot"></span> Focus</div>
-        <h1>Concentrare profundă</h1>
-        <p>Pomodoro + sunete ambientale pentru stare de flow.</p>
-      </div>
-
-      <!-- POMODORO -->
-      <div class="sec a2">
-        <div class="sec-t">⏱ Pomodoro</div>
-        <div class="card">
-          <div class="pom-mode-row">
-            <div class="pom-mode on" id="pm-focus" onclick="setPomMode('focus',this)">Focus 25'</div>
-            <div class="pom-mode" id="pm-short" onclick="setPomMode('short',this)">Pauză 5'</div>
-            <div class="pom-mode" id="pm-long" onclick="setPomMode('long',this)">Pauză 15'</div>
-          </div>
-          <div class="pom-display">
-            <div class="pom-ring">
-              <svg class="pom-svg" viewBox="0 0 100 100">
-                <defs><linearGradient id="pomGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#4A90D9"/><stop offset="100%" stop-color="#9B59B6"/></linearGradient></defs>
-                <circle class="pom-track" cx="50" cy="50" r="45"/>
-                <circle class="pom-progress" id="pomCirc" cx="50" cy="50" r="45"/>
-              </svg>
-              <div class="pom-center">
-                <div class="pom-time" id="pomTime">25:00</div>
-                <div class="pom-label" id="pomLbl">Focus</div>
+          <article class="panel card">
+            <h3>Daily ritual</h3>
+            <div class="quote-box" style="margin-top:12px">
+              <blockquote id="quoteText">“Small progress repeated daily creates meaningful change.”</blockquote>
+              <footer>— CoachingAI</footer>
+              <div class="row-actions">
+                <button class="primary-btn" id="ritualBtn">I read it · +15 XP</button>
+                <button class="ghost-btn" id="nextQuoteBtn">New quote</button>
               </div>
             </div>
-            <div class="pom-btns">
-              <button class="pom-btn" onclick="pomReset()">↺ Reset</button>
-              <button class="pom-btn go" id="pomBtn" onclick="pomToggle()">▶ Start</button>
+          </article>
+          <div class="grid-3">
+            <article class="panel card feature-card"><div class="feature-icon">📋</div><div><h3>Plan today</h3><p>Create a short, realistic task list and mark items when completed.</p></div></article>
+            <article class="panel card feature-card"><div class="feature-icon">♿</div><div><h3>Adaptive exercises</h3><p>Simple exercise ideas designed for users with mobility limitations.</p></div></article>
+            <article class="panel card feature-card"><div class="feature-icon">🥗</div><div><h3>Meal guidance</h3><p>See a gentle, balanced daily meal structure in one place.</p></div></article>
+          </div>
+          <article class="panel card">
+            <h3>Habits</h3>
+            <ul class="list">
+              <li class="list-item"><button class="check habit-check" data-habit="5-minute meditation" data-xp="10"></button><div style="flex:1"><strong>5-minute meditation</strong><div class="muted">Build calm and presence</div></div><span class="tag">+10 XP</span></li>
+              <li class="list-item"><button class="check habit-check" data-habit="8 glasses of water" data-xp="15"></button><div style="flex:1"><strong>8 glasses of water</strong><div class="muted">Support daily hydration</div></div><span class="tag">+15 XP</span></li>
+              <li class="list-item"><button class="check habit-check" data-habit="20 minutes of reading" data-xp="20"></button><div style="flex:1"><strong>20 minutes of reading</strong><div class="muted">Strengthen focus and learning</div></div><span class="tag">+20 XP</span></li>
+            </ul>
+          </article>
+        </section>
+
+        <section class="section" id="section-tasks">
+          <div class="panel section-head"><div><h2>Tasks</h2><p>Add, complete, and reopen tasks easily.</p></div><div class="tag" id="openTaskBadge">0 open</div></div>
+          <article class="panel card">
+            <h3>Add task</h3>
+            <div class="input-row" style="margin-top:14px">
+              <input class="field" id="taskInput" placeholder="Write a task...">
+              <select class="select" id="taskPriority">
+                <option value="urgent">🔴 Urgent</option>
+                <option value="normal">🟡 Normal</option>
+                <option value="easy">🟢 Easy</option>
+              </select>
+              <button class="secondary-btn" id="addTaskBtn">Add</button>
             </div>
-          </div>
-        </div>
-      </div>
+            <div class="task-list" id="taskList"></div>
+          </article>
+        </section>
 
-      <!-- AMBIENT SOUNDS -->
-      <div class="sec a3">
-        <div class="sec-t">🎧 Sunete Ambientale</div>
-        <div class="card">
-          <div class="sound-grid">
-            <div class="sound-btn" onclick="togSound(this,'🌧️')"><span class="sound-ico">🌧️</span><span class="sound-lbl">Ploaie</span></div>
-            <div class="sound-btn" onclick="togSound(this,'🌊')"><span class="sound-ico">🌊</span><span class="sound-lbl">Ocean</span></div>
-            <div class="sound-btn" onclick="togSound(this,'🌿')"><span class="sound-ico">🌿</span><span class="sound-lbl">Natură</span></div>
-            <div class="sound-btn" onclick="togSound(this,'🔥')"><span class="sound-ico">🔥</span><span class="sound-lbl">Foc</span></div>
-            <div class="sound-btn" onclick="togSound(this,'☕')"><span class="sound-ico">☕</span><span class="sound-lbl">Cafenea</span></div>
-            <div class="sound-btn" onclick="togSound(this,'🎵')"><span class="sound-ico">🎵</span><span class="sound-lbl">LoFi</span></div>
+        <section class="section" id="section-focus">
+          <div class="panel section-head"><div><h2>Focus</h2><p>Pomodoro timer, ambient sounds, and journaling in one place.</p></div><div class="tag">Deep work</div></div>
+          <div class="grid-2">
+            <article class="panel card">
+              <h3>Pomodoro</h3>
+              <div class="pomodoro">
+                <div class="mode-row">
+                  <button class="mode-chip active" data-mode="focus">Focus 25m</button>
+                  <button class="mode-chip" data-mode="short">Short 5m</button>
+                  <button class="mode-chip" data-mode="long">Long 15m</button>
+                </div>
+                <div class="timer-ring">
+                  <svg viewBox="0 0 100 100">
+                    <defs><linearGradient id="timerGradient" x1="0%" x2="100%"><stop offset="0%" stop-color="#4A90D9"></stop><stop offset="100%" stop-color="#9163d7"></stop></linearGradient></defs>
+                    <circle class="timer-track" cx="50" cy="50" r="45"></circle>
+                    <circle class="timer-progress" id="timerProgress" cx="50" cy="50" r="45"></circle>
+                  </svg>
+                  <div class="timer-center"><div class="timer-time" id="timerText">25:00</div><div class="muted" id="timerLabel">Focus session</div></div>
+                </div>
+                <div class="row-actions"><button class="ghost-btn" id="timerResetBtn">Reset</button><button class="primary-btn" id="timerStartBtn">Start</button></div>
+              </div>
+            </article>
+            <article class="panel card">
+              <h3>Journal</h3>
+              <p>Capture how you feel and what matters today.</p>
+              <textarea class="textarea" id="journalInput" placeholder="How are you feeling today? What would make this day meaningful?"></textarea>
+              <div class="row-actions"><button class="secondary-btn" id="saveJournalBtn">Save journal · +10 XP</button></div>
+            </article>
           </div>
-        </div>
-      </div>
-
-      <!-- JOURNAL -->
-      <div class="sec a4">
-        <div class="sec-t">📝 Jurnal</div>
-        <div class="card">
-          <textarea class="journal-ta" id="journalTa" placeholder="Cum te simți azi? Ce vrei să realizezi?"></textarea>
-          <button class="journal-save" onclick="saveJournal()">Salvează intrarea +10 XP</button>
-        </div>
-      </div>
-      <div class="spacer"></div>
-    </div>
-
-    <!-- ── TAB: JOCURI ── -->
-    <div class="tab-page" id="tab-games">
-      <div class="hero a1">
-        <div class="hbadge"><span class="hbdot"></span> Mini Jocuri</div>
-        <h1>Antrenează-ți mintea</h1>
-        <p>Câștigă XP și debloachează insigne.</p>
-      </div>
-      <div class="sec a2">
-        <div class="sec-t">Alege un joc</div>
-        <div class="games-grid">
-          <div class="game-card" onclick="startGame('memory')">
-            <div class="game-ico">🃏</div>
-            <div class="game-name">Memory</div>
-            <div class="game-xp">+<span>50–100 XP</span></div>
-          </div>
-          <div class="game-card" onclick="startGame('breath')">
-            <div class="game-ico">🌬️</div>
-            <div class="game-name">Respirație</div>
-            <div class="game-xp">+<span>20–40 XP</span></div>
-          </div>
-          <div class="game-card" onclick="quizStart()">
-            <div class="game-ico">🧠</div>
-            <div class="game-name">Quiz</div>
-            <div class="game-xp">+<span>20–60 XP</span></div>
-          </div>
-          <div class="game-card" onclick="showToast('Puzzle — în curând! 🔤')">
-            <div class="game-ico">🔤</div>
-            <div class="game-name">Puzzle</div>
-            <div class="game-xp">+<span>30–80 XP</span></div>
-          </div>
-        </div>
-      </div>
-      <!-- Game Area -->
-      <div class="sec a3" id="gameArea" style="display:none">
-        <div class="sec-t" id="gameSectTitle">Joc</div>
-        <div class="card" id="gameContent"></div>
-      </div>
-      <div class="spacer"></div>
-    </div>
-
-    <!-- ── TAB: PROGRES ── -->
-    <div class="tab-page" id="tab-progress">
-      <div class="hero a1">
-        <div class="hbadge"><span class="hbdot"></span> Dashboard</div>
-        <h1>Progresul tău</h1>
-        <p>Urmărește evoluția și câștigă insigne.</p>
-      </div>
-      <div class="sec a2">
-        <div class="sec-t">Statistici</div>
-        <div class="stats-grid">
-          <div class="stat-box"><div class="stat-num" id="statXP">0</div><div class="stat-lbl">XP Total</div></div>
-          <div class="stat-box"><div class="stat-num" id="statLvl">1</div><div class="stat-lbl">Nivel</div></div>
-          <div class="stat-box"><div class="stat-num" id="statStreak">0🔥</div><div class="stat-lbl">Zile la rând</div></div>
-          <div class="stat-box"><div class="stat-num" id="statRituals">0</div><div class="stat-lbl">Ritualuri</div></div>
-          <div class="stat-box"><div class="stat-num" id="statTasks">0</div><div class="stat-lbl">Sarcini</div></div>
-          <div class="stat-box"><div class="stat-num" id="statGames">0</div><div class="stat-lbl">Jocuri</div></div>
-        </div>
-      </div>
-      <div class="sec a3">
-        <div class="sec-t">Activitate săptămânală</div>
-        <div class="card">
-          <div class="week-row" id="weekBars"></div>
-        </div>
-      </div>
-      <div class="sec a4">
-        <div class="sec-t">Insigne</div>
-        <div class="card">
-          <div class="badges-row" id="badgesRow"></div>
-        </div>
-      </div>
-
-      <!-- ACCESIBILITATE -->
-      <div class="sec a5">
-        <div class="sec-t">Setări de accesibilitate</div>
-        <div class="mode-row" style="margin-bottom:8px">
-          <div class="mchip on" id="mc-light" onclick="setMode('light',this)"><span class="mchip-ico">☀️</span><span class="mchip-lbl">Luminos</span></div>
-          <div class="mchip" id="mc-dark" onclick="setMode('dark',this)"><span class="mchip-ico">🌙</span><span class="mchip-lbl">Întunecat</span></div>
-          <div class="mchip" id="mc-contrast" onclick="setMode('contrast',this)"><span class="mchip-ico">◑</span><span class="mchip-lbl">Contrast</span></div>
-        </div>
-        <div class="a11y-card">
-          <div class="a11y-row" style="cursor:default">
-            <div class="a11y-ico">🔤</div>
-            <div class="a11y-info"><div class="a11y-t">Dimensiune text</div><div class="a11y-d">Normal → Mare → Foarte mare</div></div>
-            <div class="f-step">
-              <button class="f-btn" id="fMinus" onclick="chFont(-1)" disabled>−</button>
-              <span class="f-val" id="fVal">A</span>
-              <button class="f-btn" id="fPlus" onclick="chFont(1)">+</button>
+          <article class="panel card">
+            <h3>Ambient sounds</h3>
+            <div class="sound-grid" style="margin-top:14px">
+              <button class="sound-btn">🌧️<span>Rain</span></button>
+              <button class="sound-btn">🌊<span>Ocean</span></button>
+              <button class="sound-btn">🌿<span>Nature</span></button>
+              <button class="sound-btn">🔥<span>Fire</span></button>
+              <button class="sound-btn">☕<span>Café</span></button>
+              <button class="sound-btn">🎵<span>Lo-fi</span></button>
             </div>
+          </article>
+        </section>
+
+        <section class="section" id="section-coach">
+          <div class="panel section-head"><div><h2>AI Coach</h2><p>A smarter coaching area with contextual prompts, personalized replies, and a real API-ready structure.</p></div><div class="tag">AI ready</div></div>
+          <div class="grid-2">
+            <article class="panel card">
+              <h3>Talk to your coach</h3>
+              <p>Use quick prompts or write your own message.</p>
+              <div class="chip-row" style="margin-top:14px">
+                <button class="chip coach-quick" data-prompt="I feel tired and unfocused today.">Low energy</button>
+                <button class="chip coach-quick" data-prompt="I feel anxious and need something calming.">Calm me</button>
+                <button class="chip coach-quick" data-prompt="Help me plan my day in a simple way.">Plan my day</button>
+                <button class="chip coach-quick" data-prompt="Motivate me to finish one important task.">Motivate me</button>
+              </div>
+              <textarea class="textarea" id="coachInput" placeholder="Write what you need help with..."></textarea>
+              <div class="row-actions">
+                <button class="primary-btn" id="coachSendBtn">Get coaching</button>
+                <button class="ghost-btn" id="coachApiBtn">Toggle API mode</button>
+              </div>
+            </article>
+            <article class="panel card">
+              <h3>Coach response</h3>
+              <div class="coach-box" id="coachReplyBox">✦ Your coach will answer here based on mood, tasks, goals, and your message.</div>
+              <div class="task-list" id="coachHistory"></div>
+            </article>
           </div>
-          <div class="a11y-row" onclick="togSimplified(this)" role="switch" aria-checked="false" tabindex="0">
-            <div class="a11y-ico">✦</div>
-            <div class="a11y-info"><div class="a11y-t">Mod simplificat</div><div class="a11y-d">Ascunde informația secundară.</div></div>
-            <button class="tog" tabindex="-1"></button>
+        </section>
+
+        <section class="section" id="section-goals">
+          <div class="panel section-head"><div><h2>Goals</h2><p>Create meaningful goals, track milestones, and connect daily actions to long-term progress.</p></div><div class="tag">Progress system</div></div>
+          <div class="grid-2">
+            <article class="panel card">
+              <h3>Add goal</h3>
+              <div class="input-row" style="margin-top:14px;grid-template-columns:minmax(0,1fr) 160px auto">
+                <input class="field" id="goalTitle" placeholder="Example: Walk 20 minutes daily">
+                <select class="select" id="goalCategory">
+                  <option value="health">Health</option>
+                  <option value="focus">Focus</option>
+                  <option value="mindset">Mindset</option>
+                  <option value="nutrition">Nutrition</option>
+                </select>
+                <button class="secondary-btn" id="addGoalBtn">Add goal</button>
+              </div>
+              <div class="input-row" style="margin-top:10px;grid-template-columns:1fr 1fr">
+                <input class="field" id="goalTarget" type="number" min="1" value="7" placeholder="Target value">
+                <input class="field" id="goalUnit" placeholder="days, sessions, glasses...">
+              </div>
+            </article>
+            <article class="panel card">
+              <h3>Today's plan</h3>
+              <p>Generated automatically from your goals, tasks, and current energy.</p>
+              <div class="daily-plan" id="todayPlanBox">Your plan for today will appear here.</div>
+              <div class="row-actions">
+                <button class="primary-btn" id="generatePlanBtn">Generate plan</button>
+              </div>
+            </article>
           </div>
-          <div class="a11y-row" onclick="togMotion(this)" role="switch" aria-checked="false" tabindex="0">
-            <div class="a11y-ico">🎞️</div>
-            <div class="a11y-info"><div class="a11y-t">Reduce animațiile</div><div class="a11y-d">Pentru sensibili la mișcare.</div></div>
-            <button class="tog grn" tabindex="-1"></button>
+          <article class="panel card">
+            <h3>Goal list</h3>
+            <div class="task-list" id="goalList"></div>
+          </article>
+        </section>
+
+        <section class="section" id="section-health">
+          <div class="panel section-head"><div><h2>Health planner</h2><p>Calendar, reminders, hydration, and a small auto-generated plan.</p></div><div class="tag">Daily support</div></div>
+          <div class="grid-2">
+            <article class="panel card">
+              <h3>7-day activity calendar</h3>
+              <p>Mark today as completed to build a real streak.</p>
+              <div class="calendar-grid" id="calendarGrid"></div>
+              <div class="row-actions"><button class="primary-btn" id="markDayBtn">Mark today done</button></div>
+            </article>
+            <article class="panel card">
+              <h3>Reminders</h3>
+              <p>Quick browser-based reminders while the page is open.</p>
+              <div class="input-row" style="margin-top:14px;grid-template-columns:minmax(0,1fr) 140px auto">
+                <input class="field" id="reminderText" placeholder="Drink water, stretch, breathe...">
+                <input class="field" id="reminderMinutes" type="number" min="1" value="1" placeholder="Minutes">
+                <button class="secondary-btn" id="addReminderBtn">Set</button>
+              </div>
+              <div class="reminder-list" id="reminderList"></div>
+            </article>
           </div>
-          <div class="a11y-row" style="cursor:default;padding-bottom:16px;flex-direction:column;align-items:stretch;gap:0">
-            <button class="sr-btn" onclick="haptic();showToast('Screen reader pornit 🔊')"><span style="font-size:15px">🔊</span>Citește ecranul</button>
+          <article class="panel card">
+            <h3>Today's suggestion</h3>
+            <div class="daily-plan" id="smartPlan">You have 20 minutes → Try: 5 min breathing + 10 min focus + 5 min stretching.</div>
+          </article>
+        </section>
+
+        <section class="section" id="section-exercises">
+          <div class="panel section-head"><div><h2>Exercises</h2><p>Adaptive and mobility-friendly examples with filters.</p></div><div class="tag">Mobility-friendly</div></div>
+          <article class="panel card">
+            <h3>Filter exercises</h3>
+            <div class="input-row" style="margin-top:14px;grid-template-columns:1fr 1fr auto">
+              <select class="select" id="exerciseLevel">
+                <option value="all">All levels</option>
+                <option value="beginner">Beginner</option>
+                <option value="moderate">Moderate</option>
+                <option value="assisted">Assisted</option>
+              </select>
+              <select class="select" id="exerciseType">
+                <option value="all">All goals</option>
+                <option value="mobility">Mobility</option>
+                <option value="breathing">Breathing</option>
+                <option value="posture">Posture</option>
+                <option value="relaxation">Relaxation</option>
+              </select>
+              <button class="secondary-btn" id="filterExercisesBtn">Filter</button>
+            </div>
+            <p style="margin-top:14px">These are general examples and should be adjusted to the user's comfort and medical guidance.</p>
+            <div class="exercise-grid" id="exerciseGrid"></div>
+          </article>
+        </section>
+
+        <section class="section" id="section-diet">
+          <div class="panel section-head"><div><h2>7-day meal plan</h2><p>A simple weekly structure with filters and a shopping list.</p></div><div class="tag">Balanced meals</div></div>
+          <article class="panel card">
+            <h3>Meal preferences</h3>
+            <div class="input-row" style="margin-top:14px;grid-template-columns:1fr 1fr auto">
+              <select class="select" id="mealStyle">
+                <option value="balanced">Balanced</option>
+                <option value="vegetarian">Vegetarian</option>
+                <option value="high-protein">High protein</option>
+                <option value="low-sugar">Low sugar</option>
+                <option value="soft-food">Soft food</option>
+              </select>
+              <input class="field" id="mealSearch" placeholder="Search meal or ingredient">
+              <button class="secondary-btn" id="applyMealBtn">Apply</button>
+            </div>
+            <div class="meal-grid" id="mealGrid"></div>
+          </article>
+          <article class="panel card">
+            <h3>Shopping list</h3>
+            <div class="task-list" id="shoppingList"></div>
+          </article>
+        </section>
+
+        <section class="section" id="section-games">
+          <div class="panel section-head"><div><h2>Games</h2><p>Light cognitive activities to support focus and motivation.</p></div><div class="tag">XP rewards</div></div>
+          <div class="game-grid">
+            <button class="game-card" id="memoryGameBtn"><div style="font-size:1.8rem">🃏</div><strong>Memory</strong><span class="muted">Match all pairs and earn up to 80 XP.</span></button>
+            <button class="game-card" id="breathGameBtn"><div style="font-size:1.8rem">🌬️</div><strong>Breathing</strong><span class="muted">Follow a calm breathing rhythm and earn 30 XP.</span></button>
           </div>
-        </div>
+          <article class="panel card game-area" id="gameArea"><h3 id="gameTitle">Game</h3><div id="gameContent"></div></article>
+        </section>
+
+        <section class="section" id="section-progress">
+          <div class="panel section-head"><div><h2>Progress</h2><p>Track XP, activity, quests, and earned badges.</p></div><div class="tag">Dashboard</div></div>
+          <div class="stats-grid">
+            <article class="stat-card"><strong id="statXP">0</strong><span class="muted">Current XP</span></article>
+            <article class="stat-card"><strong id="statLevel">1</strong><span class="muted">Level</span></article>
+            <article class="stat-card"><strong id="statTasks">0</strong><span class="muted">Tasks done</span></article>
+            <article class="stat-card"><strong id="statGames">0</strong><span class="muted">Games played</span></article>
+          </div>
+          <article class="panel card"><h3>Weekly activity</h3><div class="week-bars" id="weekBars"></div></article>
+          <article class="panel card"><h3>Daily quest</h3><div class="daily-plan" id="dailyQuest">Complete 1 task + 1 ritual + 1 focus session</div></article>
+          <article class="panel card"><h3>Weekly summary</h3><div class="daily-plan" id="weeklySummary">You are building consistency and healthier routines this week.</div></article>
+          <article class="panel card"><h3>Badges</h3><div class="badge-grid" id="badgeGrid"></div></article>
+          <article class="panel card"><h3>Export / import</h3><div class="row-actions"><button class="ghost-btn" id="exportBtn">Export progress</button><button class="ghost-btn" id="importBtn">Import progress</button></div></article>
+        </section>
+
+        <section class="section" id="section-settings">
+          <div class="panel section-head"><div><h2>Settings</h2><p>Theme, font size, reduced motion, simplified mode, and larger touch targets.</p></div><div class="tag">Accessibility</div></div>
+          <div class="settings-grid">
+            <article class="panel card">
+              <h3>Appearance</h3>
+              <div class="list" style="margin-top:14px">
+                <div class="setting-row"><span>Dark mode</span><button class="toggle" id="darkToggle"></button></div>
+                <div class="setting-row"><span>High contrast</span><button class="toggle" id="contrastToggle"></button></div>
+                <div class="setting-row"><span>Reduce motion</span><button class="toggle" id="motionToggle"></button></div>
+                <div class="setting-row"><span>Simplified mode</span><button class="toggle" id="simpleToggle"></button></div>
+                <div class="setting-row"><span>Larger touch targets</span><button class="toggle" id="touchToggle"></button></div>
+              </div>
+            </article>
+            <article class="panel card">
+              <h3>Font size</h3>
+              <p>Increase readability for mobile and desktop.</p>
+              <div class="setting-row" style="margin-top:14px"><span id="fontLabel">Normal</span><div class="font-stepper"><button class="step-btn" id="fontMinus">−</button><strong id="fontPreview">A</strong><button class="step-btn" id="fontPlus">+</button></div></div>
+            </article>
+          </div>
+        </section>
       </div>
-      <div class="spacer"></div>
     </div>
+  </main>
 
-  </div><!-- /scr -->
-</div><!-- /swrap -->
+  <div class="mobile-nav">
+    <div class="mobile-nav-inner">
+      <button class="mobile-tab active" data-section="home">🏠<span>Home</span></button>
+      <button class="mobile-tab" data-section="coach">🤖<span>Coach</span></button>
+      <button class="mobile-tab" data-section="goals">🎯<span>Goals</span></button>
+      <button class="mobile-tab" data-section="tasks">📋<span>Tasks</span></button>
+      <button class="mobile-tab" data-section="progress">📊<span>Stats</span></button>
+    </div>
+  </div>
 
-<!-- BOTTOM NAV -->
-<nav class="bnav">
-  <button class="ni on" onclick="switchTab('tab-home');setNav(this)" aria-label="Acasă">
-    <div class="ni-w"><span class="ni-ico">🏠</span></div><span class="ni-lbl">Acasă</span><div class="ni-dot"></div>
-  </button>
-  <button class="ni" onclick="switchTab('tab-tasks');setNav(this)" aria-label="Sarcini">
-    <div class="ni-w"><span class="ni-ico">📋</span><div class="ni-badge" id="nb-tasks">2</div></div><span class="ni-lbl">Sarcini</span><div class="ni-dot"></div>
-  </button>
-  <button class="ni" onclick="switchTab('tab-focus');setNav(this)" aria-label="Focus">
-    <div class="ni-w"><span class="ni-ico">🧘</span></div><span class="ni-lbl">Focus</span><div class="ni-dot"></div>
-  </button>
-  <button class="ni" onclick="switchTab('tab-games');setNav(this)" aria-label="Jocuri">
-    <div class="ni-w"><span class="ni-ico">🎮</span></div><span class="ni-lbl">Jocuri</span><div class="ni-dot"></div>
-  </button>
-  <button class="ni" onclick="switchTab('tab-progress');setNav(this)" aria-label="Progres">
-    <div class="ni-w"><span class="ni-ico">📊</span></div><span class="ni-lbl">Progres</span><div class="ni-dot"></div>
-  </button>
-</nav>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-</div><!-- /phone -->
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script>
+    const state={
+      appTitle:localStorage.getItem('coach_app_title')||'CoachingAI Health Companion',
+      goals:JSON.parse(localStorage.getItem('coach_goals')||'[]'),
+      coachHistory:JSON.parse(localStorage.getItem('coach_history_chat')||'[]'),
+      coachApiMode:localStorage.getItem('coach_api_mode')==='true',
+      name:localStorage.getItem('coach_name')||'Alex',xp:Number(localStorage.getItem('coach_xp')||0),level:Number(localStorage.getItem('coach_level')||1),rituals:Number(localStorage.getItem('coach_rituals')||0),tasksDone:Number(localStorage.getItem('coach_tasks_done')||0),games:Number(localStorage.getItem('coach_games')||0),streak:Number(localStorage.getItem('coach_streak')||0),
+      theme:localStorage.getItem('coach_theme')||'light',font:localStorage.getItem('coach_font')||'normal',reducedMotion:localStorage.getItem('coach_motion')==='reduce',simplified:localStorage.getItem('coach_simple')==='true',largeTouch:localStorage.getItem('coach_touch')==='true',
+      tasks:JSON.parse(localStorage.getItem('coach_tasks')||'[]'),history:JSON.parse(localStorage.getItem('coach_history')||'{}'),reminders:JSON.parse(localStorage.getItem('coach_reminders')||'[]')
+    };
 
-<script>
-const app=document.getElementById('app');
-let toastTmr,xp=0,level=1,rituals=0,tasksCompleted=0,gamesPlayed=0;
-const quotes=[
-  '"Fiecare zi e o nouă șansă de a fi mai bun."',
-  '"Disciplina este libertatea pe care ți-o dai ție însuți."',
-  '"Progresul mic, repetat zilnic, creează schimbări mari."',
-  '"Mintea ta este cea mai puternică unealtă pe care o ai."',
-  '"Obiceiurile bune sunt greu de format, ușor de trăit cu ele."',
-];
-let qIdx=0;
+    const quotes=['“Small progress repeated daily creates meaningful change.”','“Discipline is a form of self-respect.”','“Your routines quietly shape your future.”','“A calmer mind makes better decisions.”','“Consistency beats intensity when repeated over time.”'];
+    const coachMessages={motivate:['✦ You do not need a perfect day. You need one honest step forward.','✦ Progress is built from tiny actions done again and again.','✦ You are more capable than your current doubt suggests.'],calm:['✦ Slow down. Breathe out longer than you breathe in.','✦ You are allowed to rest without losing your progress.','✦ Let this moment be simple. One breath, then the next.'],focus:['✦ Choose one next task. Protect it for 25 minutes.','✦ Clarity grows when distractions get smaller.','✦ Finish one thing before starting another.']};
+    const exerciseData=[
+      {icon:'🪑',title:'Seated arm raises',text:'Lift one or both arms slowly while seated.',level:'beginner',type:'mobility'},
+      {icon:'🫁',title:'Breathing expansion',text:'Inhale deeply through the nose and exhale slowly.',level:'beginner',type:'breathing'},
+      {icon:'🦵',title:'Seated knee extensions',text:'Extend one leg at a time from a seated position.',level:'moderate',type:'mobility'},
+      {icon:'🤲',title:'Hand and wrist circles',text:'Rotate wrists gently and open-close the hands.',level:'beginner',type:'relaxation'},
+      {icon:'↔️',title:'Torso side reaches',text:'Reach gently to each side while seated.',level:'moderate',type:'posture'},
+      {icon:'🧍',title:'Supported standing balance',text:'Stand using a stable support when appropriate.',level:'assisted',type:'posture'}
+    ];
+    const weeklyMeals={
+      balanced:[
+        ['Oats, berries, yogurt','Chicken, rice, vegetables','Fish, potatoes, salad'],['Eggs, toast, fruit','Turkey wrap and soup','Beans, quinoa, vegetables'],['Greek yogurt, banana, oats','Chicken salad bowl','Salmon and broccoli'],['Porridge and seeds','Rice bowl with lean protein','Vegetable soup and toast'],['Omelet and fruit','Tuna pasta salad','Chicken and roasted carrots'],['Smoothie bowl','Lentils and vegetables','Rice and baked fish'],['Soft oats and fruit','Warm grain bowl','Soup with protein']
+      ],
+      vegetarian:[['Oats, fruit, yogurt','Chickpea salad','Lentil stew'],['Eggs, toast, fruit','Veggie wrap','Tofu rice bowl'],['Yogurt and berries','Bean soup','Vegetable pasta'],['Porridge and seeds','Quinoa salad','Lentils and potatoes'],['Omelet and fruit','Hummus bowl','Rice and tofu'],['Smoothie bowl','Vegetable curry','Bean chili'],['Soft oats and banana','Soup and toast','Mashed vegetables and yogurt']],
+      'high-protein':[['Eggs, yogurt, oats','Chicken bowl','Fish and vegetables'],['Protein oats','Turkey rice bowl','Greek yogurt dinner plate'],['Cottage cheese fruit bowl','Chicken salad','Salmon and potatoes'],['Egg wrap','Tuna bowl','Lean beef and rice'],['Yogurt, seeds, fruit','Chicken pasta','Fish soup'],['Protein smoothie','Turkey sandwich','Beans with eggs'],['Soft eggs and oats','Chicken soup','Yogurt and fruit']],
+      'low-sugar':[['Plain oats and berries','Lean protein salad','Fish and greens'],['Eggs and avocado','Chicken vegetables','Soup and toast'],['Yogurt and nuts','Tuna bowl','Roasted vegetables'],['Seed porridge','Turkey salad','Salmon and greens'],['Omelet and cucumber','Chicken soup','Beans and vegetables'],['Smoothie without added sugar','Quinoa bowl','Fish and broccoli'],['Soft oats and seeds','Vegetable soup','Eggs and toast']],
+      'soft-food':[['Soft oats and banana','Creamy soup','Soft fish and mashed potatoes'],['Yogurt and fruit puree','Rice and tender chicken','Soft lentil soup'],['Smoothie bowl','Mashed vegetables and eggs','Soft pasta'],['Porridge','Tender rice bowl','Vegetable puree soup'],['Soft omelet','Soup with tofu','Baked fish'],['Yogurt oats','Mashed beans','Rice porridge'],['Banana oats','Chicken soup','Soft vegetables and yogurt']]
+    };
+    const badges=[{icon:'🌟',label:'First ritual',earned:()=>state.rituals>=1},{icon:'✅',label:'3 tasks done',earned:()=>state.tasksDone>=3},{icon:'🎮',label:'First game',earned:()=>state.games>=1},{icon:'🏆',label:'Level 2',earned:()=>state.level>=2},{icon:'🔥',label:'3-day streak',earned:()=>state.streak>=3},{icon:'🧘',label:'Focus session',earned:()=>state.xp>=30}];
+    const weekValues=[24,38,54,42,76,30,18]; const fontOptions=['normal','large','xlarge']; const fontLabels={normal:'Normal',large:'Large',xlarge:'Extra large'};
+    const els={heroTitle:document.getElementById('heroTitle'),greetingLabel:document.getElementById('greetingLabel'),nameBtn:document.getElementById('nameBtn'),themeBtn:document.getElementById('themeBtn'),helpBtn:document.getElementById('helpBtn'),quoteText:document.getElementById('quoteText'),ritualBtn:document.getElementById('ritualBtn'),nextQuoteBtn:document.getElementById('nextQuoteBtn'),coachBubble:document.getElementById('coachBubble'),toast:document.getElementById('toast'),xpFill:document.getElementById('xpFill'),xpLabel:document.getElementById('xpLabel'),levelLabel:document.getElementById('levelLabel'),ritualCount:document.getElementById('ritualCount'),taskCount:document.getElementById('taskCount'),gameCount:document.getElementById('gameCount'),streakCount:document.getElementById('streakCount'),statXP:document.getElementById('statXP'),statLevel:document.getElementById('statLevel'),statTasks:document.getElementById('statTasks'),statGames:document.getElementById('statGames'),taskInput:document.getElementById('taskInput'),taskPriority:document.getElementById('taskPriority'),addTaskBtn:document.getElementById('addTaskBtn'),taskList:document.getElementById('taskList'),openTaskBadge:document.getElementById('openTaskBadge'),journalInput:document.getElementById('journalInput'),saveJournalBtn:document.getElementById('saveJournalBtn'),timerText:document.getElementById('timerText'),timerLabel:document.getElementById('timerLabel'),timerProgress:document.getElementById('timerProgress'),timerStartBtn:document.getElementById('timerStartBtn'),timerResetBtn:document.getElementById('timerResetBtn'),exerciseGrid:document.getElementById('exerciseGrid'),exerciseLevel:document.getElementById('exerciseLevel'),exerciseType:document.getElementById('exerciseType'),filterExercisesBtn:document.getElementById('filterExercisesBtn'),mealStyle:document.getElementById('mealStyle'),mealSearch:document.getElementById('mealSearch'),applyMealBtn:document.getElementById('applyMealBtn'),mealGrid:document.getElementById('mealGrid'),shoppingList:document.getElementById('shoppingList'),weekBars:document.getElementById('weekBars'),badgeGrid:document.getElementById('badgeGrid'),darkToggle:document.getElementById('darkToggle'),contrastToggle:document.getElementById('contrastToggle'),motionToggle:document.getElementById('motionToggle'),simpleToggle:document.getElementById('simpleToggle'),touchToggle:document.getElementById('touchToggle'),fontLabel:document.getElementById('fontLabel'),fontPreview:document.getElementById('fontPreview'),fontMinus:document.getElementById('fontMinus'),fontPlus:document.getElementById('fontPlus'),calendarGrid:document.getElementById('calendarGrid'),markDayBtn:document.getElementById('markDayBtn'),reminderText:document.getElementById('reminderText'),reminderMinutes:document.getElementById('reminderMinutes'),addReminderBtn:document.getElementById('addReminderBtn'),reminderList:document.getElementById('reminderList'),smartPlan:document.getElementById('smartPlan'),dailyQuest:document.getElementById('dailyQuest'),weeklySummary:document.getElementById('weeklySummary'),gameArea:document.getElementById('gameArea'),gameTitle:document.getElementById('gameTitle'),gameContent:document.getElementById('gameContent'),memoryGameBtn:document.getElementById('memoryGameBtn'),breathGameBtn:document.getElementById('breathGameBtn'),exportBtn:document.getElementById('exportBtn'),importBtn:document.getElementById('importBtn')};
+    let toastTimer,quoteIndex=0,coachIndex={motivate:0,calm:0,focus:0}; let timerMode='focus',timerSeconds=25*60,timerTotal=25*60,timerRunning=false,timerInterval; const timerModes={focus:{seconds:25*60,label:'Focus session'},short:{seconds:5*60,label:'Short break'},long:{seconds:15*60,label:'Long break'}}; let memoryCards=[],memoryFlipped=[],memoryMatched=0,memoryLock=false,breathTimeout;
 
-/* ── CLOCK + GREETING ── */
-function tick(){const n=new Date();document.getElementById('clock').textContent=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');}
-tick();setInterval(tick,15000);
-function greet(){const h=new Date().getHours(),s=document.getElementById('gsub');if(h>=5&&h<12)s.textContent='Bună dimineața';else if(h>=12&&h<18)s.textContent='Bună ziua';else if(h>=18&&h<22)s.textContent='Bună seara';else s.textContent='Noapte bună';}
-greet();
-
-/* ── SKELETON ── */
-setTimeout(()=>{const sk=document.getElementById('skelScreen'),mn=document.getElementById('main');sk.style.transition='opacity .3s';sk.style.opacity='0';setTimeout(()=>{sk.style.display='none';mn.style.display='block';setTimeout(()=>applyStep(curStep),200);},300);},1400);
-
-/* ── ONBOARDING ── */
-let obStep=1;
-const ob=document.getElementById('ob');
-function obDots(n){[1,2,3].forEach(i=>{const d=document.getElementById('od'+i);d.className='ob-dot'+(i===n?' cur':'');});}
-function obNext(from){
-  if(from===1){const v=document.getElementById('obName').value.trim();if(!v){document.getElementById('obName').style.borderColor='var(--accent)';return;}applyName(v);}
-  obStep=from+1;
-  document.getElementById('obs'+from).classList.remove('show');
-  document.getElementById('obs'+obStep).classList.add('show');
-  obDots(obStep);
-}
-function finishOB(){
-  ob.classList.add('hide');
-  gainXP(0,'Bun venit! 🎉');
-  showToast('Bun venit, '+document.getElementById('nDisp').textContent+'! ✦');
-}
-function checkOB(){const s=localStorage.getItem('uName');if(!s){ob.classList.remove('hide');setTimeout(()=>document.getElementById('obName').focus(),400);}else applyName(s);}
-
-/* ── NAME ── */
-function applyName(n){
-  const s=(n||'').trim()||'Utilizator';
-  document.getElementById('nDisp').textContent=s;
-  document.getElementById('avBtn').textContent=s[0].toUpperCase();
-  document.getElementById('heroH').textContent='Cum te pot ajuta azi, '+s+'?';
-  localStorage.setItem('uName',s);
-}
-function startEdit(){document.getElementById('nDisp').style.display='none';document.querySelector('.npen').style.display='none';document.getElementById('nEdit').classList.add('on');const i=document.getElementById('nInp');i.value=document.getElementById('nDisp').textContent;i.focus();i.select();}
-function saveName(){const v=document.getElementById('nInp').value.trim();applyName(v||document.getElementById('nDisp').textContent);document.getElementById('nEdit').classList.remove('on');document.getElementById('nDisp').style.display='';document.querySelector('.npen').style.display='';document.getElementById('nDisp').style.color='var(--a2)';setTimeout(()=>document.getElementById('nDisp').style.color='',700);showToast('Nume salvat ✓');}
-document.getElementById('nInp').addEventListener('keydown',e=>{if(e.key==='Enter')saveName();if(e.key==='Escape'){document.getElementById('nEdit').classList.remove('on');document.getElementById('nDisp').style.display='';document.querySelector('.npen').style.display='';}});
-
-/* ── TOAST ── */
-function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(toastTmr);toastTmr=setTimeout(()=>t.classList.remove('show'),2400);}
-
-/* ── HAPTIC ── */
-function haptic(){app.classList.remove('hap');void app.offsetWidth;app.classList.add('hap');setTimeout(()=>app.classList.remove('hap'),250);if(navigator.vibrate)navigator.vibrate([28,10,28]);}
-
-/* ── RIPPLE ── */
-function ripple(e,el){const r=document.createElement('div');r.classList.add('ripple');const rc=el.getBoundingClientRect(),sz=Math.max(rc.width,rc.height)*.7;r.style.cssText=`width:${sz}px;height:${sz}px;left:${e.clientX-rc.left-sz/2}px;top:${e.clientY-rc.top-sz/2}px`;el.appendChild(r);setTimeout(()=>r.remove(),500);}
-
-/* ── XP / LEVELS ── */
-function gainXP(amt,msg){
-  xp+=amt;
-  const lvlThresh=level*100;
-  if(xp>=lvlThresh){level++;xp-=lvlThresh;haptic();showToast('🏆 Nivel '+level+' deblocat!');}
-  updateXPBar();
-  updateStats();
-  if(msg&&amt>0)showToast('+'+amt+' XP — '+msg);
-  localStorage.setItem('xp',xp);localStorage.setItem('level',level);
-}
-function updateXPBar(){
-  const cap=level*100,pct=Math.min(100,(xp/cap)*100);
-  document.getElementById('xpFill').style.width=pct+'%';
-  document.getElementById('lvlLbl').textContent='Nivel '+level;
-  document.getElementById('xpLbl').textContent=xp+' / '+cap+' XP';
-}
-function updateStats(){
-  document.getElementById('statXP').textContent=xp;
-  document.getElementById('statLvl').textContent=level;
-  document.getElementById('statRituals').textContent=rituals;
-  document.getElementById('statTasks').textContent=tasksCompleted;
-  document.getElementById('statGames').textContent=gamesPlayed;
-}
-
-/* ── MOOD ── */
-function selMood(el,ico,lbl){document.querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');showToast('Dispoziție: '+ico+' '+lbl);gainXP(5,'Dispoziție înregistrată');}
-
-/* ── RITUAL ── */
-function readRitual(){rituals++;gainXP(15,'Ritual zilnic');document.querySelector('.qbtn.primary').textContent='Citit ✓';document.querySelector('.qbtn.primary').disabled=true;checkBadges();}
-function nextQuote(){qIdx=(qIdx+1)%quotes.length;document.getElementById('quoteText').textContent=quotes[qIdx];}
-
-/* ── HABITS ── */
-function togHabit(id,xpAmt){
-  const el=document.getElementById(id);
-  if(el.classList.contains('done')){el.classList.remove('done');gainXP(-xpAmt,'Obicei debifat');}
-  else{el.classList.add('done');gainXP(xpAmt,'Obicei bifat ✓');haptic();}
-}
-
-/* ── COACH AI ── */
-const coachMsgs={
-  motivate:['Ești capabil de mai mult decât crezi! Fiecare pas contează.','Succesul e suma micilor eforturi repetate zilnic.','Nu te opri acum — cea mai bună versiune a ta te așteaptă!'],
-  calm:['Respiră adânc. Ești în siguranță. Totul va fi bine.','Lasă gândurile să treacă ca norii pe cer.','Prezentul e singurul moment real. Fii aici.'],
-  focus:['Elimină distragerile. Un singur lucru la un moment dat.','Setează un timer de 25 min și concentrează-te total.','Mintea clară vine din pauze regulate și odihnă bună.'],
-};
-let coachIdxs={motivate:0,calm:0,focus:0};
-function coachMsg(el,type){
-  document.querySelectorAll('.coach-chip').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');
-  const msgs=coachMsgs[type],idx=coachIdxs[type]%msgs.length;
-  document.getElementById('coachBubble').textContent='✦ '+msgs[idx];
-  coachIdxs[type]++;
-  gainXP(5,'Coach AI consultat');
-}
-
-/* ── TASKS ── */
-let tasks=[];
-function addTask(){
-  const inp=document.getElementById('taskInp'),prio=document.getElementById('taskPrio');
-  const txt=inp.value.trim();if(!txt)return;
-  tasks.push({txt,prio:prio.value,done:false});
-  inp.value='';renderTasks();gainXP(5,'Sarcină adăugată');
-  const nb=document.getElementById('nb-tasks');
-  nb.textContent=tasks.filter(t=>!t.done).length||'';
-}
-function renderTasks(){
-  const list=document.getElementById('taskList');
-  if(!tasks.length){list.innerHTML='<div style="text-align:center;color:var(--muted);font-size:.80rem;padding:20px 0">Nicio sarcină. Adaugă una mai sus! ✦</div>';return;}
-  const icons={red:'🔴',yellow:'🟡',green:'🟢'};
-  list.innerHTML=tasks.map((t,i)=>`<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--brd);cursor:pointer;" onclick="doneTask(${i})">
-    <div style="width:24px;height:24px;border-radius:50%;border:2px solid var(--brd);display:flex;align-items:center;justify-content:center;flex-shrink:0;${t.done?'background:var(--a3);border-color:var(--a3);':''}font-size:${t.done?'13px':'0'};">${t.done?'✓':''}</div>
-    <div style="flex:1;font-size:.82rem;color:var(--text);text-decoration:${t.done?'line-through':'none'};opacity:${t.done?.6:1}">${icons[t.prio]} ${t.txt}</div>
-  </div>`).join('');
-}
-function doneTask(i){
-  if(!tasks[i].done){tasks[i].done=true;tasksCompleted++;gainXP(20,'Sarcină finalizată ✓');haptic();}
-  else{tasks[i].done=false;tasksCompleted=Math.max(0,tasksCompleted-1);}
-  renderTasks();updateStats();checkBadges();
-  const rem=tasks.filter(t=>!t.done).length;
-  const nb=document.getElementById('nb-tasks');nb.textContent=rem||'';
-}
-
-/* ── POMODORO ── */
-let pomRunning=false,pomSeconds=25*60,pomTotal=25*60,pomInterval;
-const pomModes={focus:25*60,short:5*60,long:15*60};
-function setPomMode(m,el){document.querySelectorAll('.pom-mode').forEach(x=>x.classList.remove('on'));el.classList.add('on');pomSeconds=pomTotal=pomModes[m];pomRunning=false;clearInterval(pomInterval);document.getElementById('pomBtn').textContent='▶ Start';renderPom();}
-function renderPom(){
-  const m=Math.floor(pomSeconds/60),s=pomSeconds%60;
-  document.getElementById('pomTime').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
-  const pct=1-(pomSeconds/pomTotal),circ=document.getElementById('pomCirc');
-  circ.style.strokeDashoffset=283-(283*pct);
-}
-function pomToggle(){
-  if(pomRunning){pomRunning=false;clearInterval(pomInterval);document.getElementById('pomBtn').textContent='▶ Start';}
-  else{pomRunning=true;document.getElementById('pomBtn').textContent='⏸ Pauză';pomInterval=setInterval(()=>{pomSeconds--;renderPom();if(pomSeconds<=0){clearInterval(pomInterval);pomRunning=false;document.getElementById('pomBtn').textContent='▶ Start';gainXP(30,'Sesiune Pomodoro finalizată');haptic();showToast('⏱ Sesiune completă! +30 XP');}},1000);}
-}
-function pomReset(){clearInterval(pomInterval);pomRunning=false;pomSeconds=pomTotal;document.getElementById('pomBtn').textContent='▶ Start';renderPom();}
-renderPom();
-
-/* ── SOUNDS ── */
-function togSound(el,ico){el.classList.toggle('on');showToast(el.classList.contains('on')?ico+' Sunet pornit':ico+' Sunet oprit');}
-
-/* ── JOURNAL ── */
-function saveJournal(){const txt=document.getElementById('journalTa').value.trim();if(!txt)return;gainXP(10,'Intrare în jurnal salvată');document.getElementById('journalTa').value='';showToast('Jurnal salvat +10 XP 📝');}
-
-/* ── MINI GAMES ── */
-// Memory
-let memCards=[],memFlipped=[],memMatched=0,memLock=false;
-const memEmojis=['🌟','🎯','🧠','💡','🌈','🎨','🌺','🔮'];
-function startGame(type){
-  document.getElementById('gameArea').style.display='block';
-  if(type==='memory'){
-    document.getElementById('gameSectTitle').textContent='🃏 Memory';
-    memFlipped=[];memMatched=0;memLock=false;
-    memCards=[...memEmojis,...memEmojis].sort(()=>Math.random()-.5);
-    document.getElementById('gameContent').innerHTML=`<div style="text-align:center;margin-bottom:10px;font-size:.80rem;color:var(--muted)">Găsește toate perechile!</div><div class="mem-grid" id="memGrid">`+memCards.map((e,i)=>`<div class="mem-card back" data-idx="${i}" data-val="${e}" onclick="memFlip(this)">${e}</div>`).join('')+'</div>';
-  }
-  if(type==='breath'){
-    document.getElementById('gameSectTitle').textContent='🌬️ Respirație';
-    document.getElementById('gameContent').innerHTML=`<div class="breath-wrap"><div class="breath-circle" id="bCircle">Inspiră</div><div class="breath-lbl" id="bLbl">Pregătire</div><div class="breath-sub" id="bSub">4 sec inspirație · 4 sec expirație</div><button class="breath-startbtn" onclick="startBreath()">Începe</button></div>`;
-  }
-  document.getElementById('gameArea').scrollIntoView({behavior:'smooth',block:'start'});
-}
-function memFlip(el){
-  if(memLock||!el.classList.contains('back')||memFlipped.length>=2)return;
-  el.classList.remove('back');memFlipped.push(el);
-  if(memFlipped.length===2){memLock=true;setTimeout(()=>{
-    if(memFlipped[0].dataset.val===memFlipped[1].dataset.val){memFlipped.forEach(c=>c.classList.add('matched'));memMatched++;if(memMatched===8){gamesPlayed++;gainXP(80,'Memory completat! 🃏');checkBadges();}}
-    else{memFlipped.forEach(c=>c.classList.add('back'));}
-    memFlipped=[];memLock=false;
-  },700);}
-}
-// Breathing
-let breathInterval;
-function startBreath(){
-  clearInterval(breathInterval);let phase=0;
-  const phases=[{l:'Inspiră',s:'4 secunde',cls:'inhale',dur:4000},{l:'Ține',s:'4 secunde',cls:'inhale',dur:4000},{l:'Expiră',s:'4 secunde',cls:'exhale',dur:4000},{l:'Pauză',s:'4 secunde',cls:'exhale',dur:4000}];
-  function nextPhase(){const p=phases[phase%4];document.getElementById('bLbl').textContent=p.l;document.getElementById('bSub').textContent=p.s;const c=document.getElementById('bCircle');c.textContent=p.l;c.className='breath-circle '+(p.cls);phase++;breathInterval=setTimeout(()=>{nextPhase();},p.dur);}
-  nextPhase();
-  setTimeout(()=>{clearTimeout(breathInterval);gamesPlayed++;gainXP(30,'Exercițiu de respirație completat');checkBadges();showToast('Respirație completată +30 XP 🌬️');},64000);
-}
-// Quiz
-const quizQ=[{q:'Care obicei ajută cel mai mult memoria?',a:['Somn regulat','Zahăr mult','Sedentarism'],c:0},{q:'Câte minute de mers pe jos sunt recomandate zilnic?',a:['10 min','30 min','2 ore'],c:1},{q:'Ce face meditația zilnică?',a:['Crește stresul','Reduce anxietatea','Nimic'],c:1}];
-let qCur=0,qScore=0;
-function quizStart(){
-  qCur=0;qScore=0;
-  document.getElementById('gameArea').style.display='block';
-  document.getElementById('gameSectTitle').textContent='🧠 Quiz';
-  renderQuiz();
-}
-function renderQuiz(){
-  if(qCur>=quizQ.length){gamesPlayed++;gainXP(20+qScore*10,'Quiz finalizat!');checkBadges();document.getElementById('gameContent').innerHTML=`<div style="text-align:center;padding:20px"><div style="font-size:40px;margin-bottom:12px">${qScore===quizQ.length?'🏆':'⭐'}</div><div style="font-size:16px;font-weight:700;color:var(--text)">Scor: ${qScore}/${quizQ.length}</div><div style="font-size:12px;color:var(--muted);margin-top:6px">+${20+qScore*10} XP câștigat</div></div>`;return;}
-  const q=quizQ[qCur];
-  document.getElementById('gameContent').innerHTML=`<div style="font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:14px;line-height:1.5">${qCur+1}. ${q.q}</div>`+q.a.map((a,i)=>`<div onclick="quizAns(${i})" style="background:var(--s2);border:1.5px solid var(--brd);border-radius:var(--rs);padding:11px 14px;margin-bottom:7px;font-size:.80rem;cursor:pointer;color:var(--text);transition:background .2s,border-color .2s;" onmouseenter="this.style.borderColor='var(--a2)'" onmouseleave="this.style.borderColor='var(--brd)'">${['A','B','C'][i]}. ${a}</div>`).join('');
-}
-function quizAns(i){const q=quizQ[qCur];if(i===q.c)qScore++;qCur++;renderQuiz();}
-
-/* ── PROGRESS STEPS ── */
-let curStep=2;
-const sData=[{pct:33,lbl:'Pasul 1 din 3'},{pct:66,lbl:'Pasul 2 din 3'},{pct:100,lbl:'Finalizat! 🎉'}];
-function applyStep(n){
-  const d=sData[n-1];
-  document.getElementById('pFill').style.width=d.pct+'%';
-  document.getElementById('pPct').textContent=d.pct+'%';
-  document.getElementById('pLbl').textContent=d.lbl;
-  [1,2,3].forEach(i=>{const el=document.getElementById('s'+i);el.className='sdot '+(i<n?'done':i===n?'active':'pending');el.textContent=i<n?'✓':i;});
-  const btn=document.getElementById('pBtn');
-  if(n>=3){btn.textContent='Profil completat ✓';btn.disabled=true;haptic();}
-  else{btn.textContent='Continuă la pasul următor →';btn.disabled=false;}
-}
-function advStep(){if(curStep<3){curStep++;applyStep(curStep);gainXP(25,'Pas profil completat');}}
-function goStep(n){if(n<=curStep){applyStep(n);}}
-
-/* ── WEEK BARS ── */
-function renderWeekBars(){
-  const days=['Lu','Ma','Mi','Jo','Vi','Sâ','Du'];
-  const vals=[20,45,30,70,55,0,0];
-  document.getElementById('weekBars').innerHTML=days.map((d,i)=>{
-    const h=Math.max(4,vals[i]*0.9);
-    return`<div class="week-bar-wrap"><div class="week-bar${i===4?' today':''}" style="height:${h}%"></div><div class="week-day">${d}</div></div>`;
-  }).join('');
-}
-renderWeekBars();
-
-/* ── BADGES ── */
-const allBadges=[
-  {ico:'🌟',lbl:'Primul ritual',cond:()=>rituals>=1},
-  {ico:'💪',lbl:'5 obiceiuri',cond:()=>tasksCompleted>=5},
-  {ico:'🎮',lbl:'Primul joc',cond:()=>gamesPlayed>=1},
-  {ico:'🏆',lbl:'Nivel 2',cond:()=>level>=2},
-  {ico:'🔥',lbl:'3 zile la rând',cond:()=>false},
-  {ico:'🧘',lbl:'Focus master',cond:()=>false},
-];
-function checkBadges(){
-  document.getElementById('badgesRow').innerHTML=allBadges.map(b=>`<div class="badge-item"><div class="badge-ico${b.cond()?' earned':''}">${b.ico}</div><div class="badge-lbl">${b.lbl}</div></div>`).join('');
-}
-checkBadges();
-
-/* ── DYNAMIC ISLAND ── */
-let diOpen=false;
-const diMsgs=['3 mesaje noi ✉','Ritual: necitit ✦','Pomodoro gata! ⏱'];let diI=0;
-function toggleDI(){diOpen=!diOpen;document.getElementById('di').classList.toggle('exp',diOpen);document.getElementById('diTxt').textContent=diOpen?diMsgs[diI++%diMsgs.length]:'';}
-setInterval(()=>{if(!diOpen){document.getElementById('diTxt').textContent=diMsgs[diI++%diMsgs.length];document.getElementById('di').classList.add('exp');setTimeout(()=>{if(!diOpen){document.getElementById('di').classList.remove('exp');document.getElementById('diTxt').textContent='';}},3200);}},14000);
-
-/* ── TAB NAVIGATION ── */
-function switchTab(id){
-  document.querySelectorAll('.tab-page').forEach(p=>p.classList.remove('show'));
-  document.getElementById(id).classList.add('show');
-  document.getElementById('main').scrollTop=0;
-}
-function setNav(el){
-  document.querySelectorAll('.ni').forEach(n=>{n.classList.remove('on');n.removeAttribute('aria-current');});
-  el.classList.add('on');el.setAttribute('aria-current','page');haptic();
-}
-
-/* ── PTR ── */
-let ptY=0,ptPull=false,ptD=0;
-const sc=document.getElementById('main'),ptr=document.getElementById('ptr'),ptrTxt=document.getElementById('ptrTxt');
-sc.addEventListener('touchstart',e=>{if(sc.scrollTop===0){ptY=e.touches[0].clientY;ptPull=true;}},{passive:true});
-sc.addEventListener('touchmove',e=>{if(!ptPull)return;ptD=Math.min(65,Math.max(0,e.touches[0].clientY-ptY));if(ptD>5){ptr.style.height=ptD+'px';ptrTxt.textContent=ptD>42?'Eliberează ↑':'Trage pentru reîmprospătare';}},{passive:true});
-sc.addEventListener('touchend',()=>{if(ptD>42){ptr.classList.add('loading');ptrTxt.textContent='Se reîmprospătează...';ptr.style.height='48px';setTimeout(()=>{ptr.style.height='0';ptr.classList.remove('loading');showToast('Reîmprospătat ✓');},1500);}else{ptr.style.height='0';}ptPull=false;ptD=0;});
-
-/* ── SWIPE NAV ── */
-let swX=0;
-app.addEventListener('touchstart',e=>{swX=e.touches[0].clientX;},{passive:true});
-app.addEventListener('touchend',e=>{
-  const dx=e.changedTouches[0].clientX-swX;
-  const navs=document.querySelectorAll('.ni');let ai=Array.from(navs).findIndex(n=>n.classList.contains('on'));
-  if(Math.abs(dx)>65){
-    const tabs=['tab-home','tab-tasks','tab-focus','tab-games','tab-progress'];
-    if(dx<0&&ai<navs.length-1){switchTab(tabs[ai+1]);setNav(navs[ai+1]);}
-    if(dx>0&&ai>0){switchTab(tabs[ai-1]);setNav(navs[ai-1]);}
-  }
-},{passive:true});
-
-/* ── ACCESSIBILITY ── */
-const fLvl=['','large','xlarge'],fLbl=['A','AA','AAA'];let fIdx=0;
-function chFont(d){fIdx=Math.max(0,Math.min(2,fIdx+d));document.documentElement.setAttribute('data-font',fLvl[fIdx]);document.getElementById('fVal').textContent=fLbl[fIdx];document.getElementById('fMinus').disabled=fIdx===0;document.getElementById('fPlus').disabled=fIdx===2;showToast('Text: '+['Normal','Mare','Foarte mare'][fIdx]);localStorage.setItem('fIdx',fIdx);}
-function togSimplified(el){const b=el.querySelector('.tog');b.classList.toggle('on');const on=b.classList.contains('on');el.setAttribute('aria-checked',on);showToast(on?'Mod simplificat ✦':'Mod complet activat');}
-function togMotion(el){const b=el.querySelector('.tog');b.classList.toggle('on');const on=b.classList.contains('on');el.setAttribute('aria-checked',on);document.documentElement.setAttribute('data-motion',on?'reduce':'');showToast(on?'Animații reduse 🎞️':'Animații normale');}
-function setMode(m,el){document.querySelectorAll('.mchip').forEach(c=>c.classList.remove('on'));el.classList.add('on');app.setAttribute('data-mode',m==='light'?'':m);showToast({light:'Mod luminos ☀️',dark:'Mod întunecat 🌙',contrast:'Contrast ridicat ◑'}[m]+' activat');localStorage.setItem('aMode',m);}
-
-/* ── RESTORE ── */
-function restore(){
-  const nm=localStorage.getItem('uName');if(nm)applyName(nm);
-  const m=localStorage.getItem('aMode')||'light';if(m!=='light'){app.setAttribute('data-mode',m);const c=document.getElementById('mc-'+m);if(c){document.querySelectorAll('.mchip').forEach(x=>x.classList.remove('on'));c.classList.add('on');}}
-  const fi=parseInt(localStorage.getItem('fIdx')||'0');if(fi>0){fIdx=fi-1;chFont(1);}
-  const sx=parseInt(localStorage.getItem('xp')||'0');const sl=parseInt(localStorage.getItem('level')||'1');xp=sx;level=sl;updateXPBar();
-}
-restore();checkOB();
-document.querySelectorAll('[role="switch"]').forEach(el=>el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();el.click();}}));
-</script>
+    function saveState(){
+      localStorage.setItem('coach_app_title',state.appTitle);
+      localStorage.setItem('coach_goals',JSON.stringify(state.goals));
+      localStorage.setItem('coach_history_chat',JSON.stringify(state.coachHistory));
+      localStorage.setItem('coach_api_mode',String(state.coachApiMode));localStorage.setItem('coach_name',state.name);localStorage.setItem('coach_xp',state.xp);localStorage.setItem('coach_level',state.level);localStorage.setItem('coach_rituals',state.rituals);localStorage.setItem('coach_tasks_done',state.tasksDone);localStorage.setItem('coach_games',state.games);localStorage.setItem('coach_streak',state.streak);localStorage.setItem('coach_theme',state.theme);localStorage.setItem('coach_font',state.font);localStorage.setItem('coach_motion',state.reducedMotion?'reduce':'normal');localStorage.setItem('coach_simple',String(state.simplified));localStorage.setItem('coach_touch',String(state.largeTouch));localStorage.setItem('coach_tasks',JSON.stringify(state.tasks));localStorage.setItem('coach_history',JSON.stringify(state.history));localStorage.setItem('coach_reminders',JSON.stringify(state.reminders));}
+    function toast(msg){els.toast.textContent=msg;els.toast.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>els.toast.classList.remove('show'),2400)}
+    function updateGreeting(){const h=new Date().getHours();els.greetingLabel.textContent=h<12?'Good morning':h<18?'Good afternoon':'Good evening'}
+    function updateHeader(){els.nameBtn.textContent=`Hello, ${state.name}`;els.heroTitle.textContent=`How can I support you today, ${state.name}?`; const appTitleEl=document.getElementById('appTitle'); if(appTitleEl&&appTitleEl.innerText.trim()!==state.appTitle){appTitleEl.innerText=state.appTitle;}}
+    function updateXP(){let threshold=state.level*100; while(state.xp>=threshold){state.xp-=threshold;state.level+=1;threshold=state.level*100;toast(`Level ${state.level} unlocked 🏆`)} const pct=Math.min(100,(state.xp/threshold)*100); els.xpFill.style.width=`${pct}%`; els.xpLabel.textContent=`${state.xp} / ${threshold} XP`; els.levelLabel.textContent=`Level ${state.level}`; els.ritualCount.textContent=state.rituals; els.taskCount.textContent=state.tasksDone; els.gameCount.textContent=state.games; els.streakCount.textContent=state.streak; els.statXP.textContent=state.xp; els.statLevel.textContent=state.level; els.statTasks.textContent=state.tasksDone; els.statGames.textContent=state.games; renderBadges(); updateSummary(); saveState();}
+    function gainXP(amount,msg){state.xp=Math.max(0,state.xp+amount); updateXP(); if(msg) toast(amount>0?`${msg} · +${amount} XP`:msg)}
+    function setSection(name){document.querySelectorAll('.section').forEach(s=>s.classList.toggle('active',s.id===`section-${name}`)); document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.section===name)); document.querySelectorAll('.mobile-tab').forEach(b=>b.classList.toggle('active',b.dataset.section===name))}
+    function renderTasks(){const icons={urgent:'🔴',normal:'🟡',easy:'🟢'}; const open=state.tasks.filter(t=>!t.done).length; els.openTaskBadge.textContent=`${open} open`; if(!state.tasks.length){els.taskList.innerHTML='<div class="task-item" style="grid-template-columns:1fr"><span class="muted">No tasks yet. Add your first one above.</span></div>'; saveState(); return;} els.taskList.innerHTML=state.tasks.map((t,i)=>`<div class="task-item"><button class="check ${t.done?'done':''}" data-task-index="${i}">${t.done?'✓':''}</button><div class="${t.done?'task-done':''}"><strong>${t.text}</strong><div class="muted">${t.done?'Completed':'Not completed yet'}</div></div><span class="priority">${icons[t.priority]}</span></div>`).join(''); saveState()}
+    function addTask(){const text=els.taskInput.value.trim(); if(!text) return; state.tasks.push({text,priority:els.taskPriority.value,done:false}); els.taskInput.value=''; renderTasks(); gainXP(5,'Task added')}
+    function toggleTask(i){const t=state.tasks[i]; if(!t) return; t.done=!t.done; if(t.done){state.tasksDone+=1; gainXP(20,'Task completed')} else {state.tasksDone=Math.max(0,state.tasksDone-1); updateXP(); toast('Task reopened')} renderTasks(); updateXP()}
+    function renderExercises(){const lvl=els.exerciseLevel.value, type=els.exerciseType.value; const filtered=exerciseData.filter(e=>(lvl==='all'||e.level===lvl)&&(type==='all'||e.type===type)); els.exerciseGrid.innerHTML=filtered.map(item=>`<article class="exercise-item"><div style="font-size:1.6rem;margin-bottom:8px">${item.icon}</div><strong>${item.title}</strong><div class="muted" style="margin:6px 0">${item.level} · ${item.type}</div><p>${item.text}</p></article>`).join('') || '<div class="exercise-item"><span class="muted">No exercises match this filter.</span></div>'}
+    function renderMeals(){const style=els.mealStyle.value||'balanced', q=(els.mealSearch.value||'').toLowerCase(); const days=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']; const meals=weeklyMeals[style]||weeklyMeals.balanced; els.mealGrid.innerHTML=meals.map((m,i)=>({day:days[i],meals:m})).filter(d=>JSON.stringify(d).toLowerCase().includes(q)).map(d=>`<article class="meal-item"><strong>${d.day}</strong><p style="margin-top:8px"><b>Breakfast:</b> ${d.meals[0]}<br><b>Lunch:</b> ${d.meals[1]}<br><b>Dinner:</b> ${d.meals[2]}</p></article>`).join('') || '<div class="meal-item"><span class="muted">No meals match this search.</span></div>'; renderShoppingList(style)}
+    function renderShoppingList(style){const source=(weeklyMeals[style]||weeklyMeals.balanced).flat().join(', ').toLowerCase(); const base=['oats','fruit','yogurt','vegetables','rice','potatoes','fish','chicken','beans','lentils','seeds','eggs']; const items=base.filter(x=>source.includes(x.split(' ')[0])); els.shoppingList.innerHTML=items.map(i=>`<div class="task-item" style="grid-template-columns:1fr"><strong>${i}</strong></div>`).join('')}
+    function renderWeekBars(){const labels=['Mon','Tue','Wed','Thu','Fri','Sat','Sun']; els.weekBars.innerHTML=labels.map((d,i)=>`<div class="bar-wrap"><div class="bar ${i===4?'today':''}" style="height:${Math.max(10,weekValues[i])}%"></div><span class="muted">${d}</span></div>`).join('')}
+    function renderBadges(){els.badgeGrid.innerHTML=badges.map(b=>`<div class="badge-item ${b.earned()?'earned':''}"><div class="badge-icon">${b.icon}</div><span class="muted">${b.label}</span></div>`).join('')}
+    function applyTheme(){document.documentElement.dataset.theme=state.theme; els.themeBtn.textContent=state.theme==='dark'?'☀️':state.theme==='contrast'?'◑':'🌙'; els.darkToggle.classList.toggle('active',state.theme==='dark'); els.contrastToggle.classList.toggle('active',state.theme==='contrast'); saveState()}
+    function applyFont(){document.documentElement.dataset.font=state.font==='normal'?'':state.font; els.fontLabel.textContent=fontLabels[state.font]; els.fontPreview.textContent=state.font==='normal'?'A':state.font==='large'?'AA':'AAA'; saveState()}
+    function applyMotion(){document.documentElement.dataset.motion=state.reducedMotion?'reduce':''; els.motionToggle.classList.toggle('active',state.reducedMotion); saveState()}
+    function applySimplified(){els.simpleToggle.classList.toggle('active',state.simplified); document.querySelectorAll('.muted').forEach(el=>el.style.display=state.simplified?'none':''); saveState()}
+    function applyTouchTargets(){els.touchToggle.classList.toggle('active',state.largeTouch); document.querySelectorAll('button,.field,.select,.textarea').forEach(el=>{el.style.minHeight=state.largeTouch?'50px':''}) ; saveState()}
+    function nextQuote(){quoteIndex=(quoteIndex+1)%quotes.length; els.quoteText.textContent=quotes[quoteIndex]}
+    function renderTimer(){const m=Math.floor(timerSeconds/60), s=timerSeconds%60; els.timerText.textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`; const pct=1-timerSeconds/timerTotal; els.timerProgress.style.strokeDashoffset=283-(283*pct); els.timerLabel.textContent=timerModes[timerMode].label}
+    function setTimerMode(mode){timerMode=mode; timerSeconds=timerModes[mode].seconds; timerTotal=timerModes[mode].seconds; timerRunning=false; clearInterval(timerInterval); document.querySelectorAll('.mode-chip').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode)); els.timerStartBtn.textContent='Start'; renderTimer()}
+    function toggleTimer(){if(timerRunning){timerRunning=false; clearInterval(timerInterval); els.timerStartBtn.textContent='Start'; return;} timerRunning=true; els.timerStartBtn.textContent='Pause'; timerInterval=setInterval(()=>{timerSeconds-=1; renderTimer(); if(timerSeconds<=0){clearInterval(timerInterval); timerRunning=false; els.timerStartBtn.textContent='Start'; gainXP(30,'Pomodoro completed')}},1000)}
+    function resetTimer(){clearInterval(timerInterval); timerRunning=false; timerSeconds=timerTotal; els.timerStartBtn.textContent='Start'; renderTimer()}
+    function getTodayKey(){return new Date().toISOString().slice(0,10)}
+    function renderCalendar(){const now=new Date(); const cells=[]; for(let i=6;i>=0;i--){const d=new Date(now); d.setDate(now.getDate()-i); const key=d.toISOString().slice(0,10); const label=`${d.toLocaleDateString('en-US',{weekday:'short'})}<br>${d.getDate()}`; cells.push(`<div class="day-cell ${state.history[key]?'done':''}" data-day="${key}">${label}</div>`)} els.calendarGrid.innerHTML=cells.join('')}
+    function markToday(){const today=getTodayKey(); if(!state.history[today]){state.history[today]=true; const dates=Object.keys(state.history).sort(); let streak=0; for(let i=0;i<365;i++){const d=new Date(); d.setDate(d.getDate()-i); const key=d.toISOString().slice(0,10); if(state.history[key]) streak++; else break;} state.streak=streak; gainXP(15,'Day marked complete')} else toast('Today is already marked'); renderCalendar(); updateXP()}
+    function renderReminders(){if(!state.reminders.length){els.reminderList.innerHTML='<div class="reminder-item"><span class="muted">No reminders yet.</span></div>'; return;} els.reminderList.innerHTML=state.reminders.map((r,i)=>`<div class="reminder-item"><span>${r.text} in ${r.minutes} min</span><button class="ghost-btn" data-reminder-index="${i}">Remove</button></div>`).join('')}
+    function addReminder(){const text=els.reminderText.value.trim(); const minutes=Math.max(1,Number(els.reminderMinutes.value||1)); if(!text) return; state.reminders.push({text,minutes}); saveState(); renderReminders(); setTimeout(()=>toast(`Reminder: ${text}`),minutes*60000); els.reminderText.value=''; els.reminderMinutes.value='1'; toast('Reminder set')}
+    function removeReminder(i){state.reminders.splice(i,1); saveState(); renderReminders()}
+    function smartSuggestion(){const hour=new Date().getHours(); const suggestions=[ 'You have 20 minutes → Try: 5 min breathing + 10 min focus + 5 min stretching.','Low energy day → Do 1 small task, 1 glass of water, and 1 breathing round.','Need momentum → Start with a 25-minute focus block and finish one task.' ]; els.smartPlan.textContent=hour<12?suggestions[0]:hour<18?suggestions[1]:suggestions[2]}
+    function buildTodayPlan(){
+      const openTasks=state.tasks.filter(t=>!t.done).slice(0,2).map(t=>t.text);
+      const activeGoals=state.goals.slice(0,2).map(g=>g.title);
+      const mood=document.querySelector('.mood-btn.active')?.dataset.mood||'Okay';
+      const blocks=[];
+      blocks.push(`Mood: ${mood}`);
+      if(activeGoals.length) blocks.push(`Priority goals: ${activeGoals.join(' · ')}`);
+      if(openTasks.length) blocks.push(`Top tasks: ${openTasks.join(' · ')}`);
+      if(mood==='Tired'||mood==='Overwhelmed') blocks.push('Suggested flow: 5 min breathing → 1 small task → hydration break.');
+      else blocks.push('Suggested flow: 25 min focus → 1 important task → short reflection.');
+      const plan=blocks.join(' ');
+      document.getElementById('todayPlanBox').textContent=plan;
+      return plan;
+    }
+    function coachLocalReply(message){
+      const lower=message.toLowerCase();
+      const hasGoals=state.goals.length>0;
+      const openTasks=state.tasks.filter(t=>!t.done).length;
+      if(lower.includes('tired')||lower.includes('energy')) return `✦ You seem low on energy. Reduce today to one meaningful task, one hydration break, and one short reset. ${hasGoals?`Your nearest goal is: ${state.goals[0].title}.`:''}`;
+      if(lower.includes('anxious')||lower.includes('calm')) return '✦ Slow the pace. Try 4 breaths, relax your shoulders, and choose a task that takes under 10 minutes.';
+      if(lower.includes('plan')) return `✦ Here is a simple plan: ${buildTodayPlan()}`;
+      if(lower.includes('motivate')) return `✦ Start smaller than you think. You have ${openTasks} open tasks. Pick one and finish only the first useful step.`;
+      return `✦ Based on your progress, I suggest keeping it simple today. ${hasGoals?`Move your goal forward by one small action: ${state.goals[0].title}.`:''}`;
+    }
+    async function getCoachReply(message){
+      if(state.coachApiMode){
+        return 'API mode is enabled. Connect your backend endpoint here to replace this placeholder with a real AI response.';
+      }
+      return coachLocalReply(message);
+    }
+    function renderCoachHistory(){
+      const el=document.getElementById('coachHistory');
+      if(!el) return;
+      if(!state.coachHistory.length){el.innerHTML='<div class="task-item" style="grid-template-columns:1fr"><span class="muted">No coach conversations yet.</span></div>'; return;}
+      el.innerHTML=state.coachHistory.slice(-4).reverse().map(item=>`<div class="task-item" style="grid-template-columns:1fr"><strong>${item.user}</strong><div class="muted" style="margin-top:6px">${item.reply}</div></div>`).join('');
+    }
+    function renderGoals(){
+      const el=document.getElementById('goalList');
+      if(!el) return;
+      if(!state.goals.length){el.innerHTML='<div class="task-item" style="grid-template-columns:1fr"><span class="muted">No goals yet. Add your first goal above.</span></div>'; return;}
+      el.innerHTML=state.goals.map((g,i)=>{const pct=Math.min(100,Math.round((g.progress/g.target)*100));return `<div class="task-item" style="grid-template-columns:minmax(0,1fr) auto;align-items:start"><div><strong>${g.title}</strong><div class="muted" style="margin-top:6px">${g.category} · ${g.progress}/${g.target} ${g.unit}</div><div class="progress-track" style="margin-top:10px"><div class="progress-fill" style="width:${pct}%"></div></div></div><div style="display:grid;gap:8px"><button class="ghost-btn" data-goal-plus="${i}">+1</button><button class="ghost-btn" data-goal-remove="${i}">Remove</button></div></div>`}).join('');
+    }
+    function addGoal(){
+      const title=document.getElementById('goalTitle').value.trim();
+      const category=document.getElementById('goalCategory').value;
+      const target=Math.max(1,Number(document.getElementById('goalTarget').value||1));
+      const unit=document.getElementById('goalUnit').value.trim()||'steps';
+      if(!title) return;
+      state.goals.push({title,category,target,unit,progress:0});
+      document.getElementById('goalTitle').value='';
+      document.getElementById('goalUnit').value='';
+      renderGoals();
+      buildTodayPlan();
+      saveState();
+      gainXP(10,'Goal added');
+    }
+    function updateGoal(index,delta){
+      const goal=state.goals[index];
+      if(!goal) return;
+      goal.progress=Math.max(0,goal.progress+delta);
+      renderGoals();
+      buildTodayPlan();
+      saveState();
+      if(delta>0) gainXP(8,'Goal progress updated');
+    }
+    function removeGoal(index){
+      state.goals.splice(index,1);
+      renderGoals();
+      buildTodayPlan();
+      saveState();
+      toast('Goal removed');
+    }
+    async function sendCoachMessage(message){
+      if(!message.trim()) return;
+      const reply=await getCoachReply(message);
+      document.getElementById('coachReplyBox').textContent=reply;
+      state.coachHistory.push({user:message,reply,ts:Date.now()});
+      renderCoachHistory();
+      saveState();
+      gainXP(5,'Coach used');
+    }
+    function updateSummary(){els.dailyQuest.textContent='Complete 1 task + 1 ritual + 1 focus session'; els.weeklySummary.textContent=`You have completed ${state.tasksDone} tasks, ${state.rituals} rituals, and played ${state.games} games. Keep building consistency.`}
+    function startMemoryGame(){els.gameArea.classList.add('active'); els.gameTitle.textContent='Memory'; const emojis=['🌟','🎯','🧠','💡','🌈','🎨','🌿','🔔']; memoryCards=[...emojis,...emojis].sort(()=>Math.random()-.5); memoryFlipped=[]; memoryMatched=0; memoryLock=false; els.gameContent.innerHTML=`<p class="muted">Match all pairs to complete the game.</p><div class="memory-grid" id="memoryGrid">${memoryCards.map((e,i)=>`<button class="memory-card back" data-index="${i}" data-value="${e}">${e}</button>`).join('')}</div>`}
+    function flipMemoryCard(card){if(memoryLock||!card.classList.contains('back'))return; card.classList.remove('back'); memoryFlipped.push(card); if(memoryFlipped.length<2)return; memoryLock=true; setTimeout(()=>{const[a,b]=memoryFlipped; if(a.dataset.value===b.dataset.value){a.classList.add('matched'); b.classList.add('matched'); memoryMatched++; if(memoryMatched===8){state.games+=1; gainXP(80,'Memory game completed')}} else {a.classList.add('back'); b.classList.add('back')} memoryFlipped=[]; memoryLock=false},650)}
+    function startBreathingGame(){els.gameArea.classList.add('active'); els.gameTitle.textContent='Breathing'; els.gameContent.innerHTML='<div class="breathing"><div class="breathing-circle" id="breathCircle">Inhale</div><strong id="breathLabel">Get ready</strong><p class="muted" id="breathSub">4 seconds inhale · 4 seconds exhale</p><button class="primary-btn" id="breathStartBtn">Start breathing</button></div>'; document.getElementById('breathStartBtn').addEventListener('click',runBreathingCycle)}
+    function runBreathingCycle(){const circle=document.getElementById('breathCircle'),label=document.getElementById('breathLabel'),sub=document.getElementById('breathSub'); const phases=[{text:'Inhale',sub:'4 seconds',cls:'inhale'},{text:'Hold',sub:'4 seconds',cls:'inhale'},{text:'Exhale',sub:'4 seconds',cls:'exhale'},{text:'Pause',sub:'4 seconds',cls:'exhale'}]; let phase=0,steps=0; clearTimeout(breathTimeout); const run=()=>{const cur=phases[phase%phases.length]; circle.className=`breathing-circle ${cur.cls}`; circle.textContent=cur.text; label.textContent=cur.text; sub.textContent=cur.sub; phase++; steps++; if(steps>=8){state.games+=1; gainXP(30,'Breathing exercise completed'); return;} breathTimeout=setTimeout(run,4000)}; run()}
+    function exportData(){const data={...state}; const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='coachingai-progress.json'; a.click(); URL.revokeObjectURL(a.href)}
+    function importData(){const input=document.createElement('input'); input.type='file'; input.accept='application/json'; input.onchange=e=>{const file=e.target.files[0]; if(!file) return; const reader=new FileReader(); reader.onload=()=>{try{const data=JSON.parse(reader.result); Object.assign(state,data); saveState(); location.reload();}catch{toast('Invalid file')}}; reader.readAsText(file)}; input.click()}
+    function initEvents(){
+      const appTitleEl=document.getElementById('appTitle');
+      appTitleEl?.addEventListener('blur',()=>{
+        state.appTitle=appTitleEl.innerText.trim()||'CoachingAI Health Companion';
+        appTitleEl.innerText=state.appTitle;
+        saveState();
+        toast('App title updated');
+      });
+      appTitleEl?.addEventListener('keydown',e=>{
+        if(e.key==='Enter'){
+          e.preventDefault();
+          appTitleEl.blur();
+        }
+      });
+      document.getElementById('coachSendBtn')?.addEventListener('click',()=>{const input=document.getElementById('coachInput'); sendCoachMessage(input.value); input.value='';});
+      document.querySelectorAll('.coach-quick').forEach(btn=>btn.addEventListener('click',()=>sendCoachMessage(btn.dataset.prompt)));
+      document.getElementById('coachApiBtn')?.addEventListener('click',()=>{state.coachApiMode=!state.coachApiMode; saveState(); toast(state.coachApiMode?'API mode enabled':'API mode disabled');});
+      document.getElementById('addGoalBtn')?.addEventListener('click',addGoal);
+      document.getElementById('generatePlanBtn')?.addEventListener('click',()=>{buildTodayPlan(); toast('Today plan refreshed');});document.querySelectorAll('[data-section]').forEach(btn=>btn.addEventListener('click',()=>setSection(btn.dataset.section))); document.querySelectorAll('[data-target]').forEach(btn=>btn.addEventListener('click',()=>setSection(btn.dataset.target)));
+      document.querySelectorAll('.mood-btn').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.mood-btn').forEach(x=>x.classList.remove('active')); btn.classList.add('active'); gainXP(5,`${btn.dataset.mood} mood saved`)}));
+      document.querySelectorAll('.chip[data-coach]').forEach(btn=>btn.addEventListener('click',()=>{const type=btn.dataset.coach,idx=coachIndex[type]%coachMessages[type].length; els.coachBubble.textContent=coachMessages[type][idx]; coachIndex[type]++; gainXP(5,'Coach tip opened')}));
+      document.querySelectorAll('.habit-check').forEach(btn=>btn.addEventListener('click',()=>{const amount=Number(btn.dataset.xp); const done=btn.classList.toggle('done'); btn.textContent=done?'✓':''; gainXP(done?amount:-amount,`${btn.dataset.habit}${done?' completed':' unchecked'}`)}));
+      els.ritualBtn.addEventListener('click',()=>{if(els.ritualBtn.disabled)return; state.rituals+=1; els.ritualBtn.disabled=true; els.ritualBtn.textContent='Completed ✓'; gainXP(15,'Daily ritual completed')});
+      els.nextQuoteBtn.addEventListener('click',nextQuote); els.addTaskBtn.addEventListener('click',addTask); els.taskInput.addEventListener('keydown',e=>{if(e.key==='Enter')addTask()}); els.taskList.addEventListener('click',e=>{const btn=e.target.closest('[data-task-index]'); if(btn) toggleTask(Number(btn.dataset.taskIndex))});
+      document.getElementById('goalList')?.addEventListener('click',e=>{const plus=e.target.closest('[data-goal-plus]'); const remove=e.target.closest('[data-goal-remove]'); if(plus) updateGoal(Number(plus.dataset.goalPlus),1); if(remove) removeGoal(Number(remove.dataset.goalRemove));});
+      document.querySelectorAll('.mode-chip').forEach(btn=>btn.addEventListener('click',()=>setTimerMode(btn.dataset.mode))); els.timerStartBtn.addEventListener('click',toggleTimer); els.timerResetBtn.addEventListener('click',resetTimer);
+      document.querySelectorAll('.sound-btn').forEach(btn=>btn.addEventListener('click',()=>{btn.classList.toggle('active'); toast(`${btn.textContent.trim()} ${btn.classList.contains('active')?'enabled':'disabled'}`)}));
+      els.saveJournalBtn.addEventListener('click',()=>{if(!els.journalInput.value.trim())return; els.journalInput.value=''; gainXP(10,'Journal entry saved')});
+      els.nameBtn.addEventListener('click',()=>{const n=prompt('Enter your name',state.name); if(!n)return; state.name=n.trim()||state.name; updateHeader(); saveState(); toast('Name updated')});
+      els.themeBtn.addEventListener('click',()=>{state.theme=state.theme==='dark'?'light':'dark'; applyTheme()}); els.darkToggle.addEventListener('click',()=>{state.theme=state.theme==='dark'?'light':'dark'; if(state.theme==='contrast')state.theme='dark'; applyTheme()}); els.contrastToggle.addEventListener('click',()=>{state.theme=state.theme==='contrast'?'light':'contrast'; applyTheme()});
+      els.motionToggle.addEventListener('click',()=>{state.reducedMotion=!state.reducedMotion; applyMotion(); toast(state.reducedMotion?'Reduced motion enabled':'Reduced motion disabled')}); els.simpleToggle.addEventListener('click',()=>{state.simplified=!state.simplified; applySimplified(); toast(state.simplified?'Simplified mode enabled':'Simplified mode disabled')}); els.touchToggle.addEventListener('click',()=>{state.largeTouch=!state.largeTouch; applyTouchTargets(); toast(state.largeTouch?'Larger touch targets enabled':'Larger touch targets disabled')});
+      els.fontMinus.addEventListener('click',()=>{const idx=Math.max(0,fontOptions.indexOf(state.font)-1); state.font=fontOptions[idx]; applyFont()}); els.fontPlus.addEventListener('click',()=>{const idx=Math.min(fontOptions.length-1,fontOptions.indexOf(state.font)+1); state.font=fontOptions[idx]; applyFont()});
+      els.helpBtn.addEventListener('click',()=>toast('Use the left menu on desktop or the bottom menu on mobile.')); els.filterExercisesBtn.addEventListener('click',renderExercises); els.applyMealBtn.addEventListener('click',renderMeals); els.markDayBtn.addEventListener('click',markToday); els.addReminderBtn.addEventListener('click',addReminder); els.reminderList.addEventListener('click',e=>{const b=e.target.closest('[data-reminder-index]'); if(b) removeReminder(Number(b.dataset.reminderIndex))});
+      els.memoryGameBtn.addEventListener('click',startMemoryGame); els.breathGameBtn.addEventListener('click',startBreathingGame); els.gameContent.addEventListener('click',e=>{const card=e.target.closest('.memory-card'); if(card) flipMemoryCard(card)}); els.exportBtn.addEventListener('click',exportData); els.importBtn.addEventListener('click',importData);
+    }
+    function init(){updateGreeting(); const appTitleEl=document.getElementById('appTitle'); if(appTitleEl) appTitleEl.innerText=state.appTitle; updateHeader(); renderTasks(); renderExercises(); renderMeals(); renderWeekBars(); renderBadges(); renderCalendar(); renderReminders(); smartSuggestion(); renderGoals(); renderCoachHistory(); buildTodayPlan(); applyTheme(); applyFont(); applyMotion(); setTimeout(applySimplified,0); applyTouchTargets(); setTimerMode('focus'); updateXP(); initEvents()}
+    init();
+  </script>
 </body>
 </html>
