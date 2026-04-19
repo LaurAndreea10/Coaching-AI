@@ -15,6 +15,8 @@ const defaults = {
   reducedMotion: false,
   simplified: false,
   largeTouch: false,
+  language: 'en',
+  hasSeenWelcome: false,
   tasks: [],
   history: {},
   reminders: []
@@ -45,6 +47,8 @@ export function loadState() {
     reducedMotion: localStorage.getItem('coach_motion') === 'reduce',
     simplified: localStorage.getItem('coach_simple') === 'true',
     largeTouch: localStorage.getItem('coach_touch') === 'true',
+    language: localStorage.getItem('coach_language') || defaults.language,
+    hasSeenWelcome: localStorage.getItem('coach_seen_welcome') === 'true',
     tasks: JSON.parse(localStorage.getItem('coach_tasks') || '[]'),
     history: JSON.parse(localStorage.getItem('coach_history') || '{}'),
     reminders: JSON.parse(localStorage.getItem('coach_reminders') || '[]')
@@ -68,6 +72,8 @@ export function saveState(state) {
   localStorage.setItem('coach_motion', state.reducedMotion ? 'reduce' : 'normal');
   localStorage.setItem('coach_simple', String(state.simplified));
   localStorage.setItem('coach_touch', String(state.largeTouch));
+  localStorage.setItem('coach_language', state.language);
+  localStorage.setItem('coach_seen_welcome', String(state.hasSeenWelcome));
   localStorage.setItem('coach_tasks', JSON.stringify(state.tasks));
   localStorage.setItem('coach_history', JSON.stringify(state.history));
   localStorage.setItem('coach_reminders', JSON.stringify(state.reminders));
