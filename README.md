@@ -1,206 +1,85 @@
-# Coaching AI
+# CoachingAI Health Companion
 
-A modern AI-assisted coaching app concept built as part of a personal front-end portfolio, focused on guidance, progress, and an interactive user experience.
+Browser-first wellness and productivity app built for portfolio/demo use with vanilla HTML, CSS, and JavaScript.
 
 ## Live Demo
 
 https://laurandreea10.github.io/Coaching-AI/
-# 🧠✨ CoachingAI — Smart Health & Productivity Companion
 
-> Your all-in-one mobile-first web app for **focus, health, habits, and AI coaching**.
+## What exists now (v1.0.0 prototype)
 
----
+- Mood check-in
+- Task list with priorities + XP rewards
+- Focus timer (Pomodoro)
+- Goals tracking
+- Local coach suggestions and quick prompts
+- Optional modules: exercises, meal plan, mini-games, progress dashboard, accessibility settings
+- Local persistence via `localStorage`
 
-## 🚀 Overview
+## What is simulated / mock
 
-**CoachingAI** is a modern, responsive web application designed to help users:
+- “AI coach” replies are rule-based local responses
+- API mode is a placeholder toggle (no real backend in this repo)
+- Weekly progress and meal data are sample datasets
 
-* stay productive 🎯
-* build healthy habits 💚
-* improve mental clarity 🧘
-* receive personalized coaching 🤖
+## What comes next
 
-Built with a **mobile-first mindset**, it combines **gamification, AI guidance, and daily planning** into a seamless experience.
+- Real coach adapter wired to backend (`services/coachService.js`)
+- Config-based environment setup (`config.example.js`)
+- Cloud sync and auth
+- PWA packaging and offline support
 
----
+## MVP Focus
 
-## 🌟 Key Features
+Current recommended MVP scope:
 
-### 🤖 AI Coach (Smart Guidance)
+1. Mood check-in
+2. Task list
+3. Focus timer
+4. Goals
+5. Coach suggestions
 
-* Context-aware coaching based on:
+The health planner, meal planner, and games are intentionally positioned as secondary modules.
 
-  * mood 😊
-  * tasks 📋
-  * goals 🎯
-* Quick prompts + custom input
-* API-ready (can connect to real AI backend)
+## Architecture snapshot
 
----
+Project moved from a single-file demo to a modular structure:
 
-### 🎯 Goals System
+- `index.html`
+- `styles/main.css`
+- `scripts/app.js`
+- `scripts/modules/{tasks,coach,goals,storage}.js`
+- `data/{exercises,meals}.js`
+- `services/coachService.js`
 
-* Create meaningful goals
-* Track progress visually 📊
-* Increment progress (+1 actions)
-* Connect goals with daily behavior
+## Accessibility decisions
 
----
+- Keyboard-friendly controls (buttons, toggles, focusable sections)
+- Theme variants: light, dark, high contrast
+- Font scaling: normal / large / xlarge
+- Reduced motion toggle
+- Larger touch targets option
+- ARIA live region for status toast updates
 
-### 📅 Daily Plan Generator
+## Portfolio story
 
-* Automatically builds your day based on:
+**Problem:** Users juggle productivity and wellbeing tools across disconnected apps.  
+**Persona:** Busy student/knowledge worker needing lightweight daily structure.  
+**Trade-off:** Fast local prototype over backend complexity for faster UX iteration.  
+**Learnings:** State management, UI modularization, accessibility-first defaults, and safe data handling for import/export.
 
-  * mood
-  * active goals
-  * pending tasks
-* Suggests realistic routines:
+## Run locally
 
-  * low energy ⚡ → light tasks
-  * high focus 🔥 → deep work
+No build step is required:
 
----
+1. Clone/download the repository.
+2. Open `index.html` in a modern browser.
 
-### 📋 Task Management
+## Repository metadata suggestions (GitHub UI)
 
-* Add, complete, and track tasks
-* Priority levels (🔴 🟡 🟢)
-* XP rewards for completion
+- **Description:** Accessible wellness + productivity companion prototype (vanilla JS).
+- **Topics:** `html`, `css`, `javascript`, `wellness-app`, `accessibility`, `productivity`
 
----
+## License
 
-### 🧘 Focus Mode (Pomodoro)
-
-* 25/5/15 minute cycles
-* Visual progress ring ⏱
-* Ambient sounds 🎧
-* Designed for deep work
-
----
-
-### 📝 Journal
-
-* Daily reflection input
-* Boosts awareness and consistency
-* Rewards XP for usage
-
----
-
-### 🎮 Mini Games
-
-* Memory game 🃏
-* Breathing exercise 🌬️
-* Quiz 🧠
-* Improves focus & cognitive skills
-
----
-
-### 📊 Progress Dashboard
-
-* XP system + Levels 🏆
-* Weekly activity chart 📈
-* Achievements & badges 🏅
-
----
-
-### ♿ Accessibility First
-
-* Dark mode 🌙
-* High contrast mode ◑
-* Font scaling (A / AA / AAA) 🔤
-* Reduced motion 🎞️
-* Screen reader support 🔊
-
----
-
-### ✏️ Editable UI
-
-* App name is editable inline
-* Saved automatically 💾
-* Personalizes experience instantly
-
----
-
-## 📱 Mobile-First Design
-
-* Optimized for small screens 📲
-* Smooth gestures (swipe navigation)
-* Native-like UI feel
-* Works directly in browser (no install required)
-
----
-
-## 💾 Data Persistence
-
-All data is stored locally using:
-
-* `localStorage`
-
-Includes:
-
-* name
-* XP / level
-* goals
-* tasks
-* coach history
-* settings
-
----
-
-## 🧩 Tech Stack
-
-* **HTML5**
-* **CSS3 (custom design system + tokens)**
-* **Vanilla JavaScript (no frameworks)**
-
----
-
-## 🔌 Future Enhancements
-
-* 🔗 Real AI integration (OpenAI API)
-* ☁️ Cloud sync (Firebase)
-* 🔐 Authentication system
-* 📲 PWA support (install as app)
-* 🔔 Push notifications
-* 📊 Advanced analytics
-
----
-
-## 🛠️ How to Run
-
-1. Download the project
-2. Open the main `.html` file in browser
-3. Done ✅ — no setup required
-
----
-
-## 💡 Philosophy
-
-> Small daily actions → consistent progress → real transformation.
-
-This app is built around:
-
-* simplicity
-* consistency
-* mental clarity
-
----
-
-## 🧑‍💻 Author
-
-Built with focus on:
-
-* UX 🧠
-* accessibility ♿
-* performance ⚡
-
----
-
-## ⭐ Final Note
-
-This is not just a productivity app.
-It’s a **personal growth system**.
-
----
-
-**Stay consistent. Stay focused. Level up. 🚀**
+MIT — see [LICENSE](./LICENSE).
